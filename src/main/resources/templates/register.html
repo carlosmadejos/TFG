@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Registro</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 50px;
+    }
+    form {
+        display: inline-block;
+        text-align: left;
+    }
+    label {
+        display: block;
+        margin: 10px 0 5px;
+    }
+    input {
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .error {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+    button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<h1>Registro de Usuario</h1>
+
+<!-- Mensaje global de error -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+<form th:action="@{/register}" th:object="${user}" method="post">
+  <label for="username">Usuario:</label>
+  <input type="text" th:field="*{username}" id="username" required>
+  <div th:if="${#fields.hasErrors('username')}" class="error" th:errors="*{username}"></div>
+
+  <label for="email">Email:</label>
+  <input type="email" th:field="*{email}" id="email" required>
+  <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
+
+  <label for="password">Contraseña:</label>
+  <input type="password" th:field="*{password}" id="password" required>
+  <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
+
+  <label for="age">Edad:</label>
+  <input type="number" th:field="*{age}" id="age" min="18" max="99" required>
+  <div th:if="${#fields.hasErrors('age')}" class="error" th:errors="*{age}"></div>
+
+  <label for="weight">Peso (kg):</label>
+  <input type="number" th:field="*{weight}" id="weight" step="0.1" required>
+  <div th:if="${#fields.hasErrors('weight')}" class="error" th:errors="*{weight}"></div>
+
+  <label for="height">Altura (cm):</label>
+  <input type="number" th:field="*{height}" id="height" step="0.1" required>
+  <div th:if="${#fields.hasErrors('height')}" class="error" th:errors="*{height}"></div>
+
+  <button type="submit">Registrar</button>
+</form>
+</body>
+</html>
