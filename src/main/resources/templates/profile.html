@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Perfil de Usuario</title>
+    <!-- Vinculamos el archivo CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Perfil de Usuario</h1>
+    <div class="profile-info">
+        <p><label>Nombre de Usuario:</label> <span th:text="${user.username}"></span></p>
+        <p><label>Email:</label> <span th:text="${user.email}"></span></p>
+        <p><label>Edad:</label> <span th:text="${user.age}"></span></p>
+        <p><label>Peso (kg):</label> <span th:text="${user.weight}"></span></p>
+        <p><label>Altura (cm):</label> <span th:text="${user.height}"></span></p>
+    </div>
+    <form th:action="@{/profile/edit}" method="get">
+        <button type="submit" class="edit-button">Editar Perfil</button>
+    </form>
+</div>
+</body>
+</html>

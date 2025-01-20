@@ -2,42 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Registro</title>
-  <style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 50px;
-    }
-    form {
-        display: inline-block;
-        text-align: left;
-    }
-    label {
-        display: block;
-        margin: 10px 0 5px;
-    }
-    input {
-        padding: 8px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .error {
-        color: red;
-        font-size: 0.9em;
-        margin-top: 5px;
-    }
-    button {
-        padding: 10px 20px;
-        margin-top: 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #0056b3;
-    }
-  </style>
+  <!-- Enlace al archivo CSS -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
 <h1>Registro de Usuario</h1>

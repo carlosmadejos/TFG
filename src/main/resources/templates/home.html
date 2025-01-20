@@ -2,9 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Home</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
 <h1>Bienvenido</h1>
 <p>Inicio de sesión exitoso.</p>
+
+<!-- Botón para ir al perfil -->
+<a th:href="@{/profile}">Ir a mi perfil</a>
+
 </body>
 </html>

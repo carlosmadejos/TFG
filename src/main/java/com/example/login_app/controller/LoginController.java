@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.BindingResult;
+import java.security.Principal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 @Controller
 public class LoginController {
@@ -39,7 +42,6 @@ public class LoginController {
         model.addAttribute("user", new User()); // Crear un objeto User vacío con valores iniciales
         return "register";
     }
-
 
 
     @PostMapping("/register")
@@ -74,4 +76,21 @@ public class LoginController {
         model.addAttribute("success", "Usuario registrado exitosamente. Ahora puedes iniciar sesión.");
         return "redirect:/login";
     }
+
+    @GetMapping("/profile")
+    public String viewProfile(Model model, Principal principal) {
+        // Obtiene el nombre del usuario autenticado
+        String username = principal.getName();
+
+        // Busca al usuario en la base de datos
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        // Añade el usuario al modelo para pasarlo a la vista
+        model.addAttribute("user", user);
+
+        // Devuelve la vista del perfil (profile.html)
+        return "profile";
+    }
+
 }
