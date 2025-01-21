@@ -33,6 +33,7 @@ public class LoginController {
 
     @GetMapping("/home")
     public String home() {
+        System.out.println("ESTOY EN HOME");
         // Devuelve la vista de inicio (home.html en templates)
         return "home";
     }
@@ -80,6 +81,7 @@ public class LoginController {
     @GetMapping("/profile")
     public String viewProfile(Model model, Principal principal) {
         // Obtiene el nombre del usuario autenticado
+        System.out.println("Usuario autenticado: " + principal.getName());
         String username = principal.getName();
 
         // Busca al usuario en la base de datos
@@ -92,5 +94,40 @@ public class LoginController {
         // Devuelve la vista del perfil (profile.html)
         return "profile";
     }
+
+    @PostMapping("/profile/update")
+    public String updateUserProfile(@ModelAttribute User updatedUser, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
+            result.getAllErrors().forEach(error -> System.out.println("Error: " + error.getDefaultMessage()));
+            model.addAttribute("error", "Hubo un error al actualizar el perfil");
+            return "profile";  // Devuelve al perfil si hay errores
+        }
+
+        // Obtiene el nombre del usuario autenticado
+        String username = principal.getName();
+        //System.out.println("Usuario autenticado: " + username);
+
+        // Llamada al repositorio
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        // Aquí llegan los datos correctos para la actualización
+        //System.out.println("Usuario actualizado: " + currentUser.getUsername());
+        //System.out.println("Nuevo peso: " + updatedUser.getWeight());
+        //System.out.println("Nueva altura: " + updatedUser.getHeight());
+        //System.out.println("Nueva edad: " + updatedUser.getAge());
+
+        // Actualiza los campos del usuario actual
+        currentUser.setAge(updatedUser.getAge());
+        currentUser.setWeight(updatedUser.getWeight());
+        currentUser.setHeight(updatedUser.getHeight());
+
+        // Guarda el usuario actualizado en la base de datos
+        userRepository.save(currentUser);
+
+        // Redirige al perfil actualizado
+        return "redirect:/profile";  // Redirige al perfil actualizado
+    }
+
 
 }

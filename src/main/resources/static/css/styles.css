@@ -73,3 +73,72 @@ a {
 a:hover {
     background-color: #0056b3;
 }
+
+/* Estilos específicos para perfil */
+.profile-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.profile-info {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.profile-update {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-update h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    width: 100%;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button.update-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button.update-button:hover {
+    background-color: #218838;
+}
