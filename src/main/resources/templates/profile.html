@@ -36,6 +36,18 @@
             </div>
         </div>
 
+        <!-- Botón para cambiar la contraseña -->
+        <div class="profile-change-password">
+            <button id="change-password-btn" class="button update-button">Cambiar Contraseña</button>
+        </div>
+
+        <!-- Botón para cerrar sesión -->
+        <div class="profile-logout">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="button update-button">Cerrar Sesión</button>
+            </form>
+        </div>
+
         <!-- Formulario de actualización -->
         <div class="profile-update">
             <h2>Actualizar Perfil</h2>
@@ -54,9 +66,55 @@
                 </div>
                 <button type="submit" class="button update-button">Actualizar Perfil</button>
             </form>
-
         </div>
     </div>
 </div>
+
+<!-- Modal para cambiar la contraseña -->
+<div id="change-password-modal" class="modal">
+    <div class="modal-content">
+        <h2>Cambiar Contraseña</h2>
+        <form th:action="@{/profile/update-password}" method="post">
+            <div class="form-group">
+                <label for="oldPassword">Contraseña actual:</label>
+                <input type="password" id="oldPassword" name="oldPassword" required />
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Nueva contraseña:</label>
+                <input type="password" id="newPassword" name="newPassword" required />
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar nueva contraseña:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required />
+            </div>
+            <button type="submit" class="button update-button">Guardar Cambios</button>
+            <button type="button" class="button" id="close-modal-btn">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<!-- Script para abrir y cerrar el modal -->
+<script>
+    const modal = document.getElementById('change-password-modal');
+    const btn = document.getElementById('change-password-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Abre el modal al hacer clic en el botón de cambiar contraseña
+    btn.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Cierra el modal al hacer clic en el botón de cancelar
+    closeModalBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Cierra el modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>
