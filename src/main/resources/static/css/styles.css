@@ -251,5 +251,33 @@ canvas#progressChart {
     display: block;
 }
 
+/* Estilo para el botón "Volver" */
+.profile-back {
+    position: absolute;
+    top: 20px; /* Ajusta la posición vertical */
+    left: 20px; /* Ajusta la posición horizontal */
+}
+
+a.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6c757d; /* Color de fondo (gris elegante) */
+    color: white; /* Color del texto */
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombras suaves */
+}
+
+a.back-button:hover {
+    background-color: #5a6268; /* Color al pasar el cursor */
+    transform: translateY(-2px); /* Efecto de elevación */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Más sombra */
+}
+
+
+
 
 

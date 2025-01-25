@@ -19,6 +19,11 @@
     <div th:if="${success}" style="color: green;">
         <p th:text="${success}"></p>
     </div>
+    <!-- Botón para ir atrás -->
+    <div class="profile-back">
+        <a th:href="@{/home}" class="button back-button">Volver a Inicio</a>
+    </div>
+
     <div class="profile-container">
         <!-- Información del perfil -->
         <div class="profile-info">

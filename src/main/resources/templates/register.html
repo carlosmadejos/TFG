@@ -7,7 +7,10 @@
 </head>
 <body>
 <h1>Registro de Usuario</h1>
-
+<!-- Botón para ir atrás -->
+<div class="profile-back">
+  <a th:href="@{/home}" class="button back-button">Inicio Sesion</a>
+</div>
 <!-- Mensaje global de error -->
 <div th:if="${error}" class="error" th:text="${error}"></div>
 
