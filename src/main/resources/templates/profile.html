@@ -48,7 +48,7 @@
             </form>
         </div>
 
-        <!-- Formulario de actualización -->
+        <!-- Formulario de actualización de perfil -->
         <div class="profile-update">
             <h2>Actualizar Perfil</h2>
             <form th:action="@{/profile/update}" th:object="${user}" method="post">
@@ -67,6 +67,13 @@
                 <button type="submit" class="button update-button">Actualizar Perfil</button>
             </form>
         </div>
+
+        <!-- Mostrar gráfico de progreso -->
+        <div class="profile-progress">
+            <h2>Progreso</h2>
+            <canvas id="progressChart"></canvas>
+        </div>
+
     </div>
 </div>
 
@@ -92,7 +99,6 @@
         </form>
     </div>
 </div>
-
 <!-- Script para abrir y cerrar el modal -->
 <script>
     const modal = document.getElementById('change-password-modal');
@@ -113,6 +119,54 @@
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = 'none';
+        }
+    }
+
+    // Crear gráfico de progreso
+    window.onload = function() {
+        // Inyectar correctamente la lista de progreso como JSON
+        var progressList = JSON.parse('[[${progressListJson}]]'.replace(/&quot;/g, '"'));
+        console.log("Datos de progreso recibidos:", progressList);
+
+
+        // Asegúrate de que progressList no esté vacío
+        if (progressList && progressList.length > 0) {
+            var ctx = document.getElementById('progressChart').getContext('2d');
+
+            // Extraemos las fechas, pesos y alturas de los datos de progreso
+            var dates = progressList.map(function(progress) { return progress.date; });
+            var weights = progressList.map(function(progress) { return progress.weight; });
+            var heights = progressList.map(function(progress) { return progress.height; });
+
+            var progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,  // Fechas de progreso
+                    datasets: [{
+                        label: 'Peso (kg)',
+                        data: weights,  // Datos de peso
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Altura (cm)',
+                        data: heights,  // Datos de altura
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        } else {
+            console.log("No hay datos de progreso.");
         }
     }
 </script>
