@@ -83,6 +83,23 @@
         </div>
     </div>
 
+    <!-- Mostrar IMC -->
+    <div class="profile-imc">
+        <h2>Índice de Masa Corporal (IMC)</h2>
+        <p>Tu IMC actual es: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}"></span></p>
+        <p>
+        <span th:if="${user.weight / ((user.height / 100) * (user.height / 100)) < 18.5}"
+              th:text="'¡Parece que tienes un IMC bajo! Considera consultar con un especialista para mejorar tu nutrición y bienestar.'"></span>
+            <span th:if="${user.weight / ((user.height / 100) * (user.height / 100)) >= 18.5 and user.weight / ((user.height / 100) * (user.height / 100)) < 25}"
+                  th:text="'¡Tu IMC está dentro de un rango saludable! Sigue manteniendo un estilo de vida equilibrado.'"></span>
+            <span th:if="${user.weight / ((user.height / 100) * (user.height / 100)) >= 25 and user.weight / ((user.height / 100) * (user.height / 100)) < 30}"
+                  th:text="'Tu IMC indica que podrías mejorar tu actividad física y alimentación para sentirte mejor.'"></span>
+            <span th:if="${user.weight / ((user.height / 100) * (user.height / 100)) >= 30}"
+                  th:text="'Es posible que quieras trabajar en un plan personalizado para mejorar tu salud general. ¡Consulta con un especialista!'"></span>
+        </p>
+    </div>
+
+
     <!-- Mostrar gráfico de progreso -->
     <div class="profile-progress">
         <h2>Progreso</h2>

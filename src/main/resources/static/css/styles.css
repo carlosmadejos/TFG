@@ -277,6 +277,34 @@ a.back-button:hover {
     box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Más sombra */
 }
 
+/* Estilo para el imc */
+.profile-imc {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.profile-imc h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.profile-imc p {
+    font-size: 1.1em;
+    color: #555;
+    margin: 10px 0;
+}
+
+.profile-imc span {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+
+
 
 
 
