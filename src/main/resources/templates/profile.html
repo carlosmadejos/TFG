@@ -103,22 +103,54 @@
     </div>
 
     <!-- Modal para explicar el IMC -->
-    <div id="imc-help-modal" class="modal">
-        <div class="modal-content">
-            <h2>Qué es el IMC</h2>
-            <p>El índice de Masa Corporal (IMC) es un indicador que relaciona tu peso y tu altura. Se calcula dividiendo tu peso (kg) por tu altura (m) al cuadrado.</p>
-            <p>Interpretación general:</p>
+    <div id="imc-help-modal" class="modal-imc">
+        <div class="modal-content-imc">
+            <h2>¿Qué es el IMC?</h2>
+            <p>El Índice de Masa Corporal (IMC) es una medida que relaciona tu peso y tu altura para evaluar tu salud general. Es ampliamente utilizado como una herramienta sencilla para identificar si tienes un peso saludable.</p>
+
+            <h3>¿Cómo se calcula?</h3>
+            <p>El IMC se calcula con la fórmula:</p>
+            <p><strong>IMC = Peso (kg) / Altura (m)²</strong></p>
+            <p><em>Ejemplo:</em> Si pesas 70 kg y mides 1.75 m:</p>
+            <p><strong>IMC = 70 / (1.75 × 1.75) = 22.86</strong></p>
+
+            <h3>Interpretación del IMC</h3>
+            <table>
+                <tr>
+                    <th>Clasificación</th>
+                    <th>IMC</th>
+                </tr>
+                <tr>
+                    <td style="color: #17a2b8;"><strong>Bajo peso</strong></td>
+                    <td>Menor a 18.5</td>
+                </tr>
+                <tr>
+                    <td style="color: #28a745;"><strong>Peso saludable</strong></td>
+                    <td>18.5 - 24.9</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffc107;"><strong>Sobrepeso</strong></td>
+                    <td>25 - 29.9</td>
+                </tr>
+                <tr>
+                    <td style="color: #dc3545;"><strong>Obesidad</strong></td>
+                    <td>30 o más</td>
+                </tr>
+            </table>
+
+            <h3>Limitaciones del IMC</h3>
             <ul>
-                <li><strong>Menor a 18.5:</strong> Bajo peso.</li>
-                <li><strong>18.5 - 24.9:</strong> Rango saludable.</li>
-                <li><strong>25 - 29.9:</strong> Sobrepeso.</li>
-                <li><strong>30 o más:</strong> Obesidad.</li>
+                <li>No tiene en cuenta la composición corporal (músculo vs grasa).</li>
+                <li>Puede no ser preciso para deportistas o personas con gran masa muscular.</li>
+                <li>No evalúa la distribución de grasa corporal.</li>
             </ul>
-            <p>Recuerda que el IMC no considera factores como masa muscular u otros indicadores de salud. Para más información, consulta a un profesional.</p>
+
+            <h3>Consejos</h3>
+            <p>El IMC es solo una guía. Consulta con un profesional de la salud para una evaluación más completa. Además, mantén un estilo de vida saludable con una dieta equilibrada y actividad física regular.</p>
+
             <button id="close-help-modal" class="button">Cerrar</button>
         </div>
     </div>
-
 
     <!-- Mostrar gráfico de progreso -->
     <div class="profile-progress">
@@ -151,10 +183,7 @@
     </div>
 </div>
 
-
-<!-- Script para abrir y cerrar el modal -->
 <script>
-    // Modal para explicar el IMC
     const imcHelpModal = document.getElementById('imc-help-modal');
     const helpBtn = document.getElementById('help-imc-btn');
     const closeHelpBtn = document.getElementById('close-help-modal');
@@ -180,12 +209,12 @@
         }
     };
 
-    // Abre el modal de ayuda al hacer clic en el botón
+    // Abre el modal de imc de ayuda al hacer clic en el botón
     helpBtn.onclick = function () {
         imcHelpModal.style.display = 'block';
     };
 
-    // Cierra el modal de ayuda al hacer clic en el botón de cerrar
+    // Cierra el modal de imc de ayuda al hacer clic en el botón de cerrar
     closeHelpBtn.onclick = function () {
         imcHelpModal.style.display = 'none';
     };
