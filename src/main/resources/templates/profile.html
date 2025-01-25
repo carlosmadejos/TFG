@@ -3,9 +3,11 @@
 <head>
     <title>Perfil de Usuario</title>
     <!-- Vinculamos el archivo CSS -->
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+
 </head>
 <body>
 <div class="container">
@@ -67,13 +69,12 @@
                 <button type="submit" class="button update-button">Actualizar Perfil</button>
             </form>
         </div>
+    </div>
 
-        <!-- Mostrar gráfico de progreso -->
-        <div class="profile-progress">
-            <h2>Progreso</h2>
-            <canvas id="progressChart"></canvas>
-        </div>
-
+    <!-- Mostrar gráfico de progreso -->
+    <div class="profile-progress">
+        <h2>Progreso</h2>
+        <canvas id="progressChart"></canvas>
     </div>
 </div>
 
@@ -84,15 +85,15 @@
         <form th:action="@{/profile/update-password}" method="post">
             <div class="form-group">
                 <label for="oldPassword">Contraseña actual:</label>
-                <input type="password" id="oldPassword" name="oldPassword" required />
+                <input type="password" id="oldPassword" name="oldPassword" required/>
             </div>
             <div class="form-group">
                 <label for="newPassword">Nueva contraseña:</label>
-                <input type="password" id="newPassword" name="newPassword" required />
+                <input type="password" id="newPassword" name="newPassword" required/>
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirmar nueva contraseña:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required />
+                <input type="password" id="confirmPassword" name="confirmPassword" required/>
             </div>
             <button type="submit" class="button update-button">Guardar Cambios</button>
             <button type="button" class="button" id="close-modal-btn">Cancelar</button>
@@ -124,16 +125,11 @@
 
     // Crear gráfico de progreso
     window.onload = function() {
-        // Inyectar correctamente la lista de progreso como JSON
         var progressList = JSON.parse('[[${progressListJson}]]'.replace(/&quot;/g, '"'));
         console.log("Datos de progreso recibidos:", progressList);
 
-
-        // Asegúrate de que progressList no esté vacío
         if (progressList && progressList.length > 0) {
             var ctx = document.getElementById('progressChart').getContext('2d');
-
-            // Extraemos las fechas, pesos y alturas de los datos de progreso
             var dates = progressList.map(function(progress) { return progress.date; });
             var weights = progressList.map(function(progress) { return progress.weight; });
             var heights = progressList.map(function(progress) { return progress.height; });
@@ -141,26 +137,68 @@
             var progressChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dates,  // Fechas de progreso
+                    labels: dates,
                     datasets: [{
                         label: 'Peso (kg)',
-                        data: weights,  // Datos de peso
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        fill: false
+                        data: weights,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointBorderColor: 'rgba(255, 255, 255, 1)',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true
                     },
                     {
                         label: 'Altura (cm)',
-                        data: heights,  // Datos de altura
+                        data: heights,
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 2,
-                        fill: false
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: 'rgba(255, 255, 255, 1)',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true
                     }]
                 },
                 options: {
+                    responsive: true,
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'x'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'x'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Fecha: ${context.label}, Valor: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Fechas'
+                            }
+                        },
                         y: {
-                            beginAtZero: true
+                            title: {
+                                display: true,
+                                text: 'Valores'
+                            }
                         }
                     }
                 }
@@ -169,6 +207,7 @@
             console.log("No hay datos de progreso.");
         }
     }
+
 </script>
 </body>
 </html>
