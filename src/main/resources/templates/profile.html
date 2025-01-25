@@ -12,6 +12,13 @@
 <body>
 <div class="container">
     <h1>Perfil de Usuario</h1>
+    <!-- Mensajes de error y éxito -->
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+    <div th:if="${success}" style="color: green;">
+        <p th:text="${success}"></p>
+    </div>
     <div class="profile-container">
         <!-- Información del perfil -->
         <div class="profile-info">

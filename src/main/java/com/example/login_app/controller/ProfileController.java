@@ -115,6 +115,32 @@ public class ProfileController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
+        // Añadir el usuario al modelo (para renderizar la vista si hay errores)
+        model.addAttribute("user", user);
+
+        // Recuperar la lista de progreso para el modelo
+        List<Progress> progressList = progressRepository.findByUser(user);
+        if (progressList == null) {
+            progressList = new ArrayList<>();
+        }
+
+        List<Map<String, Object>> progressListJson = new ArrayList<>();
+        for (Progress progress : progressList) {
+            Map<String, Object> progressMap = new HashMap<>();
+            progressMap.put("date", progress.getDate().toString());
+            progressMap.put("weight", progress.getWeight());
+            progressMap.put("height", progress.getHeight());
+            progressListJson.add(progressMap);
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(progressListJson);
+            model.addAttribute("progressListJson", jsonString);
+        } catch (JsonProcessingException e) {
+            model.addAttribute("progressListJson", "[]");
+        }
+
         // Verificar que la contraseña actual es correcta
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             model.addAttribute("error", "La contraseña actual es incorrecta");
@@ -137,6 +163,5 @@ public class ProfileController {
 
         return "redirect:/profile";  // Redirigir al perfil actualizado
     }
-
 
 }
