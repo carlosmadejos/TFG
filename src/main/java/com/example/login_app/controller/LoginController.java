@@ -83,45 +83,8 @@ public class LoginController {
     }
 
 
-    @PostMapping("/profile/update-password")
-    public String updatePassword(@RequestParam("oldPassword") String oldPassword,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 Model model, Principal principal) {
 
-        // Obtener el usuario autenticado
-        String username = principal.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        // Verificar que la contraseña actual es correcta
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            model.addAttribute("error", "La contraseña actual es incorrecta");
-            return "profile";  // Si la contraseña es incorrecta, mostrar error
-        }
-
-        // Verificar que la nueva contraseña y la confirmación coinciden
-        if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "Las nuevas contraseñas no coinciden");
-            return "profile";  // Si no coinciden, mostrar error
-        }
-
-        // Validar que la nueva contraseña cumple los requisitos
-        if (newPassword.length() < 4) {
-            model.addAttribute("error", "La nueva contraseña debe tener al menos 4 caracteres");
-            return "profile";  // Si la contraseña es demasiado corta, mostrar error
-        }
-
-        // Encriptar la nueva contraseña
-        user.setPassword(passwordEncoder.encode(newPassword));
-
-        // Guardar el usuario actualizado con la nueva contraseña
-        userRepository.save(user);
-
-        model.addAttribute("success", "Contraseña actualizada exitosamente");
-
-        return "redirect:/profile";  // Redirigir al perfil actualizado
-    }
 
 
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -31,6 +33,9 @@ public class ProfileController {
 
     @Autowired
     private ProgressRepository progressRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/profile")
     public String viewProfile(Model model, Principal principal) {
@@ -97,6 +102,40 @@ public class ProfileController {
 
         // Redirigir al perfil
         return "redirect:/profile";
+    }
+
+    @PostMapping("/profile/update-password")
+    public String updatePassword(@RequestParam("oldPassword") String oldPassword,
+                                 @RequestParam("newPassword") String newPassword,
+                                 @RequestParam("confirmPassword") String confirmPassword,
+                                 Model model, Principal principal) {
+
+        // Obtener el usuario autenticado
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        // Verificar que la contraseña actual es correcta
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            model.addAttribute("error", "La contraseña actual es incorrecta");
+            return "profile";  // Mostrar error si la contraseña actual no es correcta
+        }
+
+        // Verificar que la nueva contraseña y la confirmación coinciden
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "Las nuevas contraseñas no coinciden");
+            return "profile";  // Mostrar error si las contraseñas no coinciden
+        }
+
+        // Encriptar la nueva contraseña
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        // Guardar el usuario actualizado con la nueva contraseña
+        userRepository.save(user);
+
+        model.addAttribute("success", "Contraseña actualizada exitosamente");
+
+        return "redirect:/profile";  // Redirigir al perfil actualizado
     }
 
 

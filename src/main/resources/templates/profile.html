@@ -82,57 +82,73 @@
 <div id="change-password-modal" class="modal">
     <div class="modal-content">
         <h2>Cambiar Contraseña</h2>
-        <form th:action="@{/profile/update-password}" method="post">
+        <form id="change-password-form" th:action="@{/profile/update-password}" method="post">
             <div class="form-group">
                 <label for="oldPassword">Contraseña actual:</label>
-                <input type="password" id="oldPassword" name="oldPassword" required/>
+                <input type="password" id="oldPassword" name="oldPassword" required />
             </div>
             <div class="form-group">
                 <label for="newPassword">Nueva contraseña:</label>
-                <input type="password" id="newPassword" name="newPassword" required/>
+                <input type="password" id="newPassword" name="newPassword" required />
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirmar nueva contraseña:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required/>
+                <input type="password" id="confirmPassword" name="confirmPassword" required />
             </div>
+            <div id="error-message" style="color: red; display: none;">Las contraseñas no coinciden.</div>
             <button type="submit" class="button update-button">Guardar Cambios</button>
             <button type="button" class="button" id="close-modal-btn">Cancelar</button>
         </form>
     </div>
 </div>
+
 <!-- Script para abrir y cerrar el modal -->
 <script>
     const modal = document.getElementById('change-password-modal');
     const btn = document.getElementById('change-password-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
+    const form = document.getElementById('change-password-form');
 
     // Abre el modal al hacer clic en el botón de cambiar contraseña
-    btn.onclick = function() {
+    btn.onclick = function () {
         modal.style.display = 'block';
-    }
+    };
 
     // Cierra el modal al hacer clic en el botón de cancelar
-    closeModalBtn.onclick = function() {
+    closeModalBtn.onclick = function () {
         modal.style.display = 'none';
-    }
+    };
 
     // Cierra el modal al hacer clic fuera de él
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
-    }
+    };
+
+    // Validar contraseñas antes de enviar el formulario
+    form.onsubmit = function (e) {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            e.preventDefault(); // Detiene el envío del formulario
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = "Las contraseñas no coinciden.";
+            errorMessage.style.display = 'block';
+        }
+    };
 
     // Crear gráfico de progreso
-    window.onload = function() {
+    window.onload = function () {
         var progressList = JSON.parse('[[${progressListJson}]]'.replace(/&quot;/g, '"'));
         console.log("Datos de progreso recibidos:", progressList);
 
         if (progressList && progressList.length > 0) {
             var ctx = document.getElementById('progressChart').getContext('2d');
-            var dates = progressList.map(function(progress) { return progress.date; });
-            var weights = progressList.map(function(progress) { return progress.weight; });
-            var heights = progressList.map(function(progress) { return progress.height; });
+            var dates = progressList.map(function (progress) { return progress.date; });
+            var weights = progressList.map(function (progress) { return progress.weight; });
+            var heights = progressList.map(function (progress) { return progress.height; });
 
             var progressChart = new Chart(ctx, {
                 type: 'line',
@@ -181,7 +197,7 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     return `Fecha: ${context.label}, Valor: ${context.raw}`;
                                 }
                             }
@@ -206,8 +222,7 @@
         } else {
             console.log("No hay datos de progreso.");
         }
-    }
-
+    };
 </script>
 </body>
 </html>
