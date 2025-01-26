@@ -5,11 +5,30 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h1>Bienvenido</h1>
-<p>Inicio de sesión exitoso.</p>
+<div class="home-container">
+  <h1>¡Hola, <span th:text="${user.username}">Usuario</span>!</h1>
+  <p>Estamos felices de verte de nuevo. Aquí tienes un resumen rápido:</p>
 
-<!-- Botón para ir al perfil -->
-<a th:href="@{/profile}">Ir a mi perfil</a>
-
+  <div class="card-container">
+    <!-- Card 1: Progreso -->
+    <div class="card">
+      <h3>Tu Progreso</h3>
+      <p>IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
+      <button onclick="location.href='/profile'">Ver Perfil</button>
+    </div>
+    <!-- Card 2: Planes de Entrenamiento -->
+    <div class="card">
+      <h3>Planes de Entrenamiento</h3>
+      <p>Consulta tus planes personalizados o explora nuevos.</p>
+      <button onclick="location.href='/training-plans'">Ver Planes</button>
+    </div>
+    <!-- Card 3: Dietas -->
+    <div class="card">
+      <h3>Dietas</h3>
+      <p>Consulta tus dietas o crea un nuevo plan nutricional.</p>
+      <button onclick="location.href='/diets'">Ver Dietas</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

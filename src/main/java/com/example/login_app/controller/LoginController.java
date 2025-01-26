@@ -35,12 +35,6 @@ public class LoginController {
         return "login";
     }
 
-    @GetMapping("/home")
-    public String home() {
-        System.out.println("ESTOY EN HOME");
-        // Devuelve la vista de inicio (home.html en templates)
-        return "home";
-    }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
