@@ -13,6 +13,10 @@
   <!-- Toastify CSS y JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- SweetAlert2 CSS y JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="home-container">
@@ -61,7 +65,6 @@
     </div>
   </div>
 </div>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
@@ -76,53 +79,91 @@
         openExerciseModal(info.dateStr);
       },
       eventContent: function (arg) {
-        // Personalizar contenido del evento con una "X"
+        // Crear el contenedor del evento con estilos flexibles
+        let eventContainer = document.createElement('div');
+        eventContainer.style.display = 'flex';
+        eventContainer.style.justifyContent = 'space-between';
+        eventContainer.style.alignItems = 'center';
+        eventContainer.style.padding = '2px 6px'; // Reducir el padding
+        eventContainer.style.fontSize = '12px'; // Reducir el tamaño de la fuente
+        eventContainer.style.borderRadius = '4px'; // Bordes suaves
+        eventContainer.style.overflow = 'hidden';
+        eventContainer.style.textOverflow = 'ellipsis'; // Cortar texto largo con "..."
+
+        // Limitar la longitud del título
+        const maxTitleLength = 15; // Ajustar la longitud según necesidad
+        let truncatedTitle = arg.event.title;
+        if (truncatedTitle.length > maxTitleLength) {
+          truncatedTitle = truncatedTitle.substring(0, maxTitleLength) + '...';
+        }
+
+        // Título del evento
+        let titleElement = document.createElement('span');
+        titleElement.innerHTML = truncatedTitle;
+        titleElement.title = arg.event.title; // Mostrar el texto completo al pasar el mouse
+
+        // Botón de eliminar (X)
         let deleteButton = document.createElement('span');
         deleteButton.innerHTML = '❌';
-        deleteButton.style.marginLeft = '10px';
         deleteButton.style.cursor = 'pointer';
         deleteButton.style.color = 'red';
+        deleteButton.style.fontSize = '12px'; // Reducir el tamaño de la "X"
+        deleteButton.style.marginLeft = '10px';
+
+        // Acción al hacer clic en la "X"
         deleteButton.addEventListener('click', function (e) {
           e.stopPropagation(); // Evitar que el evento padre también se dispare
-          if (confirm(`¿Deseas eliminar el ejercicio "${arg.event.title}"?`)) {
-            fetch(`/api/exercises/delete/${arg.event.id}`, {
-              method: 'DELETE',
-              headers: {
-                'X-CSRF-TOKEN': csrfToken
-              }
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Error al eliminar el ejercicio');
-              }
-              arg.event.remove();
-              Toastify({
-                text: "Ejercicio eliminado correctamente",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#4caf50",
-              }).showToast();
-            })
-            .catch(error => {
-              Toastify({
-                text: "Error: " + error.message,
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#f44336",
-              }).showToast();
-            });
-          }
+          Swal.fire({
+            title: `¿Deseas eliminar la nota?`,
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch(`/api/exercises/delete/${arg.event.id}`, {
+                method: 'DELETE',
+                headers: {
+                  'X-CSRF-TOKEN': csrfToken,
+                },
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error('Error al eliminar el ejercicio');
+                  }
+                  arg.event.remove();
+                  Toastify({
+                    text: "Ejercicio eliminado correctamente",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4caf50",
+                  }).showToast();
+                })
+                .catch((error) => {
+                  Toastify({
+                    text: "Error: " + error.message,
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#f44336",
+                  }).showToast();
+                });
+            }
+          });
         });
 
-        let titleElement = document.createElement('span');
-        titleElement.innerHTML = arg.event.title;
+        // Agregar el título y la "X" al contenedor
+        eventContainer.appendChild(titleElement);
+        eventContainer.appendChild(deleteButton);
 
-        return { domNodes: [titleElement, deleteButton] };
-      }
+        return { domNodes: [eventContainer] };
+      },
     });
 
     calendar.render();
@@ -136,40 +177,40 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
+            'X-CSRF-TOKEN': csrfToken,
           },
           body: JSON.stringify({
             date: date,
-            description: exercises
+            description: exercises,
+          }),
+        })
+          .then((response) => response.json())
+          .then((exercise) => {
+            calendar.addEvent({
+              id: exercise.id,
+              title: exercise.description,
+              start: exercise.date,
+            });
+            Toastify({
+              text: "Ejercicio guardado correctamente",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#4caf50",
+            }).showToast();
+            closeModal();
           })
-        })
-        .then(response => response.json())
-        .then(exercise => {
-          calendar.addEvent({
-            id: exercise.id,
-            title: exercise.description,
-            start: exercise.date
+          .catch((error) => {
+            Toastify({
+              text: "Error: " + error.message,
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#f44336",
+            }).showToast();
           });
-          Toastify({
-            text: "Ejercicio guardado correctamente",
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#4caf50",
-          }).showToast();
-          closeModal();
-        })
-        .catch(error => {
-          Toastify({
-            text: "Error: " + error.message,
-            duration: 3000,
-            close: true,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#f44336",
-          }).showToast();
-        });
       } else {
         Toastify({
           text: "Por favor, completa todos los campos antes de guardar.",
@@ -181,19 +222,19 @@
         }).showToast();
       }
     };
+
+    function openExerciseModal(date) {
+      const modal = document.getElementById('exercise-modal');
+      const dateInput = document.getElementById('selected-date');
+      dateInput.value = date;
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('exercise-modal');
+      modal.style.display = 'none';
+    }
   });
-
-  function openExerciseModal(date) {
-    const modal = document.getElementById('exercise-modal');
-    const dateInput = document.getElementById('selected-date');
-    dateInput.value = date;
-    modal.style.display = 'block';
-  }
-
-  function closeModal() {
-    const modal = document.getElementById('exercise-modal');
-    modal.style.display = 'none';
-  }
 </script>
 </body>
 </html>
