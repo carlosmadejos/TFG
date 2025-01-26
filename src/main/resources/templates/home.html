@@ -75,39 +75,53 @@
       dateClick: function (info) {
         openExerciseModal(info.dateStr);
       },
-      eventClick: function (info) {
-        if (confirm(`¿Deseas eliminar el ejercicio "${info.event.title}"?`)) {
-          fetch(`/api/exercises/delete/${info.event.id}`, {
-            method: 'DELETE',
-            headers: {
-              'X-CSRF-TOKEN': csrfToken
-            }
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Error al eliminar el ejercicio');
-            }
-            info.event.remove();
-            Toastify({
-              text: "Ejercicio eliminado correctamente",
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "#4caf50",
-            }).showToast();
-          })
-          .catch(error => {
-            Toastify({
-              text: "Error: " + error.message,
-              duration: 3000,
-              close: true,
-              gravity: "top",
-              position: "right",
-              backgroundColor: "#f44336",
-            }).showToast();
-          });
-        }
+      eventContent: function (arg) {
+        // Personalizar contenido del evento con una "X"
+        let deleteButton = document.createElement('span');
+        deleteButton.innerHTML = '❌';
+        deleteButton.style.marginLeft = '10px';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.color = 'red';
+        deleteButton.addEventListener('click', function (e) {
+          e.stopPropagation(); // Evitar que el evento padre también se dispare
+          if (confirm(`¿Deseas eliminar el ejercicio "${arg.event.title}"?`)) {
+            fetch(`/api/exercises/delete/${arg.event.id}`, {
+              method: 'DELETE',
+              headers: {
+                'X-CSRF-TOKEN': csrfToken
+              }
+            })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Error al eliminar el ejercicio');
+              }
+              arg.event.remove();
+              Toastify({
+                text: "Ejercicio eliminado correctamente",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4caf50",
+              }).showToast();
+            })
+            .catch(error => {
+              Toastify({
+                text: "Error: " + error.message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#f44336",
+              }).showToast();
+            });
+          }
+        });
+
+        let titleElement = document.createElement('span');
+        titleElement.innerHTML = arg.event.title;
+
+        return { domNodes: [titleElement, deleteButton] };
       }
     });
 
