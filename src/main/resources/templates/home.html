@@ -4,6 +4,7 @@
   <title>Home</title>
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
   <meta charset='utf-8' />
+  <meta name="_csrf" th:content="${_csrf.token}" />
 
   <!-- FullCalendar CSS y JS -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar/main.min.css" rel="stylesheet" />
@@ -64,17 +65,15 @@
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
 
+    // Obtener el token CSRF desde la metaetiqueta
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
     // Inicializar el calendario
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       locale: 'es',
       selectable: true,
-      events: [
-        {
-          title: 'Correr 5km',
-          start: '2025-01-25'
-        }
-      ],
+      events: '/api/exercises/get', // Llamada al backend para obtener los eventos
       dateClick: function (info) {
         openExerciseModal(info.dateStr);
       }
@@ -88,13 +87,36 @@
       const exercises = document.getElementById('exercises').value;
 
       if (date && exercises) {
-        calendar.addEvent({
-          title: exercises,
-          start: date
+        // Llamada al backend para guardar el ejercicio
+        fetch('/api/exercises/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken // Incluir el token CSRF en el encabezado
+          },
+          body: JSON.stringify({
+            date: date,
+            description: exercises
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al guardar el ejercicio');
+          }
+          return response.text();
+        })
+        .then(message => {
+          // Añadir el evento al calendario
+          calendar.addEvent({
+            title: exercises,
+            start: date
+          });
+          alert(message);
+          closeModal();
+        })
+        .catch(error => {
+          alert('Error: ' + error.message);
         });
-
-        alert(`Ejercicio guardado para ${date}: ${exercises}`);
-        closeModal();
       } else {
         alert('Por favor, completa todos los campos antes de guardar.');
       }
@@ -115,6 +137,7 @@
     modal.style.display = 'none';
   }
 </script>
+
 
 </body>
 </html>
