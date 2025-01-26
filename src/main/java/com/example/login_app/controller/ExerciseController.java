@@ -24,17 +24,16 @@ public class ExerciseController {
 
     // Guardar un ejercicio
     @PostMapping("/save")
-    public String saveExercise(@RequestBody Exercise exercise, Principal principal) {
+    public Exercise saveExercise(@RequestBody Exercise exercise, Principal principal) {
         if (exercise.getDate() == null || exercise.getDescription() == null || exercise.getDescription().isEmpty()) {
-            return "La fecha o la descripción del ejercicio no pueden estar vacías";
+            throw new RuntimeException("La fecha o la descripción del ejercicio no pueden estar vacías");
         }
 
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         exercise.setUser(user);
-        exerciseRepository.save(exercise);
-        return "Ejercicio guardado correctamente";
+        return exerciseRepository.save(exercise); // Devolver el ejercicio guardado
     }
 
     // Obtener ejercicios en formato compatible con FullCalendar
@@ -48,9 +47,28 @@ public class ExerciseController {
         // Convertir ejercicios a formato JSON compatible con FullCalendar
         return exercises.stream().map(exercise -> {
             return new Object() {
+                public final Long id = exercise.getId(); // Incluir el ID del ejercicio
                 public final String title = exercise.getDescription();
                 public final String start = exercise.getDate().toString(); // FullCalendar usa el formato ISO-8601
             };
         }).collect(Collectors.toList());
     }
+
+    // Eliminar un ejercicio
+    @DeleteMapping("/delete/{id}")
+    public String deleteExercise(@PathVariable Long id, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Exercise exercise = exerciseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+
+        if (!exercise.getUser().equals(user)) {
+            throw new RuntimeException("No tienes permiso para eliminar este ejercicio");
+        }
+
+        exerciseRepository.delete(exercise);
+        return "Ejercicio eliminado correctamente";
+    }
+
 }

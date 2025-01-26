@@ -9,6 +9,10 @@
   <!-- FullCalendar CSS y JS -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar/main.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar/main.min.js"></script>
+
+  <!-- Toastify CSS y JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 <body>
 <div class="home-container">
@@ -16,19 +20,17 @@
   <p>Estamos felices de verte de nuevo. Aquí tienes un resumen rápido:</p>
 
   <div class="card-container">
-    <!-- Card 1: Progreso -->
+    <!-- Tarjetas de Progreso, Planes y Dietas -->
     <div class="card">
       <h3>Tu Progreso</h3>
       <p>IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
       <button onclick="location.href='/profile'">Ver Perfil</button>
     </div>
-    <!-- Card 2: Planes de Entrenamiento -->
     <div class="card">
       <h3>Planes de Entrenamiento</h3>
       <p>Consulta tus planes personalizados o explora nuevos.</p>
       <button onclick="location.href='/training-plans'">Ver Planes</button>
     </div>
-    <!-- Card 3: Dietas -->
     <div class="card">
       <h3>Dietas</h3>
       <p>Consulta tus dietas o crea un nuevo plan nutricional.</p>
@@ -60,84 +62,124 @@
   </div>
 </div>
 
-<!-- JavaScript para configurar el calendario -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
-
-    // Obtener el token CSRF desde la metaetiqueta
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
 
-    // Inicializar el calendario
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       locale: 'es',
       selectable: true,
-      events: '/api/exercises/get', // Llamada al backend para obtener los eventos
+      events: '/api/exercises/get',
       dateClick: function (info) {
         openExerciseModal(info.dateStr);
+      },
+      eventClick: function (info) {
+        if (confirm(`¿Deseas eliminar el ejercicio "${info.event.title}"?`)) {
+          fetch(`/api/exercises/delete/${info.event.id}`, {
+            method: 'DELETE',
+            headers: {
+              'X-CSRF-TOKEN': csrfToken
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Error al eliminar el ejercicio');
+            }
+            info.event.remove();
+            Toastify({
+              text: "Ejercicio eliminado correctamente",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#4caf50",
+            }).showToast();
+          })
+          .catch(error => {
+            Toastify({
+              text: "Error: " + error.message,
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor: "#f44336",
+            }).showToast();
+          });
+        }
       }
     });
 
     calendar.render();
 
-    // Guardar el ejercicio y añadirlo al calendario
     window.saveExercise = function () {
       const date = document.getElementById('selected-date').value;
       const exercises = document.getElementById('exercises').value;
 
       if (date && exercises) {
-        // Llamada al backend para guardar el ejercicio
         fetch('/api/exercises/save', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken // Incluir el token CSRF en el encabezado
+            'X-CSRF-TOKEN': csrfToken
           },
           body: JSON.stringify({
             date: date,
             description: exercises
           })
         })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Error al guardar el ejercicio');
-          }
-          return response.text();
-        })
-        .then(message => {
-          // Añadir el evento al calendario
+        .then(response => response.json())
+        .then(exercise => {
           calendar.addEvent({
-            title: exercises,
-            start: date
+            id: exercise.id,
+            title: exercise.description,
+            start: exercise.date
           });
-          alert(message);
+          Toastify({
+            text: "Ejercicio guardado correctamente",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4caf50",
+          }).showToast();
           closeModal();
         })
         .catch(error => {
-          alert('Error: ' + error.message);
+          Toastify({
+            text: "Error: " + error.message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#f44336",
+          }).showToast();
         });
       } else {
-        alert('Por favor, completa todos los campos antes de guardar.');
+        Toastify({
+          text: "Por favor, completa todos los campos antes de guardar.",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#ff9800",
+        }).showToast();
       }
     };
   });
 
-  // Abrir el modal
   function openExerciseModal(date) {
     const modal = document.getElementById('exercise-modal');
     const dateInput = document.getElementById('selected-date');
-    dateInput.value = date; // Mostrar la fecha seleccionada
+    dateInput.value = date;
     modal.style.display = 'block';
   }
 
-  // Cerrar el modal
   function closeModal() {
     const modal = document.getElementById('exercise-modal');
     modal.style.display = 'none';
   }
 </script>
-
-
 </body>
 </html>
