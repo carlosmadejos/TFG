@@ -32,4 +32,10 @@ public class HomeController {
         // Devolver la vista de inicio
         return "home";
     }
+
+    @GetMapping("/diet")
+    public String dietPage() {
+        return "diet";
+    }
+
 }

@@ -40,6 +40,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/profile/**").permitAll() // Acceso público
+                        .requestMatchers("/diet", "/diets", "/api/foods/**").authenticated()// Acceso autenticado para dietas
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

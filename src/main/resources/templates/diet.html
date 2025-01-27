@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dietas</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="diet-container">
+    <h1>Gestión de Dietas</h1>
+    <p>Aquí puedes buscar alimentos, añadirlos y registrar tu ingesta diaria.</p>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Buscar alimentos...">
+        <button onclick="searchFoods()">Buscar</button>
+    </div>
+
+    <h2>Resultados de la búsqueda</h2>
+    <div id="searchResults">
+        <p>No se encontraron alimentos.</p>
+    </div>
+
+    <h2>Registro Diario</h2>
+    <div id="dailyLog"></div>
+    <button onclick="saveDailyLog()">Guardar Registro</button>
+</div>
+
+<script>
+    // Función para buscar alimentos
+    function searchFoods() {
+        const query = document.getElementById('searchInput').value;
+
+        if (!query) {
+            alert("Por favor, introduce un término de búsqueda.");
+            return;
+        }
+
+        axios.get(`/api/foods/search?query=${query}`)
+            .then(response => {
+                const results = response.data.foods;
+                const resultsContainer = document.getElementById('searchResults');
+
+                // Limpiar los resultados previos
+                resultsContainer.innerHTML = '';
+
+                if (!results || results.length === 0) {
+                    resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
+                    return;
+                }
+
+                // Crear una tabla con los resultados
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Energía (kcal)</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                `;
+
+                const tbody = document.createElement('tbody');
+                results.forEach(food => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${food.description}</td>
+                        <td>${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 'N/A'}</td>
+                        <td><button onclick="addToLog('${food.description}', ${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0})">Añadir</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+
+                resultsContainer.appendChild(table);
+            })
+            .catch(error => {
+                console.error("Error al buscar alimentos:", error);
+                alert("Hubo un error al buscar los alimentos. Por favor, intenta de nuevo.");
+            });
+    }
+
+    // Registro diario
+    const dailyLog = [];
+
+    function addToLog(description, energy) {
+        dailyLog.push({ description, energy });
+        updateDailyLog();
+    }
+
+    function updateDailyLog() {
+        const logContainer = document.getElementById('dailyLog');
+        logContainer.innerHTML = '';
+
+        if (dailyLog.length === 0) {
+            logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Energía (kcal)</th>
+                </tr>
+            </thead>
+        `;
+
+        const tbody = document.createElement('tbody');
+        dailyLog.forEach(food => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${food.description}</td>
+                <td>${food.energy}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+
+        logContainer.appendChild(table);
+    }
+
+    function saveDailyLog() {
+        if (dailyLog.length === 0) {
+            alert("No hay alimentos para guardar.");
+            return;
+        }
+
+        // Simular guardado en el backend
+        console.log("Registro diario guardado:", dailyLog);
+        alert("Registro guardado exitosamente.");
+        dailyLog.length = 0; // Limpiar el registro
+        updateDailyLog();
+    }
+</script>
+</body>
+</html>
