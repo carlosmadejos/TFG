@@ -59,7 +59,7 @@
                     return;
                 }
 
-                // Agregar resultados a la tabla existente o crearla si no existe
+                // Crear la tabla si es una nueva búsqueda
                 let table = resultsContainer.querySelector('table');
                 if (!table) {
                     table = document.createElement('table');
@@ -76,6 +76,7 @@
                     resultsContainer.appendChild(table);
                 }
 
+                // Agregar los nuevos alimentos al cuerpo de la tabla
                 const tbody = table.querySelector('tbody');
                 results.forEach(food => {
                     const row = document.createElement('tr');
@@ -129,22 +130,29 @@
                 <tr>
                     <th>Descripción</th>
                     <th>Energía (kcal)</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
         `;
 
         const tbody = document.createElement('tbody');
-        dailyLog.forEach(food => {
+        dailyLog.forEach((food, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${food.description}</td>
                 <td>${food.energy}</td>
+                <td><button onclick="removeFromLog(${index})">Eliminar</button></td>
             `;
             tbody.appendChild(row);
         });
         table.appendChild(tbody);
 
         logContainer.appendChild(table);
+    }
+
+    function removeFromLog(index) {
+        dailyLog.splice(index, 1); // Eliminar el alimento por índice
+        updateDailyLog();
     }
 
     function saveDailyLog() {
