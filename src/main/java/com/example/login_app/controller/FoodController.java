@@ -15,7 +15,10 @@ public class FoodController {
 
     // Buscar alimentos utilizando la API externa
     @GetMapping("/search")
-    public Map<String, Object> searchFoods(@RequestParam String query) {
-        return foodDataService.searchFoods(query);
+    public Map<String, Object> searchFoods(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(defaultValue = "0") int offset) {
+        return foodDataService.searchFoods(query, limit, offset);
     }
 }

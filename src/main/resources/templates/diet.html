@@ -12,12 +12,15 @@
 
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Buscar alimentos...">
-        <button onclick="searchFoods()">Buscar</button>
+        <button onclick="searchFoods(true)">Buscar</button>
     </div>
 
     <h2>Resultados de la búsqueda</h2>
     <div id="searchResults">
         <p>No se encontraron alimentos.</p>
+    </div>
+    <div class="button-container" style="text-align: center; margin-top: 10px;">
+        <button id="loadMoreButton" onclick="loadMoreFoods()" style="display:none;">Cargar más</button>
     </div>
 
     <h2>Registro Diario</h2>
@@ -26,8 +29,11 @@
 </div>
 
 <script>
+    let currentOffset = 0;
+    const limit = 5; // Límite de resultados por página
+
     // Función para buscar alimentos
-    function searchFoods() {
+    function searchFoods(isNewSearch = false) {
         const query = document.getElementById('searchInput').value;
 
         if (!query) {
@@ -35,32 +41,42 @@
             return;
         }
 
-        axios.get(`/api/foods/search?query=${query}`)
+        if (isNewSearch) {
+            currentOffset = 0; // Reiniciar el offset para una nueva búsqueda
+            document.getElementById('searchResults').innerHTML = ''; // Limpiar resultados previos
+        }
+
+        axios.get(`/api/foods/search?query=${query}&limit=${limit}&offset=${currentOffset}`)
             .then(response => {
                 const results = response.data.foods;
                 const resultsContainer = document.getElementById('searchResults');
 
-                // Limpiar los resultados previos
-                resultsContainer.innerHTML = '';
-
                 if (!results || results.length === 0) {
-                    resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
+                    if (isNewSearch) {
+                        resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
+                    }
+                    document.getElementById('loadMoreButton').style.display = 'none';
                     return;
                 }
 
-                // Crear una tabla con los resultados
-                const table = document.createElement('table');
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Descripción</th>
-                            <th>Energía (kcal)</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                `;
+                // Agregar resultados a la tabla existente o crearla si no existe
+                let table = resultsContainer.querySelector('table');
+                if (!table) {
+                    table = document.createElement('table');
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Energía (kcal)</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    `;
+                    resultsContainer.appendChild(table);
+                }
 
-                const tbody = document.createElement('tbody');
+                const tbody = table.querySelector('tbody');
                 results.forEach(food => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -70,14 +86,24 @@
                     `;
                     tbody.appendChild(row);
                 });
-                table.appendChild(tbody);
 
-                resultsContainer.appendChild(table);
+                // Mostrar el botón "Cargar más" si hay más resultados
+                if (results.length === limit) {
+                    document.getElementById('loadMoreButton').style.display = 'block';
+                } else {
+                    document.getElementById('loadMoreButton').style.display = 'none';
+                }
+
+                currentOffset += limit; // Incrementar el offset para la próxima carga
             })
             .catch(error => {
                 console.error("Error al buscar alimentos:", error);
                 alert("Hubo un error al buscar los alimentos. Por favor, intenta de nuevo.");
             });
+    }
+
+    function loadMoreFoods() {
+        searchFoods(false);
     }
 
     // Registro diario
