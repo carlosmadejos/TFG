@@ -6,6 +6,10 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+<!-- Botón para ir atrás -->
+<div class="profile-back">
+    <a th:href="@{/home}" class="button back-button">Volver a Inicio</a>
+</div>
 <div class="diet-container">
     <h1>Gestión de Dietas</h1>
     <p>Aquí puedes buscar alimentos, añadirlos y registrar tu ingesta diaria.</p>
@@ -24,15 +28,32 @@
     </div>
 
     <h2>Registro Diario</h2>
+    <label for="calorieGoal">Objetivo calórico diario (kcal):</label>
+    <input type="number" id="calorieGoal" placeholder="2000">
     <div id="dailyLog"></div>
+    <p id="calorieSummary"></p>
     <button onclick="saveDailyLog()">Guardar Registro</button>
 </div>
-
 <script>
     let currentOffset = 0;
     const limit = 5; // Límite de resultados por página
+    const username = "Carlos"; // Cambiar dinámicamente según el usuario autenticado
+    let dailyLog = []; // Inicialización del registro diario
 
-    // Función para buscar alimentos
+    function loadDailyLogFromStorage() {
+        const storedLog = localStorage.getItem(`dailyLog_${username}`);
+        return storedLog ? JSON.parse(storedLog) : [];
+    }
+
+    function saveDailyLogToStorage() {
+        localStorage.setItem(`dailyLog_${username}`, JSON.stringify(dailyLog));
+    }
+
+    function initializeDailyLog() {
+        dailyLog = loadDailyLogFromStorage(); // Cargar desde localStorage
+        updateDailyLog(); // Actualizar la tabla sin duplicados
+    }
+
     function searchFoods(isNewSearch = false) {
         const query = document.getElementById('searchInput').value;
 
@@ -59,7 +80,6 @@
                     return;
                 }
 
-                // Crear la tabla si es una nueva búsqueda
                 let table = resultsContainer.querySelector('table');
                 if (!table) {
                     table = document.createElement('table');
@@ -76,7 +96,6 @@
                     resultsContainer.appendChild(table);
                 }
 
-                // Agregar los nuevos alimentos al cuerpo de la tabla
                 const tbody = table.querySelector('tbody');
                 results.forEach(food => {
                     const row = document.createElement('tr');
@@ -88,14 +107,13 @@
                     tbody.appendChild(row);
                 });
 
-                // Mostrar el botón "Cargar más" si hay más resultados
                 if (results.length === limit) {
                     document.getElementById('loadMoreButton').style.display = 'block';
                 } else {
                     document.getElementById('loadMoreButton').style.display = 'none';
                 }
 
-                currentOffset += limit; // Incrementar el offset para la próxima carga
+                currentOffset += limit;
             })
             .catch(error => {
                 console.error("Error al buscar alimentos:", error);
@@ -107,20 +125,26 @@
         searchFoods(false);
     }
 
-    // Registro diario
-    const dailyLog = [];
-
     function addToLog(description, energy) {
         dailyLog.push({ description, energy });
         updateDailyLog();
+        saveDailyLogToStorage();
+    }
+
+    function removeFromLog(index) {
+        dailyLog.splice(index, 1);
+        updateDailyLog();
+        saveDailyLogToStorage();
     }
 
     function updateDailyLog() {
         const logContainer = document.getElementById('dailyLog');
+        const calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 0;
         logContainer.innerHTML = '';
 
         if (dailyLog.length === 0) {
             logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
+            document.getElementById('calorieSummary').textContent = '';
             return;
         }
 
@@ -136,7 +160,10 @@
         `;
 
         const tbody = document.createElement('tbody');
+        let totalCalories = 0;
+
         dailyLog.forEach((food, index) => {
+            totalCalories += food.energy;
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${food.description}</td>
@@ -148,25 +175,21 @@
         table.appendChild(tbody);
 
         logContainer.appendChild(table);
-    }
 
-    function removeFromLog(index) {
-        dailyLog.splice(index, 1); // Eliminar el alimento por índice
-        updateDailyLog();
-    }
-
-    function saveDailyLog() {
-        if (dailyLog.length === 0) {
-            alert("No hay alimentos para guardar.");
-            return;
+        const calorieSummary = document.getElementById('calorieSummary');
+        if (calorieGoal > 0) {
+            const remainingCalories = calorieGoal - totalCalories;
+            calorieSummary.textContent = `Calorías consumidas: ${totalCalories} kcal. ${
+                remainingCalories >= 0
+                    ? `Te faltan ${remainingCalories} kcal para alcanzar tu objetivo.`
+                    : `Has excedido tu objetivo en ${Math.abs(remainingCalories)} kcal.`
+            }`;
+        } else {
+            calorieSummary.textContent = `Calorías consumidas: ${totalCalories} kcal.`;
         }
-
-        // Simular guardado en el backend
-        console.log("Registro diario guardado:", dailyLog);
-        alert("Registro guardado exitosamente.");
-        dailyLog.length = 0; // Limpiar el registro
-        updateDailyLog();
     }
+
+    document.addEventListener('DOMContentLoaded', initializeDailyLog);
 </script>
 </body>
 </html>
