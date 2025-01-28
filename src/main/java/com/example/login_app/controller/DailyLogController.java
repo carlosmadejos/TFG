@@ -6,6 +6,7 @@ import com.example.login_app.repository.DailyLogRepository;
 import com.example.login_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -50,6 +51,7 @@ public class DailyLogController {
 
     // Eliminar el registro diario
     @DeleteMapping
+    @Transactional
     public ResponseEntity<?> deleteDailyLog(Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
