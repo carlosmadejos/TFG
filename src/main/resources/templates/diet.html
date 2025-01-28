@@ -4,6 +4,8 @@
     <title>Dietas</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta charset='utf-8' />
+    <meta name="_csrf" th:content="${_csrf.token}" />
 </head>
 <body>
 <!-- Botón para ir atrás -->
@@ -32,28 +34,82 @@
     <input type="number" id="calorieGoal" placeholder="2000">
     <div id="dailyLog"></div>
     <p id="calorieSummary"></p>
-    <button onclick="saveDailyLog()">Guardar Registro</button>
+    <div>
+        <button onclick="saveDailyLogToDatabase()">Guardar Registro</button>
+        <button onclick="deleteDailyLogFromDatabase()">Empezar Nuevo Registro</button>
+    </div>
 </div>
 <script>
+    // Obtener el token CSRF desde el meta tag
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+    // Configurar Axios para incluir el token CSRF automáticamente
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+
     let currentOffset = 0;
     const limit = 5; // Límite de resultados por página
-    const username = "Carlos"; // Cambiar dinámicamente según el usuario autenticado
-    let dailyLog = []; // Inicialización del registro diario
 
-    function loadDailyLogFromStorage() {
-        const storedLog = localStorage.getItem(`dailyLog_${username}`);
-        return storedLog ? JSON.parse(storedLog) : [];
+    let dailyLog = [];
+    let calorieGoal = 2000;
+
+    // Cargar el registro diario desde el backend
+    function loadDailyLogFromDatabase() {
+        axios.get(`/api/daily-log`)
+            .then((response) => {
+                dailyLog = JSON.parse(response.data.dailyLogJson || '[]'); // Parsear el JSON
+                calorieGoal = response.data.calorieGoal || 2000;
+
+                document.getElementById('calorieGoal').value = calorieGoal;
+                updateDailyLog();
+            })
+            .catch((error) => {
+                console.error("Error al cargar el registro diario:", error);
+                alert("Error al cargar el registro diario.");
+            });
     }
 
-    function saveDailyLogToStorage() {
-        localStorage.setItem(`dailyLog_${username}`, JSON.stringify(dailyLog));
+    // Guardar o actualizar el registro diario en el backend
+    function saveDailyLogToDatabase() {
+        const data = {
+            dailyLogJson: JSON.stringify(dailyLog), // Convertir a JSON antes de enviar
+            calorieGoal: parseInt(document.getElementById('calorieGoal').value) || 2000,
+        };
+
+        axios.post(`/api/daily-log`, data)
+            .then(() => {
+                alert("Registro guardado exitosamente.");
+            })
+            .catch((error) => {
+                console.error("Error al guardar el registro diario:", error);
+                if (error.response && error.response.status === 403) {
+                    alert("Error de autenticación o CSRF. Por favor, recarga la página e intenta nuevamente.");
+                } else {
+                    alert("Error al guardar el registro diario.");
+                }
+            });
     }
 
-    function initializeDailyLog() {
-        dailyLog = loadDailyLogFromStorage(); // Cargar desde localStorage
-        updateDailyLog(); // Actualizar la tabla sin duplicados
+    // Eliminar el registro diario en el backend
+    function deleteDailyLogFromDatabase() {
+        axios.delete(`/api/daily-log`)
+            .then(() => {
+                dailyLog = [];
+                calorieGoal = 2000;
+                document.getElementById('calorieGoal').value = calorieGoal;
+                updateDailyLog();
+                alert("Se ha iniciado un nuevo registro diario.");
+            })
+            .catch((error) => {
+                console.error("Error al eliminar el registro diario:", error);
+                if (error.response && error.response.status === 403) {
+                    alert("Error de autenticación o CSRF. Por favor, recarga la página e intenta nuevamente.");
+                } else {
+                    alert("Error al iniciar un nuevo registro.");
+                }
+            });
     }
 
+    // Buscar alimentos desde el backend
     function searchFoods(isNewSearch = false) {
         const query = document.getElementById('searchInput').value;
 
@@ -63,12 +119,12 @@
         }
 
         if (isNewSearch) {
-            currentOffset = 0; // Reiniciar el offset para una nueva búsqueda
-            document.getElementById('searchResults').innerHTML = ''; // Limpiar resultados previos
+            currentOffset = 0;
+            document.getElementById('searchResults').innerHTML = '';
         }
 
         axios.get(`/api/foods/search?query=${query}&limit=${limit}&offset=${currentOffset}`)
-            .then(response => {
+            .then((response) => {
                 const results = response.data.foods;
                 const resultsContainer = document.getElementById('searchResults');
 
@@ -97,7 +153,7 @@
                 }
 
                 const tbody = table.querySelector('tbody');
-                results.forEach(food => {
+                results.forEach((food) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${food.description}</td>
@@ -115,31 +171,22 @@
 
                 currentOffset += limit;
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error al buscar alimentos:", error);
                 alert("Hubo un error al buscar los alimentos. Por favor, intenta de nuevo.");
             });
     }
 
-    function loadMoreFoods() {
-        searchFoods(false);
-    }
-
+    // Añadir alimentos al registro diario
     function addToLog(description, energy) {
         dailyLog.push({ description, energy });
         updateDailyLog();
-        saveDailyLogToStorage();
     }
 
-    function removeFromLog(index) {
-        dailyLog.splice(index, 1);
-        updateDailyLog();
-        saveDailyLogToStorage();
-    }
-
+    // Actualizar el registro diario en el DOM
     function updateDailyLog() {
         const logContainer = document.getElementById('dailyLog');
-        const calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 0;
+        calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 2000;
         logContainer.innerHTML = '';
 
         if (dailyLog.length === 0) {
@@ -189,7 +236,10 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', initializeDailyLog);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDailyLogFromDatabase();
+    });
 </script>
+
 </body>
 </html>
