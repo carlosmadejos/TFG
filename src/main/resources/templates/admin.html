@@ -2,28 +2,66 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Admin Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-<h1>Welcome, <span th:text="${user.username}">Admin</span>!</h1>
+<div class="admin-container">
+  <h1>Bienvenido, <span th:text="${user.username}">Admin</span>!</h1>
 
-<h2>List of Users</h2>
-<table>
-  <tr>
-    <th>Username</th>
-    <th>Email</th>
-    <th>Role</th>
-    <th>Actions</th>
-  </tr>
-  <tr th:each="u : ${users}">
-    <td th:text="${u.username}"></td>
-    <td th:text="${u.email}"></td>
-    <td th:text="${u.role}"></td>
-    <td>
-      <form th:action="@{/admin/delete-user/{id}(id=${u.id})}" method="post">
-        <button type="submit">Delete</button>
-      </form>
-    </td>
-  </tr>
-</table>
+  <h2>Lista de usuarios</h2>
+  <table class="admin-table">
+    <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${users}">
+      <td th:text="${u.username}"></td>
+      <td th:text="${u.email}"></td>
+      <td th:text="${u.role}"></td>
+      <td>
+        <button class="admin-delete-button" th:data-id="${u.id}" th:data-username="${u.username}">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll(".admin-delete-button").forEach(button => {
+          button.addEventListener("click", function() {
+              let userId = this.getAttribute("data-id");
+              let username = this.getAttribute("data-username");
+
+              Swal.fire({
+                  title: `Are you sure?`,
+                  text: `You are about to delete user ${username}`,
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#d33",
+                  cancelButtonColor: "#3085d6",
+                  confirmButtonText: "Yes, delete it!"
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      fetch(`/admin/delete-user/${userId}`, { method: "POST" })
+                          .then(response => {
+                              if (!response.ok) throw new Error("Error deleting user");
+                              location.reload();
+                          })
+                          .catch(error => {
+                              Swal.fire("Error", "Could not delete user", "error");
+                          });
+                  }
+              });
+          });
+      });
+  });
+</script>
 </body>
 </html>
