@@ -1,10 +1,6 @@
 package com.example.login_app.security;
 
 import com.example.login_app.service.CustomUserDetailsService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -14,11 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -31,26 +23,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.addFilterBefore(new OncePerRequestFilter() {
-            @Override
-            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-                System.out.println("Request URL: " + request.getRequestURL());
-                filterChain.doFilter(request, response);
-            }
-        }, UsernamePasswordAuthenticationFilter.class);
-
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/daily-log/**") // Ignorar CSRF para la API
-                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/daily-log/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/profile/**").permitAll() // Acceso público
-                        .requestMatchers("/diet", "/diets", "/api/foods/**").authenticated() // Acceso autenticado para dietas
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/profile/**").permitAll()
+                        .requestMatchers("/diet", "/diets", "/api/foods/**").authenticated()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login").permitAll() // Ruta de la página de login
-                        .defaultSuccessUrl("/home", true) // Redirige a home tras login exitoso
+                        .loginPage("/login").permitAll()
+                        .successHandler(customSuccessHandler()) // Redirige a /admin o /home
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -61,6 +44,10 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public AuthenticationSuccessHandler customSuccessHandler() {
+        return new CustomSuccessHandler();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -75,5 +62,4 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
     }
-
 }
