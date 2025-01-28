@@ -78,6 +78,15 @@
       dateClick: function (info) {
         openExerciseModal(info.dateStr);
       },
+
+      eventClick: function (info) {
+        Swal.fire({
+            title: 'Detalles del Ejercicio',
+            html: info.event.title.replace(/\n/g, "<br>"), // Muestra la descripción completa del ejercicio
+            icon: 'info',
+            confirmButtonText: 'Cerrar'
+        });
+      },
       eventContent: function (arg) {
         // Crear el contenedor del evento con estilos flexibles
         let eventContainer = document.createElement('div');
