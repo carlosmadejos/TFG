@@ -234,6 +234,17 @@
       const modal = document.getElementById('exercise-modal');
       modal.style.display = 'none';
     }
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', function (event) {
+      const modal = document.getElementById('exercise-modal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal when clicking the "X" button
+    document.querySelector('.calendar-modal-close').addEventListener('click', closeModal);
   });
 </script>
 </body>
