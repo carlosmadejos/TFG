@@ -40,22 +40,22 @@
               let username = this.getAttribute("data-username");
 
               Swal.fire({
-                  title: `Are you sure?`,
+                  title: `¿Estás seguro de que deseas eliminar al usuario?`,
                   text: `You are about to delete user ${username}`,
                   icon: "warning",
                   showCancelButton: true,
                   confirmButtonColor: "#d33",
                   cancelButtonColor: "#3085d6",
-                  confirmButtonText: "Yes, delete it!"
+                  confirmButtonText: "Sí, eliminar usuario",
               }).then((result) => {
                   if (result.isConfirmed) {
                       fetch(`/admin/delete-user/${userId}`, { method: "POST" })
                           .then(response => {
-                              if (!response.ok) throw new Error("Error deleting user");
+                              if (!response.ok) throw new Error("Error al eliminar usuario");
                               location.reload();
                           })
                           .catch(error => {
-                              Swal.fire("Error", "Could not delete user", "error");
+                              Swal.fire("Error", "No hemos podido eliminar al usuario", "error");
                           });
                   }
               });
