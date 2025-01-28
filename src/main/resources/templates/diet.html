@@ -81,11 +81,7 @@
             })
             .catch((error) => {
                 console.error("Error al guardar el registro diario:", error);
-                if (error.response && error.response.status === 403) {
-                    alert("Error de autenticación o CSRF. Por favor, recarga la página e intenta nuevamente.");
-                } else {
-                    alert("Error al guardar el registro diario.");
-                }
+                alert("Hubo un problema al guardar el registro. Intenta nuevamente.");
             });
     }
 
@@ -101,11 +97,7 @@
             })
             .catch((error) => {
                 console.error("Error al eliminar el registro diario:", error);
-                if (error.response && error.response.status === 403) {
-                    alert("Error de autenticación o CSRF. Por favor, recarga la página e intenta nuevamente.");
-                } else {
-                    alert("Error al iniciar un nuevo registro.");
-                }
+                alert("Error al eliminar el registro. Intenta nuevamente.");
             });
     }
 
@@ -125,56 +117,60 @@
 
         axios.get(`/api/foods/search?query=${query}&limit=${limit}&offset=${currentOffset}`)
             .then((response) => {
-                const results = response.data.foods;
-                const resultsContainer = document.getElementById('searchResults');
-
-                if (!results || results.length === 0) {
-                    if (isNewSearch) {
-                        resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
-                    }
-                    document.getElementById('loadMoreButton').style.display = 'none';
-                    return;
-                }
-
-                let table = resultsContainer.querySelector('table');
-                if (!table) {
-                    table = document.createElement('table');
-                    table.innerHTML = `
-                        <thead>
-                            <tr>
-                                <th>Descripción</th>
-                                <th>Energía (kcal)</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    `;
-                    resultsContainer.appendChild(table);
-                }
-
-                const tbody = table.querySelector('tbody');
-                results.forEach((food) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${food.description}</td>
-                        <td>${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 'N/A'}</td>
-                        <td><button onclick="addToLog('${food.description}', ${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0})">Añadir</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-                if (results.length === limit) {
-                    document.getElementById('loadMoreButton').style.display = 'block';
-                } else {
-                    document.getElementById('loadMoreButton').style.display = 'none';
-                }
-
+                displayFoodResults(response.data.foods, isNewSearch);
                 currentOffset += limit;
             })
             .catch((error) => {
                 console.error("Error al buscar alimentos:", error);
                 alert("Hubo un error al buscar los alimentos. Por favor, intenta de nuevo.");
             });
+    }
+
+    // Función para mostrar los alimentos en la tabla
+    function displayFoodResults(results, isNewSearch) {
+        const resultsContainer = document.getElementById('searchResults');
+
+        if (!results || results.length === 0) {
+            if (isNewSearch) {
+                resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
+            }
+            document.getElementById('loadMoreButton').style.display = 'none';
+            return;
+        }
+
+        let table = resultsContainer.querySelector('table');
+        if (!table) {
+            table = document.createElement('table');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Energía (kcal)</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+            resultsContainer.appendChild(table);
+        }
+
+        const tbody = table.querySelector('tbody');
+        results.forEach((food) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${food.description}</td>
+                <td>${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 'N/A'}</td>
+                <td><button onclick="addToLog('${food.description}', ${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0})">Añadir</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('loadMoreButton').style.display = results.length === limit ? 'block' : 'none';
+    }
+
+    // Cargar más alimentos cuando se presiona el botón
+    function loadMoreFoods() {
+        searchFoods(false);
     }
 
     // Añadir alimentos al registro diario
@@ -240,6 +236,7 @@
         loadDailyLogFromDatabase();
     });
 </script>
+
 
 </body>
 </html>
