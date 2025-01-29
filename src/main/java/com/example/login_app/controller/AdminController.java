@@ -55,6 +55,10 @@ public class AdminController {
                         .body("El usuario no existe.");
             }
 
+            if (userRepository.findById(id).get().getRole().equals("ADMIN")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No puedes eliminar a otro administrador.");
+            }
+
             // Eliminar registros relacionados en otras tablas antes de eliminar al usuario
             progressRepository.deleteByUserId(id);
             exerciseRepository.deleteByUserId(id);

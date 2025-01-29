@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/daily-log/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/profile/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/profile/**").permitAll()
                         .requestMatchers("/diet", "/diets", "/api/foods/**", "/training-plans").authenticated()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()

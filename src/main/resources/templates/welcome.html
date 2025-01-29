@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bienvenido</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body  class="welcome-page">
+
+<div class="welcome-background">
+    <div class="welcome-container">
+        <h1>Bienvenido a la Plataforma de Entrenamiento</h1>
+        <p>Optimiza tu rutina de ejercicios y alimentación con nuestra plataforma.
+            Descubre entrenamientos personalizados y lleva tu progreso al siguiente nivel.</p>
+
+        <div class="buttons">
+            <a th:href="@{/login}" class="button">Iniciar Sesión</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
