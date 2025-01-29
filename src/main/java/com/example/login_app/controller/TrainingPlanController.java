@@ -36,6 +36,7 @@ public class TrainingPlanController {
         if (plan == null) {
             return "redirect:/training-plans"; // Si no existe, redirigir a la lista
         }
+        System.out.println("Detalles del plan: " + plan.getDetails());
         model.addAttribute("plan", plan);
         return "training-plan-details";
     }
