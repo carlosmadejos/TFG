@@ -68,11 +68,11 @@
             <form th:action="@{/profile/update}" th:object="${user}" method="post">
                 <div class="form-group">
                     <label for="weight">Nuevo peso (kg):</label>
-                    <input type="number" id="weight" th:field="*{weight}" step="0.1" required />
+                    <input type="number" id="weight" th:field="*{weight}" step="0.1" min="30" max="300" required />
                 </div>
                 <div class="form-group">
                     <label for="height">Nueva altura (cm):</label>
-                    <input type="number" id="height" th:field="*{height}" step="0.1" required />
+                    <input type="number" id="height" th:field="*{height}" step="0.1" min="100" max="250" required />
                 </div>
                 <div class="form-group">
                     <label for="age">Nueva edad:</label>
@@ -101,6 +101,32 @@
             <button id="help-imc-btn" class="button help-button">¿Qué significa el IMC?</button>
         </div>
     </div>
+
+    <script>
+        document.getElementById("profileForm").addEventListener("submit", function(event) {
+            let weight = parseFloat(document.getElementById("weight").value);
+            let height = parseInt(document.getElementById("height").value);
+            let age = parseInt(document.getElementById("age").value);
+
+            if (weight < 30 || weight > 300) {
+                alert("El peso debe estar entre 30 y 300 kg.");
+                event.preventDefault();
+                return;
+            }
+
+            if (height < 100 || height > 250) {
+                alert("La altura debe estar entre 100 y 250 cm.");
+                event.preventDefault();
+                return;
+            }
+
+            if (age < 18 || age > 99) {
+                alert("La edad debe estar entre 18 y 99 años.");
+                event.preventDefault();
+                return;
+            }
+        });
+    </script>
 
     <!-- Modal para explicar el IMC -->
     <div id="imc-help-modal" class="modal-imc">
