@@ -115,75 +115,155 @@ public class TrainingPlanService {
 
             trainingPlanRepository.save(new TrainingPlan(
                     "Ganancia Muscular",
-                    "Un programa basado en la hipertrofia, fuerza y definición muscular, con una progresión óptima. Se divide en tres fases clave: volumen para aumentar masa muscular, fuerza para desarrollar potencia y definición para mejorar la calidad muscular.",
+                    "Un programa progresivo dividido en tres fases clave: volumen para construir masa muscular, fuerza para desarrollar potencia y definición para optimizar la composición corporal. Se enfoca en ejercicios compuestos, técnicas avanzadas y una planificación estructurada.",
                     "Intermedio",
                     12,
 
                     "<h3>Semana 1-4: Volumen (Hipertrofia)</h3>" +
-                            "<p>El objetivo en esta fase es maximizar el crecimiento muscular mediante una combinación de ejercicios multiarticulares y aislamiento. Se recomienda una alimentación alta en proteínas y carbohidratos para potenciar la recuperación.</p>" +
+                            "<p>Durante esta fase, se trabaja en el crecimiento muscular aumentando la carga progresivamente y maximizando el tiempo bajo tensión. Se recomienda una dieta alta en proteínas y carbohidratos para favorecer la recuperación.</p>" +
 
                             "<ul>" +
-                            "   <li><b>Lunes: Pecho y Tríceps</b> (4 ejercicios, 4x10 reps)</li>" +
+                            "   <li><b>Lunes: Pecho y Tríceps</b> (5 ejercicios, 4x10-12 reps)</li>" +
                             "   <ul>" +
-                            "       <li>💪 <b>Press de banca con barra:</b> Fundamental para el desarrollo del pectoral. Mantén los pies firmes en el suelo, baja la barra hasta el pecho y empuja explosivamente.</li>" +
-                            "       <li>💪 <b>Fondos en paralelas:</b> Trabaja el pecho y los tríceps. Baja controladamente hasta que los codos formen un ángulo de 90° y empuja hacia arriba.</li>" +
-                            "       <li>💪 <b>Aperturas con mancuernas:</b> Ideal para ensanchar el pecho. Mantén los codos ligeramente flexionados y baja las mancuernas en un arco controlado.</li>" +
-                            "       <li>💪 <b>Extensiones de tríceps con mancuerna:</b> Sujeta una mancuerna con ambas manos y baja detrás de la cabeza, manteniendo los codos fijos.</li>" +
+                            "       <li>💪 <b>Press de banca con barra:</b> Coloca los pies firmes en el suelo, baja la barra hasta tocar el pecho y empuja controladamente. Mantén los codos a 45° para proteger los hombros.</li>" +
+                            "       <li>💪 <b>Press inclinado con mancuernas:</b> Activa la parte superior del pectoral. Baja las mancuernas hasta que los codos formen un ángulo de 90°.</li>" +
+                            "       <li>💪 <b>Fondos en paralelas:</b> Baja controladamente y sube sin bloquear los codos.</li>" +
+                            "       <li>💪 <b>Aperturas con mancuernas:</b> Mantén una ligera flexión en los codos y evita rebotar en la fase final.</li>" +
+                            "       <li>💪 <b>Extensiones de tríceps en polea:</b> Mantén los codos fijos y aprieta en la fase final.</li>" +
                             "   </ul>" +
 
-                            "   <li><b>Martes: Espalda y Bíceps</b> (4 ejercicios, 4x10 reps)</li>" +
+                            "   <li><b>Martes: Espalda y Bíceps</b> (5 ejercicios, 4x10-12 reps)</li>" +
                             "   <ul>" +
-                            "       <li>🏋 <b>Dominadas pronas:</b> Un ejercicio esencial para la espalda. Usa un agarre ancho, sube hasta que la barbilla supere la barra y baja lentamente.</li>" +
-                            "       <li>🏋 <b>Remo con barra:</b> Mantén la espalda recta, lleva la barra hacia el abdomen y controla el movimiento de bajada.</li>" +
-                            "       <li>🏋 <b>Curl de bíceps con barra:</b> Mantén los codos fijos, sube la barra sin balanceo y aprieta los bíceps al final del movimiento.</li>" +
-                            "       <li>🏋 <b>Face pulls con cuerda:</b> Ayuda a desarrollar los músculos del trapecio y mejorar la postura.</li>" +
+                            "       <li>🏋 <b>Dominadas con agarre ancho:</b> Ideal para desarrollar el dorsal ancho. Sube hasta que la barbilla pase la barra.</li>" +
+                            "       <li>🏋 <b>Remo con barra:</b> Mantén la espalda recta y lleva la barra hacia el abdomen.</li>" +
+                            "       <li>🏋 <b>Pull-over con mancuerna:</b> Expande la caja torácica y mejora la conexión mente-músculo.</li>" +
+                            "       <li>🏋 <b>Curl de bíceps con barra Z:</b> Agarre cerrado para mayor activación.</li>" +
+                            "       <li>🏋 <b>Martillo con mancuernas:</b> Trabaja el braquiorradial y antebrazos.</li>" +
                             "   </ul>" +
 
-                            "   <li><b>Miércoles: Piernas y Glúteos</b> (5 ejercicios, 4x12 reps)</li>" +
+                            "   <li><b>Miércoles: Piernas y Glúteos</b> (5 ejercicios, 4x12-15 reps)</li>" +
                             "   <ul>" +
-                            "       <li>🏋 <b>Sentadilla profunda con barra:</b> Baja hasta que las caderas estén por debajo de las rodillas, manteniendo la espalda recta.</li>" +
-                            "       <li>🏋 <b>Peso muerto rumano:</b> Activa los isquiotibiales y glúteos. Mantén la barra cerca del cuerpo y baja lentamente.</li>" +
-                            "       <li>🏋 <b>Hip thrust con barra:</b> Fundamental para la activación de glúteos. Apoya la espalda en un banco y empuja con la cadera hacia arriba.</li>" +
-                            "       <li>🏋 <b>Estocadas con mancuernas:</b> Controla el equilibrio y baja hasta que la rodilla trasera casi toque el suelo.</li>" +
-                            "       <li>🏋 <b>Elevación de talones para gemelos:</b> Realiza el movimiento con rango completo y sostén la contracción máxima por 2 segundos.</li>" +
+                            "       <li>🏋 <b>Sentadilla profunda:</b> Baja hasta que los muslos pasen la línea de las rodillas.</li>" +
+                            "       <li>🏋 <b>Peso muerto rumano:</b> Mantén la barra pegada a las piernas y activa los isquiotibiales.</li>" +
+                            "       <li>🏋 <b>Hip thrust con barra:</b> Contrae los glúteos al final del movimiento.</li>" +
+                            "       <li>🏋 <b>Estocadas con mancuernas:</b> Alterna cada pierna con control.</li>" +
+                            "       <li>🏋 <b>Elevación de talones para gemelos:</b> Usa un rango completo de movimiento.</li>" +
                             "   </ul>" +
 
-                            "   <li><b>Jueves: Hombros y Abdomen</b> (4 ejercicios, 4x10 reps)</li>" +
+                            "   <li><b>Jueves: Hombros y Abdomen</b> (5 ejercicios, 4x10-12 reps)</li>" +
                             "   <ul>" +
-                            "       <li>🏋 <b>Press militar con barra:</b> Empuja la barra por encima de la cabeza sin arquear la espalda.</li>" +
-                            "       <li>🏋 <b>Elevaciones laterales con mancuernas:</b> Levanta las mancuernas hasta la altura de los hombros, sin balanceo.</li>" +
-                            "       <li>🏋 <b>Planchas con peso:</b> Mantén la posición con un disco en la espalda para mayor intensidad.</li>" +
-                            "       <li>🏋 <b>Crunch en polea con cuerda:</b> Flexiona el torso hacia abajo manteniendo la tensión en los abdominales.</li>" +
-                            "   </ul>" +
-
-                            "   <li><b>Viernes: Full Body Funcional</b></li>" +
-                            "   <ul>" +
-                            "       <li>🔥 Circuito de alta intensidad con movimientos multiarticulares.</li>" +
+                            "       <li>🏋 <b>Press militar con barra:</b> Mantén el core firme y empuja la barra por encima de la cabeza.</li>" +
+                            "       <li>🏋 <b>Elevaciones laterales con mancuernas:</b> Levanta hasta la altura de los hombros sin balanceo.</li>" +
+                            "       <li>🏋 <b>Remo al mentón con barra Z:</b> Trabaja deltoides y trapecios.</li>" +
+                            "       <li>🏋 <b>Crunch en polea con cuerda:</b> Máxima tensión en los abdominales.</li>" +
+                            "       <li>🏋 <b>Planchas con peso:</b> Mantén el core firme.</li>" +
                             "   </ul>" +
                             "</ul>" +
 
                             "<h3>Semana 5-8: Fuerza Máxima</h3>" +
-                            "<p>Se reduce el número de repeticiones y se enfoca en aumentar el peso levantado en los ejercicios principales.</p>" +
-
+                            "<p>Reducción de repeticiones y aumento del peso en ejercicios clave.</p>" +
                             "<ul>" +
-                            "   <li>💪 <b>Ejercicios clave:</b></li>" +
+                            "   <li>💪 <b>Ejercicios de carga progresiva:</b> Sentadilla, peso muerto, press banca y dominadas con lastre.</li>" +
+                            "   <li>🔥 <b>Descanso extendido:</b> 90-120 segundos entre series.</li>" +
+                            "</ul>" +
+
+                            "<h3>Semana 9-12: Definición Muscular</h3>" +
+                            "<p>Mayor énfasis en resistencia muscular y reducción de grasa.</p>" +
+                            "<ul>" +
+                            "   <li>🔥 <b>Repeticiones más altas:</b> 12-15 repeticiones por serie.</li>" +
+                            "   <li>🔥 <b>Superseries y dropsets:</b> Para máxima fatiga muscular.</li>" +
+                            "   <li>🔥 <b>Cardio post-entrenamiento:</b> 20-30 minutos de LISS o HIIT.</li>" +
+                            "</ul>" +
+
+                            "<h3>Estiramientos y Movilidad</h3>" +
+                            "<p>Los estiramientos ayudan a prevenir lesiones, mejorar la flexibilidad y optimizar el rendimiento. Se recomienda realizarlos después del entrenamiento para relajar los músculos y mejorar la recuperación.</p>" +
+
+                            "<h4>🔹 Estiramientos para el Tren Superior</h4>" +
+                            "<ul>" +
+                            "   <li>🧘 <b>Estiramiento de pectorales:</b> Apoya la mano en una pared con el codo a 90° y gira lentamente el torso en la dirección opuesta hasta sentir la tensión en el pecho. Mantén 20-30 segundos por lado.</li>" +
+                            "   <li>🧘 <b>Estiramiento de tríceps:</b> Lleva un brazo por detrás de la cabeza y presiona el codo con la mano opuesta.</li>" +
+                            "   <li>🧘 <b>Estiramiento de espalda alta:</b> Agarra un poste o una barra y flexiona el torso hacia atrás, sintiendo la extensión en la parte superior de la espalda.</li>" +
+                            "   <li>🧘 <b>Estiramiento de bíceps:</b> Extiende el brazo hacia atrás con la palma hacia afuera apoyándola en una pared.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Estiramientos para el Tren Inferior</h4>" +
+                            "<ul>" +
+                            "   <li>🦵 <b>Estiramiento de cuádriceps:</b> De pie, lleva un pie hacia el glúteo sujetándolo con la mano. Mantén la espalda recta y presiona suavemente el talón contra el glúteo.</li>" +
+                            "   <li>🦵 <b>Estiramiento de isquiotibiales:</b> Sentado con una pierna extendida, inclina el torso hacia adelante manteniendo la espalda recta.</li>" +
+                            "   <li>🦵 <b>Estiramiento de glúteos:</b> Cruza una pierna sobre la otra y lleva la rodilla hacia el pecho.</li>" +
+                            "   <li>🦵 <b>Estiramiento de gemelos:</b> Apoya las manos contra una pared y empuja el talón hacia atrás sin levantarlo del suelo.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Movilidad Articular</h4>" +
+                            "<ul>" +
+                            "   <li>🔄 <b>Círculos de hombros:</b> Gira los hombros hacia adelante y hacia atrás en movimientos controlados.</li>" +
+                            "   <li>🔄 <b>Movilidad de cadera:</b> Realiza círculos con la pierna para mejorar la movilidad.</li>" +
+                            "   <li>🔄 <b>Rotaciones de cuello:</b> Gira la cabeza lentamente en círculos pequeños para liberar tensión.</li>" +
+                            "</ul>"+
+
+                            "<h3>Nutrición para Ganancia Muscular</h3>" +
+                            "<p>Una alimentación adecuada es clave para maximizar el crecimiento muscular. Se recomienda una dieta rica en proteínas, carbohidratos complejos y grasas saludables.</p>" +
+
+                            "<h4>🔹 Proteínas: Construcción Muscular</h4>" +
+                            "<ul>" +
+                            "   <li>🥩 <b>Fuentes animales:</b> Pollo, carne magra, pescado (salmón, atún), huevos, lácteos.</li>" +
+                            "   <li>🌱 <b>Fuentes vegetales:</b> Legumbres (lentejas, garbanzos), tofu, quinoa, frutos secos.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Consumir proteína cada 3-4 horas para optimizar la síntesis muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Carbohidratos: Energía y Rendimiento</h4>" +
+                            "<ul>" +
+                            "   <li>🥔 <b>Carbohidratos complejos:</b> Arroz integral, patatas, avena, quinoa.</li>" +
+                            "   <li>🍌 <b>Carbohidratos rápidos:</b> Frutas, miel, dátiles (ideales post-entrenamiento).</li>" +
+                            "   <li>💡 <b>Consejo:</b> Asegurar una buena carga de carbohidratos antes del entrenamiento para maximizar la energía.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Grasas Saludables: Regulación Hormonal</h4>" +
+                            "<ul>" +
+                            "   <li>🥑 <b>Fuentes:</b> Aguacate, frutos secos, aceite de oliva, semillas de chía.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Incluir grasas saludables en la cena para favorecer la recuperación nocturna.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Hidratación y Suplementación</h4>" +
+                            "<ul>" +
+                            "   <li>💧 <b>Hidratación:</b> Bebe al menos 2.5L de agua al día. La deshidratación reduce la fuerza y la recuperación muscular.</li>" +
+                            "   <li>💊 <b>Suplementos recomendados:</b></li>" +
                             "   <ul>" +
-                            "       <li>🏋 <b>Sentadilla con barra:</b> 5 series de 5 reps con aumento progresivo de carga.</li>" +
-                            "       <li>🏋 <b>Peso muerto convencional:</b> Mayor control en la fase excéntrica para mejorar la activación muscular.</li>" +
-                            "       <li>🏋 <b>Press banca pesado:</b> Técnica estricta con enfoque en fuerza explosiva.</li>" +
-                            "       <li>🏋 <b>Dominadas con lastre:</b> Añadir peso extra para aumentar la dificultad.</li>" +
+                            "       <li>🔹 <b>Proteína en polvo:</b> Útil si no alcanzas tus requerimientos diarios.</li>" +
+                            "       <li>🔹 <b>Creatina:</b> Mejora la fuerza y la resistencia muscular.</li>" +
+                            "       <li>🔹 <b>Aminoácidos esenciales (BCAA):</b> Ayudan a reducir la fatiga y mejoran la recuperación.</li>" +
                             "   </ul>" +
                             "</ul>" +
 
-                            "<h3>Semana 9-12: Definición y Resistencia</h3>" +
-                            "<p>Esta fase se centra en mantener la fuerza mientras se aumenta la quema de grasa con superseries y dropsets.</p>" +
+                            "<h3>Recuperación y Optimización</h3>" +
+                            "<p>El descanso y la recuperación son igual de importantes que el entrenamiento. Sin una adecuada recuperación, el crecimiento muscular se verá afectado.</p>" +
 
+                            "<h4>🔹 Sueño y Descanso</h4>" +
                             "<ul>" +
-                            "   <li>🔥 <b>Ejercicios de superseries:</b> Combina dos ejercicios sin descanso para maximizar el estímulo muscular.</li>" +
-                            "   <li>🔥 <b>Uso de pesos moderados:</b> 15-20 repeticiones por serie para aumentar la resistencia muscular.</li>" +
-                            "   <li>🔥 <b>Cardio post-entrenamiento:</b> 20-30 min de cardio moderado para ayudar a la definición.</li>" +
+                            "   <li>🛌 <b>Duración recomendada:</b> 7-9 horas por noche.</li>" +
+                            "   <li>🌙 <b>Evita pantallas antes de dormir:</b> La luz azul afecta la producción de melatonina.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Técnicas de Recuperación</h4>" +
+                            "<ul>" +
+                            "   <li>🧊 <b>Baños de contraste:</b> Alternar agua fría y caliente mejora la circulación y reduce la inflamación.</li>" +
+                            "   <li>💆 <b>Masajes con foam roller:</b> Ayudan a eliminar nudos musculares y mejorar la elasticidad.</li>" +
+                            "   <li>🧘 <b>Yoga y estiramientos dinámicos:</b> Ideales para mejorar la movilidad y reducir la rigidez muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Comida Post-Entrenamiento</h4>" +
+                            "<ul>" +
+                            "   <li>🍗 <b>Proteína + Carbohidratos:</b> Ayuda a reparar las fibras musculares y reponer glucógeno.</li>" +
+                            "   <li>🍌 <b>Ejemplo de comida post-entrenamiento:</b> Pechuga de pollo con arroz integral y verduras.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Estrategias para Evitar el Sobreentrenamiento</h4>" +
+                            "<ul>" +
+                            "   <li>🛑 <b>Escucha a tu cuerpo:</b> Si sientes fatiga extrema, descansa.</li>" +
+                            "   <li>📆 <b>Incluye días de descanso activo:</b> Caminatas suaves o natación ligera.</li>" +
                             "</ul>"
             ));
+
 
 
             trainingPlanRepository.save(new TrainingPlan(
