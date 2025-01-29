@@ -9,13 +9,17 @@
 <h2>Planes de Entrenamiento</h2>
 <p>Aquí puedes ver y gestionar tus planes de entrenamiento.</p>
 
-<div class="training-container">
+<div th:if="${trainingPlans.isEmpty()}">
+  <p>No hay planes de entrenamiento disponibles en este momento.</p>
+</div>
+
+<div class="training-container" th:if="${not trainingPlans.isEmpty()}">
   <div class="training-card" th:each="plan : ${trainingPlans}">
     <h3 th:text="${plan.name}"></h3>
     <p th:text="${plan.description}"></p>
     <p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
     <p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
-    <button class="button">Ver Detalles</button>
+    <a th:href="@{'/training-plans/' + ${plan.id}}" class="button">Ver Detalles</a>
   </div>
 </div>
 

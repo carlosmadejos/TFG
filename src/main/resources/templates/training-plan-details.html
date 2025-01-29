@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Detalles del Plan de Entrenamiento</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<h2 th:text="${plan.name}"></h2>
+<p th:text="${plan.description}"></p>
+<p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
+<p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
+
+<h3>Detalles:</h3>
+<pre th:text="${plan.details}"></pre>
+
+<a href="/training-plans" class="button">Volver</a>
+
+</body>
+</html>

@@ -15,13 +15,17 @@ public class TrainingPlan {
     private String level;
     private int duration; // Duración en semanas
 
+    @Column(length = 5000) // Permitir que los detalles sean largos
+    private String details; // Contenido detallado del plan
+
     public TrainingPlan() {}
 
-    public TrainingPlan(String name, String description, String level, int duration) {
+    public TrainingPlan(String name, String description, String level, int duration, String details) {
         this.name = name;
         this.description = description;
         this.level = level;
         this.duration = duration;
+        this.details = details;
     }
 
     // Getters y Setters
@@ -39,4 +43,7 @@ public class TrainingPlan {
 
     public int getDuration() { return duration; }
     public void setDuration(int duration) { this.duration = duration; }
+
+    public String getDetails() { return details; }
+    public void setDetails(String details) { this.details = details; }
 }
