@@ -111,13 +111,52 @@ public class TrainingPlanService {
                             "</ul>"+
 
                             "<h3>Nutrición para la Pérdida de Peso</h3>" +
-                            "<p>Una alimentación adecuada potenciará la quema de grasa y mejorará tu rendimiento.</p>" +
+                            "<p>La clave para una pérdida de grasa efectiva no es simplemente reducir calorías, sino optimizar la calidad de los alimentos que consumes. Se debe buscar un déficit calórico moderado sin comprometer la salud ni la energía para el entrenamiento.</p>" +
+
+                            "<h4>🔹 Déficit Calórico: Cómo Bajar de Peso de Forma Segura</h4>" +
                             "<ul>" +
-                            "   <li>🥩 <b>Prioriza proteínas:</b> Pollo, pescado, huevos y legumbres ayudan a preservar la masa muscular.</li>" +
-                            "   <li>🥦 <b>Consume suficientes vegetales:</b> Aportan fibra y micronutrientes esenciales.</li>" +
-                            "   <li>🥑 <b>Grasas saludables:</b> Aguacate, frutos secos y aceite de oliva son esenciales para la recuperación.</li>" +
-                            "   <li>💧 <b>Hidratación constante:</b> Bebe al menos 2L de agua al día para optimizar el metabolismo.</li>" +
+                            "   <li>🔥 <b>Déficit calórico recomendado:</b> 300-500 kcal menos de las que gastas a diario. Un déficit demasiado agresivo puede llevar a la pérdida de masa muscular y ralentizar el metabolismo.</li>" +
+                            "   <li>📉 <b>Calcula tus calorías:</b> Usa una fórmula como Harris-Benedict para estimar tu gasto calórico diario y ajusta según tu actividad.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Mantén una ingesta proteica adecuada para minimizar la pérdida de músculo mientras reduces grasa.</li>" +
                             "</ul>" +
+
+                            "<h4>🔹 Proteínas: La Clave para Preservar el Músculo</h4>" +
+                            "<ul>" +
+                            "   <li>🥩 <b>Fuentes animales:</b> Pechuga de pollo, pescado blanco (merluza, bacalao), huevos, claras de huevo, queso cottage.</li>" +
+                            "   <li>🌱 <b>Fuentes vegetales:</b> Lentejas, garbanzos, tofu, quinoa, tempeh.</li>" +
+                            "   <li>💪 <b>¿Cuánta proteína necesitas?</b> Aproximadamente 1.6-2.2g por kg de peso corporal al día.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Consumir proteína en cada comida mantiene la saciedad y evita la pérdida muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Carbohidratos: Regulación de Energía y Rendimiento</h4>" +
+                            "<ul>" +
+                            "   <li>🍚 <b>Carbohidratos complejos (bajos en índice glucémico):</b> Avena, arroz integral, batata, quinoa.</li>" +
+                            "   <li>🍓 <b>Carbohidratos fibrosos:</b> Verduras como brócoli, espinaca, espárragos, pimientos.</li>" +
+                            "   <li>🍌 <b>Carbohidratos rápidos:</b> Plátanos, miel y dátiles son útiles antes o después del entrenamiento.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Mantén los carbohidratos más altos en los días de entrenamiento y redúcelos en los días de descanso.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Grasas Saludables: Claves para la Saciedad y la Función Hormonal</h4>" +
+                            "<ul>" +
+                            "   <li>🥑 <b>Fuentes saludables:</b> Aguacate, aceite de oliva, frutos secos, semillas de chía y lino.</li>" +
+                            "   <li>🐟 <b>Omega-3:</b> Pescados grasos como el salmón y la sardina, esenciales para la reducción de inflamación.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Incluir una porción de grasas saludables en cada comida mejora la saciedad y evita antojos.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Hidratación: Optimiza Tu Metabolismo</h4>" +
+                            "<ul>" +
+                            "   <li>💧 <b>Consumo diario recomendado:</b> 2.5-3L de agua al día.</li>" +
+                            "   <li>🥒 <b>Incluye electrolitos naturales:</b> Agua con limón, pepino y una pizca de sal pueden mejorar la hidratación.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Si sientes hambre, primero bebe agua. Muchas veces la deshidratación se confunde con hambre.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Suplementos Recomendados</h4>" +
+                            "<ul>" +
+                            "   <li>💊 <b>Proteína en polvo:</b> Puede ayudar a alcanzar el requerimiento proteico diario si te cuesta consumir suficientes proteínas.</li>" +
+                            "   <li>💊 <b>Omega-3:</b> Reduce la inflamación y mejora la sensibilidad a la insulina.</li>" +
+                            "   <li>💊 <b>Té verde y cafeína:</b> Pueden mejorar la oxidación de grasas y la energía antes del entrenamiento.</li>" +
+                            "</ul>" +
+
 
                             "<h3>Recuperación y Optimización</h3>" +
                             "<p>El descanso y la recuperación son igual de importantes que el entrenamiento. Sin una adecuada recuperación, el crecimiento muscular se verá afectado.</p>" +
@@ -133,12 +172,6 @@ public class TrainingPlanService {
                             "   <li>🧊 <b>Baños de contraste:</b> Alternar agua fría y caliente mejora la circulación y reduce la inflamación.</li>" +
                             "   <li>💆 <b>Masajes con foam roller:</b> Ayudan a eliminar nudos musculares y mejorar la elasticidad.</li>" +
                             "   <li>🧘 <b>Yoga y estiramientos dinámicos:</b> Ideales para mejorar la movilidad y reducir la rigidez muscular.</li>" +
-                            "</ul>" +
-
-                            "<h4>🔹 Comida Post-Entrenamiento</h4>" +
-                            "<ul>" +
-                            "   <li>🍗 <b>Proteína + Carbohidratos:</b> Ayuda a reparar las fibras musculares y reponer glucógeno.</li>" +
-                            "   <li>🍌 <b>Ejemplo de comida post-entrenamiento:</b> Pechuga de pollo con arroz integral y verduras.</li>" +
                             "</ul>" +
 
                             "<h4>🔹 Estrategias para Evitar el Sobreentrenamiento</h4>" +
@@ -348,6 +381,58 @@ public class TrainingPlanService {
                             "   <li>🔥 <b>Entrenamiento Tabata:</b> 20s trabajo / 10s descanso x 8 rondas por ejercicio.</li>" +
                             "   <li>🔥 Uso de bandas de resistencia para mayor intensidad.</li>" +
                             "   <li>🔥 Combinación de movimientos pliométricos con cardio (ej: sprints + saltos en caja).</li>" +
+                            "</ul>"+
+
+                            "<h3>Nutrición para HIIT y Pérdida de Grasa</h3>" +
+                            "<p>El HIIT requiere una alimentación bien balanceada para maximizar la energía y la recuperación.</p>" +
+
+                            "<h4>🔹 Proteínas: Recuperación y Desarrollo Muscular</h4>" +
+                            "<ul>" +
+                            "   <li>🥩 <b>Fuentes animales:</b> Pollo, pescado magro, huevos, claras de huevo.</li>" +
+                            "   <li>🌱 <b>Fuentes vegetales:</b> Tofu, legumbres, quinoa, frutos secos.</li>" +
+                            "   <li>💡 <b>Consejo:</b> Consume proteína después del entrenamiento para optimizar la recuperación muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Carbohidratos: Energía y Rendimiento</h4>" +
+                            "<ul>" +
+                            "   <li>🍚 <b>Carbohidratos complejos:</b> Avena, arroz integral, quinoa, batatas.</li>" +
+                            "   <li>🍓 <b>Carbohidratos fibrosos:</b> Verduras de hoja verde, brócoli, zanahorias.</li>" +
+                            "   <li>🍌 <b>Carbohidratos rápidos:</b> Frutas como plátano o dátiles, ideales post-entrenamiento.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Grasas Saludables: Regulación Hormonal</h4>" +
+                            "<ul>" +
+                            "   <li>🥑 <b>Fuentes:</b> Aguacate, aceite de oliva, frutos secos.</li>" +
+                            "   <li>🐟 <b>Omega-3:</b> Pescados grasos y semillas de chía.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Hidratación y Suplementación</h4>" +
+                            "<ul>" +
+                            "   <li>💧 <b>Agua:</b> 2.5-3L diarios. Evita la deshidratación.</li>" +
+                            "   <li>💊 <b>BCAAs:</b> Reducen la fatiga y preservan músculo.</li>" +
+                            "   <li>💊 <b>Cafeína:</b> Aumenta la resistencia y mejora la quema de grasa.</li>" +
+                            "</ul>" +
+
+                            "<h3>Recuperación y Optimización</h3>" +
+                            "<p>El descanso y la recuperación son igual de importantes que el entrenamiento. Sin una adecuada recuperación, el crecimiento muscular se verá afectado.</p>" +
+
+                            "<h4>🔹 Sueño y Descanso</h4>" +
+                            "<ul>" +
+                            "   <li>🛌 <b>Duración recomendada:</b> 7-9 horas por noche.</li>" +
+                            "   <li>🌙 <b>Evita pantallas antes de dormir:</b> La luz azul afecta la producción de melatonina.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Técnicas de Recuperación</h4>" +
+                            "<ul>" +
+                            "   <li>🧊 <b>Baños de contraste:</b> Alternar agua fría y caliente mejora la circulación y reduce la inflamación.</li>" +
+                            "   <li>💆 <b>Masajes con foam roller:</b> Ayudan a eliminar nudos musculares y mejorar la elasticidad.</li>" +
+                            "   <li>🧘 <b>Yoga y estiramientos dinámicos:</b> Ideales para mejorar la movilidad y reducir la rigidez muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Estrategias para Evitar el Sobreentrenamiento</h4>" +
+                            "<ul>" +
+                            "   <li>🛑 <b>Escucha a tu cuerpo:</b> Si sientes fatiga extrema, descansa.</li>" +
+                            "   <li>📆 <b>Incluye días de descanso activo:</b> Caminatas suaves o natación ligera.</li>" +
                             "</ul>"
             ));
 
