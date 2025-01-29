@@ -15,7 +15,8 @@ public class TrainingPlan {
     private String level;
     private int duration; // Duración en semanas
 
-    @Column(length = 5000) // Permitir que los detalles sean largos
+    @Lob
+    @Column(columnDefinition = "TEXT") // Para almacenar contenido largo
     private String details; // Contenido detallado del plan
 
     public TrainingPlan() {}
