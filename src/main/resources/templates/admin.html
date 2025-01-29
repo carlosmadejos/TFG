@@ -32,6 +32,10 @@
   </table>
 </div>
 
+<!-- CSRF Token -->
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <script>
   document.addEventListener("DOMContentLoaded", function() {
       document.querySelectorAll(".admin-delete-button").forEach(button => {
@@ -39,9 +43,12 @@
               let userId = this.getAttribute("data-id");
               let username = this.getAttribute("data-username");
 
+              // Obtener CSRF token
+              let csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
+              let csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
+
               Swal.fire({
-                  title: `¿Estás seguro de que deseas eliminar al usuario?`,
-                  text: `You are about to delete user ${username}`,
+                  title: `¿Estás seguro de que deseas eliminar a ${username}?`,
                   icon: "warning",
                   showCancelButton: true,
                   confirmButtonColor: "#d33",
@@ -49,14 +56,19 @@
                   confirmButtonText: "Sí, eliminar usuario",
               }).then((result) => {
                   if (result.isConfirmed) {
-                      fetch(`/admin/delete-user/${userId}`, { method: "POST" })
-                          .then(response => {
-                              if (!response.ok) throw new Error("Error al eliminar usuario");
-                              location.reload();
-                          })
-                          .catch(error => {
-                              Swal.fire("Error", "No hemos podido eliminar al usuario", "error");
-                          });
+                      fetch(`/admin/delete-user/${userId}`, {
+                          method: "DELETE",
+                          headers: {
+                              [csrfHeader]: csrfToken // Agregar el CSRF token a la cabecera
+                          }
+                      })
+                      .then(response => {
+                          if (!response.ok) throw new Error("Error al eliminar usuario");
+                          location.reload();
+                      })
+                      .catch(error => {
+                          Swal.fire("Error", "No hemos podido eliminar al usuario", "error");
+                      });
                   }
               });
           });
