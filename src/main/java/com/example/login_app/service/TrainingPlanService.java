@@ -28,60 +28,90 @@ public class TrainingPlanService {
         if (trainingPlanRepository.count() == 0) {
             trainingPlanRepository.save(new TrainingPlan(
                     "Pérdida de Peso",
-                    "Un plan diseñado para perder grasa progresivamente combinando cardio y entrenamiento de fuerza. Se enfoca en la adaptación inicial, el incremento de intensidad y la combinación de fuerza y resistencia.",
+                    "Este plan está diseñado para reducir grasa corporal mediante una combinación efectiva de cardio y entrenamiento de fuerza. Inicia con una fase de adaptación para preparar al cuerpo y luego progresa hacia entrenamientos de mayor intensidad, combinando ejercicios funcionales, pliométricos e HIIT.",
                     "Principiante",
                     8,
+
                     "<h3>Semana 1-2: Adaptación y Movilidad</h3>" +
-                            "<p>Durante las primeras dos semanas, el objetivo es mejorar la movilidad, adaptarse a la actividad física y fortalecer la resistencia aeróbica.</p>" +
+                            "<p>El objetivo en estas semanas es mejorar la movilidad, fortalecer la base muscular y acostumbrar al cuerpo a la actividad física sin generar fatiga excesiva.</p>" +
+
                             "<ul>" +
                             "   <li><b>Lunes:</b> Caminata rápida (30 min) + <b>Entrenamiento de cuerpo completo</b> (3 series de 15 repeticiones)</li>" +
                             "   <ul>" +
-                            "       <li>🔹 <b>Sentadillas:</b> De pie con los pies al ancho de los hombros, flexiona las rodillas y baja las caderas manteniendo la espalda recta. Empuja con los talones para regresar a la posición inicial.</li>" +
-                            "       <li>🔹 <b>Flexiones de brazos:</b> Mantén las manos alineadas con los hombros, baja el cuerpo doblando los codos hasta que el pecho casi toque el suelo y luego empuja hacia arriba.</li>" +
-                            "       <li>🔹 <b>Planchas:</b> Apoya los antebrazos en el suelo y mantén el cuerpo recto desde la cabeza hasta los talones. Aprieta el abdomen y sostén la posición.</li>" +
-                            "       <li>🔹 <b>Zancadas:</b> Da un paso hacia adelante con una pierna y baja las caderas hasta que ambas rodillas formen un ángulo de 90°. Vuelve a la posición inicial y cambia de pierna.</li>" +
+                            "       <li>🔹 <b>Sentadillas:</b> Baja lentamente hasta que los muslos estén paralelos al suelo. Mantén la espalda recta y las rodillas alineadas con los pies. Empuja con los talones para volver a la posición inicial.</li>" +
+                            "       <li>🔹 <b>Flexiones de brazos:</b> Controla el descenso hasta que el pecho casi toque el suelo. Si es difícil, apoya las rodillas.</li>" +
+                            "       <li>🔹 <b>Planchas:</b> Activa el abdomen y los glúteos. Evita que las caderas se hundan o suban demasiado.</li>" +
+                            "       <li>🔹 <b>Zancadas:</b> Mantén el torso erguido, baja controladamente y empuja con la pierna adelantada para volver a la posición inicial.</li>" +
                             "   </ul>" +
-                            "   <li><b>Martes:</b> Cardio moderado (40 min de carrera a ritmo bajo o bicicleta estática).</li>" +
-                            "   <li><b>Miércoles:</b> Descanso activo (yoga, movilidad articular y estiramientos profundos para evitar lesiones).</li>" +
+                            "   <li><b>Martes:</b> Cardio moderado: 40 min de caminata rápida o bicicleta estática con resistencia baja.</li>" +
+                            "   <li><b>Miércoles:</b> Descanso activo: Yoga, movilidad articular, estiramientos dinámicos.</li>" +
                             "   <li><b>Jueves:</b> <b>HIIT Básico (20 min)</b></li>" +
                             "   <ul>" +
-                            "       <li>🔥 <b>Sprints:</b> Corre a máxima velocidad durante 30 segundos y descansa 30 segundos. Repite 8 veces.</li>" +
-                            "       <li>🔥 <b>Burpees:</b> Desde posición de pie, agáchate y coloca las manos en el suelo, salta con los pies hacia atrás para una plancha, realiza una flexión, salta de nuevo hacia adelante y luego salta verticalmente con los brazos extendidos.</li>" +
-                            "       <li>🔥 <b>Saltos en caja:</b> Salta sobre una superficie elevada (como un banco bajo o una caja de 40 cm). Baja controladamente y repite.</li>" +
+                            "       <li>🔥 <b>Sprints:</b> Corre a máxima velocidad por 30 segundos, seguido de 30 segundos de descanso. Repite 8 veces.</li>" +
+                            "       <li>🔥 <b>Burpees:</b> Si es difícil, omite la flexión o el salto.</li>" +
+                            "       <li>🔥 <b>Saltos en caja:</b> Aterriza con las rodillas ligeramente flexionadas para evitar impacto en las articulaciones.</li>" +
                             "   </ul>" +
                             "   <li><b>Viernes:</b> Natación o caminata rápida (45 min).</li>" +
-                            "   <li><b>Sábado:</b> Cardio de baja intensidad (remo, elíptica, caminata inclinada a baja velocidad).</li>" +
+                            "   <li><b>Sábado:</b> Cardio de baja intensidad (remo, elíptica, caminata inclinada a ritmo moderado).</li>" +
                             "   <li><b>Domingo:</b> Descanso.</li>" +
                             "</ul>" +
 
                             "<h3>Semana 3-4: Aumento de la Intensidad</h3>" +
-                            "<p>A partir de la tercera semana, se aumentará la dificultad con ejercicios más demandantes para mejorar la resistencia y la fuerza muscular.</p>" +
+                            "<p>Se incrementa la dificultad incorporando peso adicional, trabajo de resistencia y ejercicios de agilidad.</p>" +
                             "<ul>" +
-                            "   <li>✅ Introducción al uso de pesas ligeras en circuitos funcionales.</li>" +
-                            "   <li>✅ Incorporación de ejercicios pliométricos para mejorar la potencia y la agilidad:</li>" +
+                            "   <li>✅ Se introduce el uso de pesas ligeras en circuitos funcionales.</li>" +
+                            "   <li>✅ Se incorporan ejercicios pliométricos para mejorar potencia y agilidad:</li>" +
                             "   <ul>" +
-                            "       <li>🔥 <b>Saltos en cuclillas:</b> Baja en sentadilla y salta explosivamente hacia arriba, aterrizando suavemente.</li>" +
+                            "       <li>🔥 <b>Saltos en cuclillas:</b> Realiza una sentadilla profunda y salta explosivamente. Aterriza con control.</li>" +
                             "       <li>🔥 <b>Cambios de dirección:</b> Corre 5 metros en una dirección y cambia rápidamente de sentido.</li>" +
                             "   </ul>" +
                             "</ul>" +
 
                             "<h3>Semana 5-6: Combinación de Fuerza y Cardio</h3>" +
-                            "<p>Se incorpora mayor intensidad en los ejercicios de fuerza y se introducen entrenamientos interválicos de alta exigencia.</p>" +
+                            "<p>El entrenamiento comienza a enfocarse en la quema calórica con circuitos de alta intensidad.</p>" +
                             "<ul>" +
-                            "   <li>💪 <b>Ejercicios con resistencia:</b> Se introducen pesas o bandas elásticas para mejorar la fuerza.</li>" +
-                            "   <li>🏃 <b>Cardio de alta intensidad:</b> Sprints y escaleras, mejorando la capacidad cardiovascular.</li>" +
-                            "   <li>💥 <b>Burpees avanzados:</b> Se agrega un salto más alto y una flexión adicional.</li>" +
-                            "   <li>🔥 <b>Plancha con toques de hombro:</b> Mantén una plancha y toca un hombro con la mano contraria sin mover la cadera.</li>" +
+                            "   <li>💪 <b>Ejercicios con resistencia:</b> Se introducen pesas o bandas elásticas para aumentar la intensidad.</li>" +
+                            "   <li>🏃 <b>Cardio de alta intensidad:</b> Sprints cortos y ejercicios de escalera de agilidad.</li>" +
+                            "   <li>💥 <b>Burpees avanzados:</b> Añade una sentadilla extra antes del salto.</li>" +
+                            "   <li>🔥 <b>Plancha con toques de hombro:</b> Mantén el core firme y toca alternativamente los hombros sin mover las caderas.</li>" +
                             "</ul>" +
 
                             "<h3>Semana 7-8: Definición y Resistencia</h3>" +
-                            "<p>El entrenamiento final enfatiza la resistencia muscular y la quema de grasa a través de sesiones combinadas de cardio y fuerza.</p>" +
+                            "<p>Fase final del plan, centrada en tonificación y pérdida de grasa.</p>" +
                             "<ul>" +
-                            "   <li>🔥 <b>Rutinas de resistencia con pesas moderadas:</b> Mayor número de repeticiones con menos descanso.</li>" +
-                            "   <li>💪 <b>Entrenamiento de circuito:</b> Se combinan ejercicios de fuerza con series cortas de cardio para mantener el ritmo cardíaco elevado.</li>" +
-                            "   <li>💨 <b>Cardio HIIT final:</b> Intervalos de 40 segundos de esfuerzo / 20 segundos de descanso con burpees, sprints y saltos en caja.</li>" +
+                            "   <li>🔥 <b>Rutinas de resistencia con pesas moderadas:</b> Menos descanso entre series.</li>" +
+                            "   <li>💪 <b>Entrenamiento de circuito:</b> Se combinan ejercicios de fuerza y cardio para mantener un alto gasto calórico.</li>" +
+                            "   <li>💨 <b>Cardio HIIT final:</b> 40 segundos de esfuerzo / 20 segundos de descanso con burpees, sprints y saltos en caja.</li>" +
+                            "</ul>" +
+
+                            "<h3>Estiramientos y Movilidad</h3>" +
+                            "<p>Los estiramientos son fundamentales para evitar lesiones y mejorar el rendimiento. Realiza cada uno durante 20-30 segundos.</p>" +
+                            "<ul>" +
+                            "   <li>🧘 <b>Estiramiento de cuádriceps:</b> De pie, lleva un pie hacia el glúteo sujetándolo con la mano. Mantén la espalda recta.</li>" +
+                            "   <li>🧘 <b>Estiramiento de isquiotibiales:</b> Desde posición de pie, flexiona el torso hacia adelante intentando tocar los dedos de los pies.</li>" +
+                            "   <li>🧘 <b>Estiramiento de espalda y hombros:</b> Extiende un brazo sobre el pecho y presiona suavemente con la otra mano.</li>" +
+                            "   <li>🧘 <b>Rotación de cadera:</b> De pie, haz círculos amplios con las caderas en ambas direcciones.</li>" +
+                            "</ul>" +
+
+                            "<h3>Nutrición para la Pérdida de Peso</h3>" +
+                            "<p>Una alimentación adecuada potenciará la quema de grasa y mejorará tu rendimiento.</p>" +
+                            "<ul>" +
+                            "   <li>🥩 <b>Prioriza proteínas:</b> Pollo, pescado, huevos y legumbres ayudan a preservar la masa muscular.</li>" +
+                            "   <li>🥦 <b>Consume suficientes vegetales:</b> Aportan fibra y micronutrientes esenciales.</li>" +
+                            "   <li>🥑 <b>Grasas saludables:</b> Aguacate, frutos secos y aceite de oliva son esenciales para la recuperación.</li>" +
+                            "   <li>💧 <b>Hidratación constante:</b> Bebe al menos 2L de agua al día para optimizar el metabolismo.</li>" +
+                            "</ul>" +
+
+                            "<h3>Recuperación Muscular</h3>" +
+                            "<p>Descansar correctamente es tan importante como entrenar.</p>" +
+                            "<ul>" +
+                            "   <li>🛌 <b>7-9 horas de sueño:</b> El descanso adecuado favorece la recuperación y el crecimiento muscular.</li>" +
+                            "   <li>🧊 <b>Baños de agua fría:</b> Reducen la inflamación y alivian el dolor muscular.</li>" +
+                            "   <li>💆 <b>Masajes y foam rolling:</b> Mejora la circulación y relaja la musculatura.</li>" +
+                            "   <li>🍽️ <b>Comida post-entrenamiento:</b> Consume proteína y carbohidratos para acelerar la recuperación.</li>" +
                             "</ul>"
             ));
+
 
             trainingPlanRepository.save(new TrainingPlan(
                     "Ganancia Muscular",

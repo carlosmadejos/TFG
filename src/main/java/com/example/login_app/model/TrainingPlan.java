@@ -11,6 +11,8 @@ public class TrainingPlan {
     private Long id;
 
     private String name;
+
+    @Column(length = 1000)
     private String description;
     private String level;
     private int duration; // Duración en semanas
