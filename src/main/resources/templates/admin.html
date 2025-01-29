@@ -7,6 +7,12 @@
 </head>
 <body>
 <div class="admin-container">
+  <!-- Botón para cerrar sesión -->
+  <div class="profile-logout">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="button update-button">Cerrar Sesión</button>
+    </form>
+  </div>
   <h1>Bienvenido, <span th:text="${user.username}">Admin</span>!</h1>
 
   <h2>Lista de usuarios</h2>

@@ -32,14 +32,39 @@
   <div th:if="${#fields.hasErrors('age')}" class="error" th:errors="*{age}"></div>
 
   <label for="weight">Peso (kg):</label>
-  <input type="number" th:field="*{weight}" id="weight" step="0.1" required>
+  <input type="number" th:field="*{weight}" id="weight" step="0.1" min="30" max="300" required>
   <div th:if="${#fields.hasErrors('weight')}" class="error" th:errors="*{weight}"></div>
 
   <label for="height">Altura (cm):</label>
-  <input type="number" th:field="*{height}" id="height" step="0.1" required>
+  <input type="number" th:field="*{height}" id="height" step="0.1" min="100" max="250" required>
   <div th:if="${#fields.hasErrors('height')}" class="error" th:errors="*{height}"></div>
 
   <button type="submit">Registrar</button>
 </form>
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function(event) {
+      let age = parseInt(document.getElementById("age").value);
+      let weight = parseFloat(document.getElementById("weight").value);
+      let height = parseInt(document.getElementById("height").value);
+
+      if (age < 18 || age > 99) {
+          alert("La edad debe estar entre 18 y 99 años.");
+          event.preventDefault();
+          return;
+      }
+
+      if (weight < 30 || weight > 300) {
+          alert("El peso debe estar entre 30 y 300 kg.");
+          event.preventDefault();
+          return;
+      }
+
+      if (height < 100 || height > 250) {
+          alert("La altura debe estar entre 100 y 250 cm.");
+          event.preventDefault();
+          return;
+      }
+  });
+</script>
 </body>
 </html>
