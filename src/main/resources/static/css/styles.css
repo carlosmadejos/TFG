@@ -739,7 +739,6 @@ a.back-button:hover {
 }
 
 /* Estilos para la página de bienvenida */
-
 /* Fondo con animación y degradado dinámico */
 .welcome-page {
     margin: 0;
@@ -747,11 +746,13 @@ a.back-button:hover {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(-45deg, #1e3c72, #2a5298, #00c6ff, #007BFF);
     background-size: 400% 400%;
-    animation: gradientBG 10s ease infinite;
+    animation: gradientBG 7s ease infinite; /* Velocidad de animación de fondo */
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    position: relative;
 }
 
 /* Animación de fondo degradado */
@@ -761,15 +762,31 @@ a.back-button:hover {
     100% { background-position: 0% 50%; }
 }
 
-/* Contenedor de bienvenida */
+/* Contenedor de bienvenida con efecto brillante */
 .welcome-container {
     max-width: 700px;
     padding: 50px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.9); /* Transparencia elegante */
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     animation: fadeIn 1.5s ease-in-out;
+    position: relative;
+    z-index: 2;
+}
+
+/* Efecto de iluminación */
+.welcome-container::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    z-index: -1;
 }
 
 /* Animación de aparición */
@@ -778,19 +795,30 @@ a.back-button:hover {
     100% { opacity: 1; transform: translateY(0); }
 }
 
+/* Animación en el título */
 .welcome-container h1 {
     font-size: 2.8em;
     color: #007BFF;
     font-weight: bold;
     margin-bottom: 15px;
+    animation: fadeInText 1.5s ease-in-out;
 }
 
+/* Animación en el texto */
 .welcome-container p {
     font-size: 1.2em;
     color: #555;
     margin-bottom: 30px;
+    animation: fadeInText 2s ease-in-out;
 }
 
+/* Animación para texto */
+@keyframes fadeInText {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Botón interactivo con efecto neón */
 .welcome-container .button {
     display: inline-block;
     padding: 15px 30px;
@@ -814,7 +842,7 @@ a.back-button:hover {
     left: 50%;
     width: 300%;
     height: 300%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, transparent 70%);
     transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
     opacity: 0;
     transform: translate(-50%, -50%);
@@ -831,18 +859,6 @@ a.back-button:hover {
     transform: scale(1.05);
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
 }
-
-/* 🌠 Efecto sutil de parpadeo */
-.welcome-container .button:active {
-    transform: scale(0.98);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-
-
-
-
 
 
 
