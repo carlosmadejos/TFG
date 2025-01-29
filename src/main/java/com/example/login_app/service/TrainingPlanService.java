@@ -85,13 +85,30 @@ public class TrainingPlanService {
                             "</ul>" +
 
                             "<h3>Estiramientos y Movilidad</h3>" +
-                            "<p>Los estiramientos son fundamentales para evitar lesiones y mejorar el rendimiento. Realiza cada uno durante 20-30 segundos.</p>" +
+                            "<p>Los estiramientos ayudan a prevenir lesiones, mejorar la flexibilidad y optimizar el rendimiento. Se recomienda realizarlos después del entrenamiento para relajar los músculos y mejorar la recuperación.</p>" +
+
+                            "<h4>🔹 Estiramientos para el Tren Superior</h4>" +
                             "<ul>" +
-                            "   <li>🧘 <b>Estiramiento de cuádriceps:</b> De pie, lleva un pie hacia el glúteo sujetándolo con la mano. Mantén la espalda recta.</li>" +
-                            "   <li>🧘 <b>Estiramiento de isquiotibiales:</b> Desde posición de pie, flexiona el torso hacia adelante intentando tocar los dedos de los pies.</li>" +
-                            "   <li>🧘 <b>Estiramiento de espalda y hombros:</b> Extiende un brazo sobre el pecho y presiona suavemente con la otra mano.</li>" +
-                            "   <li>🧘 <b>Rotación de cadera:</b> De pie, haz círculos amplios con las caderas en ambas direcciones.</li>" +
+                            "   <li>🧘 <b>Estiramiento de pectorales:</b> Apoya la mano en una pared con el codo a 90° y gira lentamente el torso en la dirección opuesta hasta sentir la tensión en el pecho. Mantén 20-30 segundos por lado.</li>" +
+                            "   <li>🧘 <b>Estiramiento de tríceps:</b> Lleva un brazo por detrás de la cabeza y presiona el codo con la mano opuesta.</li>" +
+                            "   <li>🧘 <b>Estiramiento de espalda alta:</b> Agarra un poste o una barra y flexiona el torso hacia atrás, sintiendo la extensión en la parte superior de la espalda.</li>" +
+                            "   <li>🧘 <b>Estiramiento de bíceps:</b> Extiende el brazo hacia atrás con la palma hacia afuera apoyándola en una pared.</li>" +
                             "</ul>" +
+
+                            "<h4>🔹 Estiramientos para el Tren Inferior</h4>" +
+                            "<ul>" +
+                            "   <li>🦵 <b>Estiramiento de cuádriceps:</b> De pie, lleva un pie hacia el glúteo sujetándolo con la mano. Mantén la espalda recta y presiona suavemente el talón contra el glúteo.</li>" +
+                            "   <li>🦵 <b>Estiramiento de isquiotibiales:</b> Sentado con una pierna extendida, inclina el torso hacia adelante manteniendo la espalda recta.</li>" +
+                            "   <li>🦵 <b>Estiramiento de glúteos:</b> Cruza una pierna sobre la otra y lleva la rodilla hacia el pecho.</li>" +
+                            "   <li>🦵 <b>Estiramiento de gemelos:</b> Apoya las manos contra una pared y empuja el talón hacia atrás sin levantarlo del suelo.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Movilidad Articular</h4>" +
+                            "<ul>" +
+                            "   <li>🔄 <b>Círculos de hombros:</b> Gira los hombros hacia adelante y hacia atrás en movimientos controlados.</li>" +
+                            "   <li>🔄 <b>Movilidad de cadera:</b> Realiza círculos con la pierna para mejorar la movilidad.</li>" +
+                            "   <li>🔄 <b>Rotaciones de cuello:</b> Gira la cabeza lentamente en círculos pequeños para liberar tensión.</li>" +
+                            "</ul>"+
 
                             "<h3>Nutrición para la Pérdida de Peso</h3>" +
                             "<p>Una alimentación adecuada potenciará la quema de grasa y mejorará tu rendimiento.</p>" +
@@ -102,13 +119,32 @@ public class TrainingPlanService {
                             "   <li>💧 <b>Hidratación constante:</b> Bebe al menos 2L de agua al día para optimizar el metabolismo.</li>" +
                             "</ul>" +
 
-                            "<h3>Recuperación Muscular</h3>" +
-                            "<p>Descansar correctamente es tan importante como entrenar.</p>" +
+                            "<h3>Recuperación y Optimización</h3>" +
+                            "<p>El descanso y la recuperación son igual de importantes que el entrenamiento. Sin una adecuada recuperación, el crecimiento muscular se verá afectado.</p>" +
+
+                            "<h4>🔹 Sueño y Descanso</h4>" +
                             "<ul>" +
-                            "   <li>🛌 <b>7-9 horas de sueño:</b> El descanso adecuado favorece la recuperación y el crecimiento muscular.</li>" +
-                            "   <li>🧊 <b>Baños de agua fría:</b> Reducen la inflamación y alivian el dolor muscular.</li>" +
-                            "   <li>💆 <b>Masajes y foam rolling:</b> Mejora la circulación y relaja la musculatura.</li>" +
-                            "   <li>🍽️ <b>Comida post-entrenamiento:</b> Consume proteína y carbohidratos para acelerar la recuperación.</li>" +
+                            "   <li>🛌 <b>Duración recomendada:</b> 7-9 horas por noche.</li>" +
+                            "   <li>🌙 <b>Evita pantallas antes de dormir:</b> La luz azul afecta la producción de melatonina.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Técnicas de Recuperación</h4>" +
+                            "<ul>" +
+                            "   <li>🧊 <b>Baños de contraste:</b> Alternar agua fría y caliente mejora la circulación y reduce la inflamación.</li>" +
+                            "   <li>💆 <b>Masajes con foam roller:</b> Ayudan a eliminar nudos musculares y mejorar la elasticidad.</li>" +
+                            "   <li>🧘 <b>Yoga y estiramientos dinámicos:</b> Ideales para mejorar la movilidad y reducir la rigidez muscular.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Comida Post-Entrenamiento</h4>" +
+                            "<ul>" +
+                            "   <li>🍗 <b>Proteína + Carbohidratos:</b> Ayuda a reparar las fibras musculares y reponer glucógeno.</li>" +
+                            "   <li>🍌 <b>Ejemplo de comida post-entrenamiento:</b> Pechuga de pollo con arroz integral y verduras.</li>" +
+                            "</ul>" +
+
+                            "<h4>🔹 Estrategias para Evitar el Sobreentrenamiento</h4>" +
+                            "<ul>" +
+                            "   <li>🛑 <b>Escucha a tu cuerpo:</b> Si sientes fatiga extrema, descansa.</li>" +
+                            "   <li>📆 <b>Incluye días de descanso activo:</b> Caminatas suaves o natación ligera.</li>" +
                             "</ul>"
             ));
 
