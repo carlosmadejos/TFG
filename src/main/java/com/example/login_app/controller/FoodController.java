@@ -4,6 +4,7 @@ import com.example.login_app.service.FoodDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -13,12 +14,10 @@ public class FoodController {
     @Autowired
     private FoodDataService foodDataService;
 
-    // Buscar alimentos utilizando la API externa
+    // Endpoint para buscar alimentos usando Open Food Facts
     @GetMapping("/search")
-    public Map<String, Object> searchFoods(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "5") int limit,
-            @RequestParam(defaultValue = "0") int offset) {
-        return foodDataService.searchFoods(query, limit, offset);
+    public List<Map<String, Object>> searchFoods(@RequestParam String query) {
+        return foodDataService.searchFoods(query);
     }
+
 }

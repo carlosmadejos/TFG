@@ -117,8 +117,7 @@
             });
     }
 
-    // Buscar alimentos desde el backend
-    function searchFoods(isNewSearch = false) {
+   function searchFoods() {
         const query = document.getElementById('searchInput').value;
 
         if (!query) {
@@ -126,15 +125,10 @@
             return;
         }
 
-        if (isNewSearch) {
-            currentOffset = 0;
-            document.getElementById('searchResults').innerHTML = '';
-        }
-
-        axios.get(`/api/foods/search?query=${query}&limit=${limit}&offset=${currentOffset}`)
+        axios.get(`/api/foods/search?query=${query}`)
             .then((response) => {
-                displayFoodResults(response.data.foods, isNewSearch);
-                currentOffset += limit;
+                displayFoodResults(response.data);
+
             })
             .catch((error) => {
                 console.error("Error al buscar alimentos:", error);
@@ -142,47 +136,52 @@
             });
     }
 
-    // Función para mostrar los alimentos en la tabla
-    function displayFoodResults(results, isNewSearch) {
+    // Mostrar los resultados de la búsqueda de alimentos
+    function displayFoodResults(results) {
         const resultsContainer = document.getElementById('searchResults');
+        resultsContainer.innerHTML = '';
 
-        if (!results || results.length === 0) {
-            if (isNewSearch) {
-                resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
-            }
-            document.getElementById('loadMoreButton').style.display = 'none';
+        if (!results || results.length === 0 || results[0].error) {
+            resultsContainer.innerHTML = '<p>No se encontraron alimentos.</p>';
             return;
         }
 
-        let table = resultsContainer.querySelector('table');
-        if (!table) {
-            table = document.createElement('table');
-            table.innerHTML = `
-                <thead>
-                    <tr>
-                        <th>Descripción</th>
-                        <th>Energía (kcal)</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            `;
-            resultsContainer.appendChild(table);
-        }
+        let table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Calorías</th>
+                    <th>Proteínas</th>
+                    <th>Carbohidratos</th>
+                    <th>Grasas</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
 
         const tbody = table.querySelector('tbody');
+
         results.forEach((food) => {
+            if (!food.name) return; // Evitar productos sin nombre
+
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${food.description}</td>
-                <td>${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 'N/A'}</td>
-                <td><button onclick="addToLog('${food.description}', ${food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0})">Añadir</button></td>
+                <td>${food.name}</td>
+                <td>${food.calories || 0} kcal</td>
+                <td>${food.proteins || 0} g</td>
+                <td>${food.carbs || 0} g</td>
+                <td>${food.fats || 0} g</td>
+                <td><button onclick="addToLog('${food.name}', ${food.calories || 0})">Añadir</button></td>
             `;
             tbody.appendChild(row);
         });
 
-        document.getElementById('loadMoreButton').style.display = results.length === limit ? 'block' : 'none';
+        resultsContainer.appendChild(table);
     }
+
+
 
     // Cargar más alimentos cuando se presiona el botón
     function loadMoreFoods() {
