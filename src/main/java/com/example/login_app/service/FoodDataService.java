@@ -49,10 +49,12 @@ public class FoodDataService {
             for (int i = 0; i < products.length(); i++) {
                 JSONObject product = products.getJSONObject(i);
                 String name = product.optString("product_name", "");
+                String imageUrl = product.optString("image_url", "No disponible");
 
                 JSONObject nutrients = product.optJSONObject("nutriments");
                 Map<String, Object> result = new HashMap<>();
                 result.put("name", name);
+                result.put("image", imageUrl);
                 result.put("calories", nutrients != null ? nutrients.optDouble("energy-kcal_100g", 0) : 0);
                 result.put("proteins", nutrients != null ? nutrients.optDouble("proteins_100g", 0) : 0);
                 result.put("carbs", nutrients != null ? nutrients.optDouble("carbohydrates_100g", 0) : 0);
