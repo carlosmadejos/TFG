@@ -1,8 +1,8 @@
 package com.example.login_app.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import java.util.List;
 
 @Entity
 @Table(name = "daily_logs")
@@ -19,9 +19,9 @@ public class DailyLog {
     @Column(nullable = false)
     private int calorieGoal = 2000; // Valor predeterminado
 
-    @Lob
-    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
-    private String dailyLogJson; // Almacena el registro de alimentos como JSON
+    @OneToMany(mappedBy = "dailyLog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Food> foods; // Lista de alimentos en el registro diario
 
     // Getters y Setters
     public Long getId() {
@@ -48,11 +48,11 @@ public class DailyLog {
         this.calorieGoal = calorieGoal;
     }
 
-    public String getDailyLogJson() {
-        return dailyLogJson;
+    public List<Food> getFoods() {
+        return foods;
     }
 
-    public void setDailyLogJson(String dailyLogJson) {
-        this.dailyLogJson = dailyLogJson;
+    public void setFoods(List<Food> foods) {
+        this.foods = foods;
     }
 }

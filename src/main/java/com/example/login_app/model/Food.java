@@ -1,5 +1,6 @@
 package com.example.login_app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +15,12 @@ public class Food {
     private int carbs; // Carbohidratos en gramos por porción
     private int proteins; // Proteínas en gramos por porción
     private int fats; // Grasas en gramos por porción
+    private String imageUrl; // URL de la imagen del alimento
+
+    @ManyToOne
+    @JoinColumn(name = "daily_log_id") // Relación con DailyLog
+    @JsonBackReference
+    private DailyLog dailyLog;
 
     // Constructor vacío
     public Food() {}
@@ -65,5 +72,21 @@ public class Food {
 
     public void setFats(int fats) {
         this.fats = fats;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public DailyLog getDailyLog() {
+        return dailyLog;
+    }
+
+    public void setDailyLog(DailyLog dailyLog) {
+        this.dailyLog = dailyLog;
     }
 }

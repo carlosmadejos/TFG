@@ -51,12 +51,6 @@
     // Configurar Axios para incluir el token CSRF automáticamente
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
-    let currentOffset = 0;
-    const limit = 5; // Límite de resultados por página
-
-    let dailyLog = [];
-    let calorieGoal = 2000;
-
     // Función para mostrar mensajes con Toastify
     function showToast(message, color) {
         Toastify({
@@ -73,10 +67,47 @@
     function loadDailyLogFromDatabase() {
         axios.get(`/api/daily-log`)
             .then((response) => {
-                dailyLog = JSON.parse(response.data.dailyLogJson || '[]');
-                calorieGoal = response.data.calorieGoal || 2000;
-                document.getElementById('calorieGoal').value = calorieGoal;
-                updateDailyLog();
+                const dailyLog = response.data.foods;
+                const logContainer = document.getElementById('dailyLog');
+                logContainer.innerHTML = '';
+
+                if (!dailyLog || dailyLog.length === 0) {
+                    logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
+                    return;
+                }
+
+                let table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Descripción</th>
+                            <th>Calorías</th>
+                            <th>Proteínas</th>
+                            <th>Carbohidratos</th>
+                            <th>Grasas</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+
+                const tbody = table.querySelector('tbody');
+                dailyLog.forEach((food) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${food.imageUrl}" alt="${food.name}" style="width:50px; height:50px;"></td>  <!-- image_url en lugar de image -->
+                        <td>${food.name}</td>
+                        <td>${food.calories || 0} kcal</td>
+                        <td>${food.proteins || 0} g</td>
+                        <td>${food.carbs || 0} g</td>
+                        <td>${food.fats || 0} g</td>
+                        <td><button onclick="removeFromDailyLog(${food.id})">Eliminar</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                logContainer.appendChild(table);
             })
             .catch((error) => {
                 console.error("Error al cargar el registro diario:", error);
@@ -84,40 +115,36 @@
             });
     }
 
-    // Guardar o actualizar el registro diario en el backend
-    function saveDailyLogToDatabase() {
-        const data = {
-            dailyLogJson: JSON.stringify(dailyLog),
-            calorieGoal: parseInt(document.getElementById('calorieGoal').value) || 2000,
-        };
 
-        axios.post(`/api/daily-log`, data)
+    // Añadir alimentos al registro diario en el backend
+    function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl) {
+        const food = { name, calories, proteins, carbs, fats, imageUrl };
+        axios.post('/api/daily-log/add-food', food)
             .then(() => {
-                showToast("Registro guardado exitosamente", "#4caf50");
+                showToast(`Añadido: ${name} (${calories} kcal)`, "#4caf50");
+                loadDailyLogFromDatabase();
             })
             .catch((error) => {
-                console.error("Error al guardar el registro diario:", error);
-                showToast("Error al guardar el registro", "#f44336");
+                console.error("Error al añadir alimento:", error);
+                showToast("Error al añadir el alimento", "#f44336");
             });
     }
 
-    // Eliminar el registro diario en el backend
-    function deleteDailyLogFromDatabase() {
-        axios.delete(`/api/daily-log`)
+    // Eliminar alimentos del registro diario en el backend
+    function removeFromDailyLog(foodId) {
+        axios.delete(`/api/daily-log/remove-food/${foodId}`)
             .then(() => {
-                dailyLog = [];
-                calorieGoal = 2000;
-                document.getElementById('calorieGoal').value = calorieGoal;
-                updateDailyLog();
-                showToast("Registro reiniciado correctamente", "#ff9800");
+                showToast("Alimento eliminado correctamente", "#f44336");
+                loadDailyLogFromDatabase();
             })
             .catch((error) => {
-                console.error("Error al eliminar el registro diario:", error);
-                showToast("Error al eliminar el registro", "#f44336");
+                console.error("Error al eliminar el alimento:", error);
+                showToast("Error al eliminar el alimento", "#f44336");
             });
     }
 
-   function searchFoods() {
+    // Buscar alimentos desde el backend y mostrarlos
+    function searchFoods() {
         const query = document.getElementById('searchInput').value;
 
         if (!query) {
@@ -128,7 +155,6 @@
         axios.get(`/api/foods/search?query=${query}`)
             .then((response) => {
                 displayFoodResults(response.data);
-
             })
             .catch((error) => {
                 console.error("Error al buscar alimentos:", error);
@@ -165,17 +191,17 @@
         const tbody = table.querySelector('tbody');
 
         results.forEach((food) => {
-            if (!food.name) return; // Evitar productos sin nombre
+            if (!food.name) return;
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><img src="${food.image}" alt="${food.name}" style="width:50px; height:50px;"></td>
+                <td><img src="${food.image_url}" alt="${food.name}" style="width:50px; height:50px;"></td>
                 <td>${food.name}</td>
                 <td>${food.calories || 0} kcal</td>
                 <td>${food.proteins || 0} g</td>
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
-                <td><button onclick="addToLog('${food.name}', ${food.calories || 0})">Añadir</button></td>
+                <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}')">Añadir</button></td>
             `;
             tbody.appendChild(row);
         });
@@ -183,83 +209,12 @@
         resultsContainer.appendChild(table);
     }
 
-
-
-    // Cargar más alimentos cuando se presiona el botón
-    function loadMoreFoods() {
-        searchFoods(false);
-    }
-
-    // Añadir alimentos al registro diario
-    function addToLog(description, energy) {
-        dailyLog.push({ description, energy });
-        updateDailyLog();
-        showToast(`Añadido: ${description} (${energy} kcal)`, "#4caf50");
-    }
-
-    // Eliminar alimentos del registro diario
-    function removeFromLog(index) {
-        const removedFood = dailyLog.splice(index, 1);
-        updateDailyLog();
-        showToast(`Eliminado: ${removedFood[0].description} (${removedFood[0].energy} kcal)`, "#f44336");
-    }
-
-
-
-    // Actualizar el registro diario en el DOM
-    function updateDailyLog() {
-        const logContainer = document.getElementById('dailyLog');
-        calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 2000;
-        logContainer.innerHTML = '';
-
-        if (dailyLog.length === 0) {
-            logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
-            document.getElementById('calorieSummary').textContent = '';
-            return;
-        }
-
-        const table = document.createElement('table');
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Descripción</th>
-                    <th>Energía (kcal)</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-        `;
-
-        const tbody = document.createElement('tbody');
-        let totalCalories = 0;
-
-        dailyLog.forEach((food, index) => {
-            totalCalories += food.energy;
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${food.description}</td>
-                <td>${food.energy}</td>
-                <td><button onclick="removeFromLog(${index})">Eliminar</button></td>
-            `;
-            tbody.appendChild(row);
-        });
-        table.appendChild(tbody);
-
-        logContainer.appendChild(table);
-
-        const calorieSummary = document.getElementById('calorieSummary');
-        calorieSummary.textContent = `Calorías consumidas: ${totalCalories} kcal. ${
-            calorieGoal > totalCalories
-                ? `Te faltan ${calorieGoal - totalCalories} kcal para alcanzar tu objetivo.`
-                : `Has excedido tu objetivo en ${Math.abs(calorieGoal - totalCalories)} kcal.`
-        }`;
-    }
-
+    // Cargar el registro cuando se inicia la página
     document.addEventListener('DOMContentLoaded', () => {
         loadDailyLogFromDatabase();
     });
+
 </script>
-
-
 
 </body>
 </html>
