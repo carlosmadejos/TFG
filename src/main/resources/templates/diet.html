@@ -43,6 +43,12 @@
         <button onclick="saveDailyLogToDatabase()">Guardar Registro</button>
         <button onclick="deleteDailyLogFromDatabase()">Empezar Nuevo Registro</button>
     </div>
+
+    <h2>Historial de Registros</h2>
+    <label for="logSelector">Seleccionar Registro:</label>
+    <select id="logSelector" onchange="loadSelectedDailyLog()"></select>
+    <button onclick="loadDailyLogHistory()">Cargar Historial</button>
+
 </div>
 <script>
     // Obtener el token CSRF desde el meta tag
@@ -209,9 +215,137 @@
         resultsContainer.appendChild(table);
     }
 
+    function saveDailyLogToDatabase() {
+        const calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 2000;
+        axios.post('/api/daily-log/update-calorie-goal', { calorieGoal })
+            .then(() => {
+                showToast("Registro guardado exitosamente", "#4caf50");
+            })
+            .catch((error) => {
+                console.error("Error al guardar el registro:", error);
+                showToast("Error al guardar el registro", "#f44336");
+            });
+    }
+
+    function deleteDailyLogFromDatabase() {
+        axios.post(`/api/daily-log/new`, { calorieGoal: 2000 }) // Crear nuevo registro en backend
+            .then((response) => {
+                showToast("Nuevo registro iniciado", "#ff9800");
+
+                // Esperar un breve tiempo antes de actualizar el historial para asegurar que el backend lo registre
+                setTimeout(() => {
+                    loadDailyLogHistory().then(() => {
+                        let logSelector = document.getElementById('logSelector');
+                        logSelector.selectedIndex = logSelector.options.length - 1;
+                        loadSelectedDailyLog();
+                    });
+                }, 500);
+
+                loadDailyLogFromDatabase(); // Recargar la interfaz con el nuevo registro
+            })
+            .catch((error) => {
+                console.error("Error al iniciar un nuevo registro:", error);
+                showToast("Error al iniciar un nuevo registro", "#f44336");
+            });
+    }
+
+
+
+
+    async function loadDailyLogHistory() {
+        return axios.get(`/api/daily-log/history`)
+            .then((response) => {
+                const logSelector = document.getElementById('logSelector');
+                logSelector.innerHTML = '';
+
+                if (response.data.length === 0) {
+                    logSelector.innerHTML = '<option disabled>No hay registros anteriores</option>';
+                    return;
+                }
+
+                response.data.forEach((log, index) => {
+                    let option = document.createElement('option');
+                    option.value = log.id;
+                    option.textContent = `Registro ${log.id} - ${log.calorieGoal} kcal`;
+                    logSelector.appendChild(option);
+                });
+
+                logSelector.selectedIndex = response.data.length - 1; // Seleccionar el último registro automáticamente
+                loadSelectedDailyLog();
+            })
+            .catch((error) => {
+                console.error("Error al cargar el historial:", error);
+                showToast("Error al cargar el historial", "#f44336");
+            });
+    }
+
+    function loadSelectedDailyLog() {
+        let logSelector = document.getElementById('logSelector');
+        if (logSelector.options.length === 0) return; // Evita errores si no hay registros disponibles
+
+        let selectedLogId = logSelector.value;
+        axios.get(`/api/daily-log/${selectedLogId}`)
+            .then((response) => {
+                updateDailyLogUI(response.data);
+            })
+            .catch((error) => {
+                console.error("Error al cargar el registro seleccionado:", error);
+                showToast("Error al cargar el registro seleccionado", "#f44336");
+            });
+    }
+
+
+    // Función para actualizar la interfaz con los datos del registro seleccionado
+    function updateDailyLogUI(dailyLog) {
+        const logContainer = document.getElementById('dailyLog');
+        logContainer.innerHTML = '';
+
+        if (!dailyLog || !dailyLog.foods || dailyLog.foods.length === 0) {
+            logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
+            return;
+        }
+
+        let table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Descripción</th>
+                    <th>Calorías</th>
+                    <th>Proteínas</th>
+                    <th>Carbohidratos</th>
+                    <th>Grasas</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
+
+        const tbody = table.querySelector('tbody');
+        dailyLog.foods.forEach((food) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${food.imageUrl || 'https://via.placeholder.com/50'}" alt="${food.name}" style="width:50px; height:50px;"></td>
+                <td>${food.name}</td>
+                <td>${food.calories || 0} kcal</td>
+                <td>${food.proteins || 0} g</td>
+                <td>${food.carbs || 0} g</td>
+                <td>${food.fats || 0} g</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        logContainer.appendChild(table);
+    }
+
+
+
+
+
+
     // Cargar el registro cuando se inicia la página
     document.addEventListener('DOMContentLoaded', () => {
         loadDailyLogFromDatabase();
+        loadDailyLogHistory();
     });
 
 </script>

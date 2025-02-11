@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -20,4 +21,13 @@ public interface DailyLogRepository extends JpaRepository<DailyLog, Long> {
     @Modifying
     @Query("DELETE FROM DailyLog d WHERE d.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
+
+    // Encuentra los registros cerrados de un usuario
+    List<DailyLog> findByUserAndClosedTrue(User user);
+
+    // Encuentra los registros activos de un usuario
+    List<DailyLog> findByUserAndClosedFalse(User user);
+
+    Optional<DailyLog> findFirstByUserAndClosedFalseOrderByIdDesc(User user);
+
 }

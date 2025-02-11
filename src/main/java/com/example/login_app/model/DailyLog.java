@@ -12,9 +12,10 @@ public class DailyLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true) // Relación con User
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Permitir múltiples registros por usuario
     private User user;
+
 
     @Column(nullable = false)
     private int calorieGoal = 2000; // Valor predeterminado
@@ -22,6 +23,11 @@ public class DailyLog {
     @OneToMany(mappedBy = "dailyLog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Food> foods; // Lista de alimentos en el registro diario
+
+    @Column(nullable = false)
+    private boolean closed = false; // Indica si el registro está archivado o activo
+
+
 
     // Getters y Setters
     public Long getId() {
@@ -54,5 +60,13 @@ public class DailyLog {
 
     public void setFoods(List<Food> foods) {
         this.foods = foods;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }
