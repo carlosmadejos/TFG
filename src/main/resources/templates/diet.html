@@ -127,12 +127,13 @@
         try {
             // Obtener el ID del registro activo
             const response = await axios.get(`/api/daily-log`);
-            const dailyLogId = response.data.id;
+            let dailyLogId = response.data.id;
 
-            // Validar que el ID es válido
+            // Si no hay un dailyLogId válido, intenta crearlo
             if (!dailyLogId) {
-                showToast("No hay un registro activo para añadir alimentos.", "#f44336");
-                return;
+                console.warn("No se encontró un DailyLog activo, creando uno nuevo...");
+                const newLogResponse = await axios.post(`/api/daily-log/new`);
+                dailyLogId = newLogResponse.data.id; // Asignar el ID del nuevo registro
             }
 
             // Crear el objeto de alimento
@@ -151,6 +152,7 @@
             showToast("Error al añadir el alimento", "#f44336");
         }
     }
+
 
 
 

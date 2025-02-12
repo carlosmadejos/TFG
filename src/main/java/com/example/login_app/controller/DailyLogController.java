@@ -55,15 +55,15 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Buscar un registro activo del usuario
+        // Intentar obtener un DailyLog activo o crear uno nuevo si no existe
         DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user)
                 .orElseGet(() -> {
+                    System.out.println("No se encontró un DailyLog activo, creando uno nuevo...");
                     DailyLog newLog = new DailyLog();
                     newLog.setUser(user);
                     newLog.setCalorieGoal(2000);
                     newLog.setClosed(false);
-                    newLog = dailyLogRepository.save(newLog); // Guardar el nuevo registro
-                    return newLog;
+                    return dailyLogRepository.save(newLog); // Guardar el nuevo registro
                 });
 
         Food food = new Food();
@@ -79,6 +79,7 @@ public class DailyLogController {
 
         return ResponseEntity.ok("Alimento agregado exitosamente");
     }
+
 
 
     // Eliminar un alimento del registro diario
@@ -194,8 +195,18 @@ public class DailyLogController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+
         if (dailyLogOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("No hay un registro diario activo.");
+            System.out.println("No se encontró un DailyLog activo, creando uno nuevo..."); // Log para depuración
+
+            DailyLog newLog = new DailyLog();
+            newLog.setUser(user);
+            newLog.setCalorieGoal(2000);
+            newLog.setClosed(false);
+
+            dailyLogRepository.save(newLog);
+
+            return ResponseEntity.ok(newLog);
         }
 
         DailyLog dailyLog = dailyLogOpt.get();
@@ -204,6 +215,7 @@ public class DailyLogController {
 
         return ResponseEntity.ok(dailyLog);
     }
+
 
 
 
