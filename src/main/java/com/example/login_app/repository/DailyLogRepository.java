@@ -22,8 +22,8 @@ public interface DailyLogRepository extends JpaRepository<DailyLog, Long> {
     @Query("DELETE FROM DailyLog d WHERE d.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
 
-    // Encuentra los registros cerrados de un usuario
-    List<DailyLog> findByUserAndClosedTrue(User user);
+    @Query("SELECT d FROM DailyLog d WHERE d.user = :user AND d.closed = true ORDER BY d.id DESC")
+    List<DailyLog> findByUserAndClosedTrue(@Param("user") User user);
 
     // Encuentra los registros activos de un usuario
     List<DailyLog> findByUserAndClosedFalse(User user);

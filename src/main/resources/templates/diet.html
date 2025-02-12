@@ -123,18 +123,36 @@
 
 
     // Añadir alimentos al registro diario en el backend
-    function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl) {
-        const food = { name, calories, proteins, carbs, fats, imageUrl };
-        axios.post('/api/daily-log/add-food', food)
-            .then(() => {
-                showToast(`Añadido: ${name} (${calories} kcal)`, "#4caf50");
-                loadDailyLogFromDatabase();
-            })
-            .catch((error) => {
-                console.error("Error al añadir alimento:", error);
-                showToast("Error al añadir el alimento", "#f44336");
-            });
+    async function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl) {
+        try {
+            // Obtener el ID del registro activo
+            const response = await axios.get(`/api/daily-log`);
+            const dailyLogId = response.data.id;
+
+            // Validar que el ID es válido
+            if (!dailyLogId) {
+                showToast("No hay un registro activo para añadir alimentos.", "#f44336");
+                return;
+            }
+
+            // Crear el objeto de alimento
+            const food = { name, calories, proteins, carbs, fats, imageUrl, dailyLogId };
+
+            // Enviar el alimento al backend
+            await axios.post('/api/daily-log/add-food', food);
+
+            // Mostrar mensaje de éxito
+            showToast(`Añadido: ${name} (${calories} kcal)`, "#4caf50");
+
+            // Actualizar el registro en la interfaz
+            await loadDailyLogFromDatabase();
+        } catch (error) {
+            console.error("Error al añadir alimento:", error);
+            showToast("Error al añadir el alimento", "#f44336");
+        }
     }
+
+
 
     // Eliminar alimentos del registro diario en el backend
     function removeFromDailyLog(foodId) {
@@ -227,30 +245,18 @@
             });
     }
 
-    function deleteDailyLogFromDatabase() {
-        axios.post(`/api/daily-log/new`, { calorieGoal: 2000 }) // Crear nuevo registro en backend
-            .then((response) => {
-                showToast("Nuevo registro iniciado", "#ff9800");
-
-                // Esperar un breve tiempo antes de actualizar el historial para asegurar que el backend lo registre
-                setTimeout(() => {
-                    loadDailyLogHistory().then(() => {
-                        let logSelector = document.getElementById('logSelector');
-                        logSelector.selectedIndex = logSelector.options.length - 1;
-                        loadSelectedDailyLog();
-                    });
-                }, 500);
-
-                loadDailyLogFromDatabase(); // Recargar la interfaz con el nuevo registro
-            })
-            .catch((error) => {
-                console.error("Error al iniciar un nuevo registro:", error);
-                showToast("Error al iniciar un nuevo registro", "#f44336");
-            });
+    async function deleteDailyLogFromDatabase() {
+        try {
+            await axios.put('/api/daily-log/close'); // Cierra el registro actual
+            await axios.post('/api/daily-log/new', { calorieGoal: 2000 }); // Crea uno nuevo
+            showToast("Nuevo registro iniciado", "#ff9800");
+            await loadDailyLogHistory(); // Asegurar que el historial se actualiza
+            await loadDailyLogFromDatabase();
+        } catch (error) {
+            console.error("Error al iniciar un nuevo registro:", error);
+            showToast("Error al iniciar un nuevo registro", "#f44336");
+        }
     }
-
-
-
 
     async function loadDailyLogHistory() {
         return axios.get(`/api/daily-log/history`)

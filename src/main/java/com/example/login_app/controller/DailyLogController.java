@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/daily-log")
@@ -28,21 +29,25 @@ public class DailyLogController {
     private FoodRepository foodRepository;
 
     // Obtener el registro diario del usuario autenticado con alimentos
-    @GetMapping
-    public ResponseEntity<?> getDailyLog(Principal principal) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDailyLogById(@PathVariable Long id, Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user)
-                .orElseGet(() -> {
-                    DailyLog newLog = new DailyLog();
-                    newLog.setUser(user);
-                    newLog.setCalorieGoal(2000);
-                    return dailyLogRepository.save(newLog);
-                });
+        // Buscar solo los registros del usuario autenticado
+        Optional<DailyLog> dailyLog = dailyLogRepository.findById(id);
 
-        return ResponseEntity.ok(dailyLog);
+        if (dailyLog.isEmpty() || !dailyLog.get().getUser().equals(user)) {
+            return ResponseEntity.status(403).body("No tienes permiso para ver este registro.");
+        }
+
+        List<Food> foods = foodRepository.findByDailyLog(dailyLog.get());
+        dailyLog.get().setFoods(foods);
+
+        return ResponseEntity.ok(dailyLog.get());
     }
+
+
 
     // Agregar un alimento al registro diario
     @PostMapping("/add-food")
@@ -50,12 +55,16 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        DailyLog dailyLog = dailyLogRepository.findByUser(user).orElseGet(() -> {
-            DailyLog newLog = new DailyLog();
-            newLog.setUser(user);
-            newLog.setCalorieGoal(2000);
-            return dailyLogRepository.save(newLog);
-        });
+        // Buscar un registro activo del usuario
+        DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user)
+                .orElseGet(() -> {
+                    DailyLog newLog = new DailyLog();
+                    newLog.setUser(user);
+                    newLog.setCalorieGoal(2000);
+                    newLog.setClosed(false);
+                    newLog = dailyLogRepository.save(newLog); // Guardar el nuevo registro
+                    return newLog;
+                });
 
         Food food = new Food();
         food.setName(foodRequest.getName());
@@ -75,12 +84,21 @@ public class DailyLogController {
     // Eliminar un alimento del registro diario
     @DeleteMapping("/remove-food/{foodId}")
     public ResponseEntity<?> removeFoodFromDailyLog(@PathVariable Long foodId, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Food food = foodRepository.findById(foodId)
                 .orElseThrow(() -> new RuntimeException("Alimento no encontrado"));
+
+        // Verificar que el alimento pertenece a un DailyLog del usuario autenticado
+        if (!food.getDailyLog().getUser().equals(user)) {
+            return ResponseEntity.status(403).body("No tienes permiso para eliminar este alimento.");
+        }
 
         foodRepository.delete(food);
         return ResponseEntity.ok("Alimento eliminado exitosamente");
     }
+
 
     @DeleteMapping
     @Transactional
@@ -88,8 +106,12 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        DailyLog dailyLog = dailyLogRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("No hay un registro diario activo"));
+        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        if (dailyLogOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("No hay un registro diario activo.");
+        }
+        DailyLog dailyLog = dailyLogOpt.get();
+
 
         dailyLog.setClosed(true);
         dailyLogRepository.save(dailyLog);
@@ -118,26 +140,26 @@ public class DailyLogController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<?> createNewDailyLog(@RequestBody DailyLog newLog, Principal principal) {
+    public ResponseEntity<?> createNewDailyLog(Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Verificar si hay un registro activo
-        List<DailyLog> activeLogs = dailyLogRepository.findByUserAndClosedFalse(user);
-        if (!activeLogs.isEmpty()) {
+        // Verificar si ya hay un registro activo
+        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+
+        if (activeLog.isPresent()) {
             return ResponseEntity.badRequest().body("Ya tienes un registro activo.");
         }
 
-        // Crear un nuevo registro
-        DailyLog dailyLog = new DailyLog();
-        dailyLog.setUser(user);
-        dailyLog.setCalorieGoal(newLog.getCalorieGoal());
-        dailyLog.setClosed(false);
+        DailyLog newLog = new DailyLog();
+        newLog.setUser(user);
+        newLog.setCalorieGoal(2000); // Default
+        newLog.setClosed(false); // Marcarlo como activo
+        dailyLogRepository.save(newLog);
 
-        dailyLogRepository.save(dailyLog);
-
-        return ResponseEntity.ok("Nuevo registro de dieta creado");
+        return ResponseEntity.ok(newLog);
     }
+
 
 
     @GetMapping("/history")
@@ -148,6 +170,41 @@ public class DailyLogController {
         List<DailyLog> logs = dailyLogRepository.findByUserAndClosedTrue(user);
         return ResponseEntity.ok(logs);
     }
+
+    @PutMapping("/close")
+    public ResponseEntity<?> closeCurrentDailyLog(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+
+        if (activeLog.isPresent()) {
+            DailyLog log = activeLog.get();
+            log.setClosed(true);
+            dailyLogRepository.save(log);
+            return ResponseEntity.ok("Registro cerrado correctamente.");
+        }
+
+        return ResponseEntity.badRequest().body("No hay un registro activo para cerrar.");
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getActiveDailyLog(Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        if (dailyLogOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("No hay un registro diario activo.");
+        }
+
+        DailyLog dailyLog = dailyLogOpt.get();
+        List<Food> foods = foodRepository.findByDailyLog(dailyLog);
+        dailyLog.setFoods(foods);
+
+        return ResponseEntity.ok(dailyLog);
+    }
+
 
 
 
