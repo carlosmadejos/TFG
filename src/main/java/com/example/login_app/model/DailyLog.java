@@ -27,6 +27,8 @@ public class DailyLog {
     @Column(nullable = false)
     private boolean closed = false; // Indica si el registro está archivado o activo
 
+    @Column(nullable = false)
+    private int totalCalories = 0; // Calorías consumidas en el día
 
 
     // Getters y Setters
@@ -69,4 +71,12 @@ public class DailyLog {
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
+
+    public int getTotalCalories() {
+        return totalCalories;
+    }
+    public void setTotalCalories(int totalCalories) {
+        this.totalCalories = totalCalories;
+    }
+
 }

@@ -62,6 +62,7 @@ public class DailyLogController {
                     DailyLog newLog = new DailyLog();
                     newLog.setUser(user);
                     newLog.setCalorieGoal(2000);
+                    newLog.setTotalCalories(0);
                     newLog.setClosed(false);
                     return dailyLogRepository.save(newLog); // Guardar el nuevo registro
                 });
@@ -76,6 +77,9 @@ public class DailyLogController {
 
         food.setDailyLog(dailyLog);
         foodRepository.save(food);
+
+        dailyLog.setTotalCalories(dailyLog.getTotalCalories() + food.getCalories());
+        dailyLogRepository.save(dailyLog);
 
         return ResponseEntity.ok("Alimento agregado exitosamente");
     }
@@ -112,7 +116,6 @@ public class DailyLogController {
             return ResponseEntity.badRequest().body("No hay un registro diario activo.");
         }
         DailyLog dailyLog = dailyLogOpt.get();
-
 
         dailyLog.setClosed(true);
         dailyLogRepository.save(dailyLog);
@@ -154,8 +157,9 @@ public class DailyLogController {
 
         DailyLog newLog = new DailyLog();
         newLog.setUser(user);
-        newLog.setCalorieGoal(2000); // Default
-        newLog.setClosed(false); // Marcarlo como activo
+        newLog.setCalorieGoal(2000); // Valor predeterminado
+        newLog.setTotalCalories(0);
+        newLog.setClosed(false); // Registro activo
         dailyLogRepository.save(newLog);
 
         return ResponseEntity.ok(newLog);

@@ -48,6 +48,14 @@
     <select id="logSelector" onchange="loadSelectedDailyLog()"></select>
     <button onclick="loadDailyLogHistory()">Cargar Historial</button>
 
+    <h2>Resumen Nutricional</h2>
+    <p><b>Objetivo Calórico:</b> <span id="calorieGoalDisplay">0</span> kcal</p>
+    <p><b>Calorías Consumidas:</b> <span id="totalCalories">0</span> kcal</p>
+    <p><b>Proteínas:</b> <span id="totalProteins">0</span> g</p>
+    <p><b>Carbohidratos:</b> <span id="totalCarbs">0</span> g</p>
+    <p><b>Grasas:</b> <span id="totalFats">0</span> g</p>
+
+
 </div>
 <script>
     // Obtener el token CSRF desde el meta tag
@@ -72,11 +80,17 @@
     function loadDailyLogFromDatabase() {
         axios.get(`/api/daily-log`)
             .then((response) => {
-                const dailyLog = response.data.foods;
+                const dailyLog = response.data;
                 const logContainer = document.getElementById('dailyLog');
                 logContainer.innerHTML = '';
 
-                if (!dailyLog || dailyLog.length === 0) {
+                document.getElementById('calorieGoalDisplay').innerText = dailyLog.calorieGoal || 2000;
+                document.getElementById('totalCalories').innerText = dailyLog.totalCalories || 0;
+                document.getElementById('totalProteins').innerText = dailyLog.totalProteins || 0;
+                document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
+                document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
+
+                if (!dailyLog.foods || dailyLog.foods.length === 0) {
                     logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
                     return;
                 }
@@ -98,10 +112,10 @@
                 `;
 
                 const tbody = table.querySelector('tbody');
-                dailyLog.forEach((food) => {
+                dailyLog.foods.forEach((food) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td><img src="${food.imageUrl}" alt="${food.name}" style="width:50px; height:50px;"></td>  <!-- image_url en lugar de image -->
+                        <td><img src="${food.imageUrl}" alt="${food.name}" style="width:50px; height:50px;"></td>
                         <td>${food.name}</td>
                         <td>${food.calories || 0} kcal</td>
                         <td>${food.proteins || 0} g</td>
@@ -119,6 +133,7 @@
                 showToast("Error al cargar el registro diario", "#f44336");
             });
     }
+
 
 
     // Añadir alimentos al registro diario en el backend
