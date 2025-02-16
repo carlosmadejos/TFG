@@ -40,8 +40,7 @@
     <div id="dailyLog"></div>
     <p id="calorieSummary"></p>
     <div>
-        <button onclick="saveDailyLogToDatabase()">Guardar Registro</button>
-        <button onclick="deleteDailyLogFromDatabase()">Empezar Nuevo Registro</button>
+        <button onclick="deleteDailyLogFromDatabase()">Guardar y Empezar Nuevo Registro</button>
     </div>
 
     <h2>Historial de Registros</h2>
@@ -233,18 +232,6 @@
         });
 
         resultsContainer.appendChild(table);
-    }
-
-    function saveDailyLogToDatabase() {
-        const calorieGoal = parseInt(document.getElementById('calorieGoal').value) || 2000;
-        axios.post('/api/daily-log/update-calorie-goal', { calorieGoal })
-            .then(() => {
-                showToast("Registro guardado exitosamente", "#4caf50");
-            })
-            .catch((error) => {
-                console.error("Error al guardar el registro:", error);
-                showToast("Error al guardar el registro", "#f44336");
-            });
     }
 
     async function deleteDailyLogFromDatabase() {
