@@ -11,6 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
+    <!-- Incluir SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 <!-- Botón para ir atrás -->
@@ -35,8 +38,8 @@
     </div>
 
     <h2>Registro Diario</h2>
-    <label for="calorieGoal">Objetivo calórico diario (kcal):</label>
-    <input type="number" id="calorieGoal" placeholder="2000">
+    <label for="calorieGoalInput">Objetivo calórico diario (kcal):</label>
+    <input type="number" id="calorieGoalInput" placeholder="2000">
     <div id="dailyLog"></div>
     <p id="calorieSummary"></p>
     <div>
@@ -251,16 +254,57 @@
 
     async function deleteDailyLogFromDatabase() {
         try {
-            await axios.put('/api/daily-log/close'); // Cierra el registro actual
-            await axios.post('/api/daily-log/new', { calorieGoal: 2000 }); // Crea uno nuevo
-            showToast("Nuevo registro iniciado", "#ff9800");
-            await loadDailyLogHistory(); // Asegurar que el historial se actualiza
+            const { value: newCalorieGoal } = await Swal.fire({
+                title: 'Nuevo Objetivo Calórico',
+                input: 'number',
+                inputLabel: 'Ingresa el nuevo objetivo calórico (kcal)',
+                inputPlaceholder: 'Ejemplo: 2000',
+                inputAttributes: {
+                    min: 1000,
+                    max: 5000,
+                    step: 50
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!newCalorieGoal) {
+                Swal.fire('Cancelado', 'No se creó un nuevo registro.', 'info');
+                return;
+            }
+
+            // Paso 1: Cerrar el registro actual
+            const closeResponse = await axios.put('/api/daily-log/close');
+            console.log("Cierre de registro:", closeResponse.data);
+
+            // Paso 2: Crear un nuevo registro
+            const newLogResponse = await axios.post('/api/daily-log/new', {
+                calorieGoal: newCalorieGoal
+            });
+            console.log("Nuevo registro creado:", newLogResponse.data);
+
+            showToast(`Nuevo registro creado con objetivo de ${newCalorieGoal} kcal`, "#4caf50");
+
+            // Paso 3: Recargar datos
+            await loadDailyLogHistory();
             await loadDailyLogFromDatabase();
+
         } catch (error) {
-            console.error("Error al iniciar un nuevo registro:", error);
-            showToast("Error al iniciar un nuevo registro", "#f44336");
+            // Mostrar detalles específicos del error
+            if (error.response) {
+                console.error("Respuesta del servidor:", error.response.data);
+                showToast(`Error: ${error.response.data.message || "No se pudo crear el nuevo registro"}`, "#f44336");
+            } else if (error.request) {
+                console.error("Sin respuesta del servidor:", error.request);
+                showToast("Sin respuesta del servidor", "#f44336");
+            } else {
+                console.error("Error al configurar la solicitud:", error.message);
+                showToast("Error desconocido", "#f44336");
+            }
         }
     }
+
 
     async function loadDailyLogHistory() {
         return axios.get(`/api/daily-log/history`)
@@ -313,14 +357,18 @@
         const logContainer = document.getElementById('dailyLog');
         logContainer.innerHTML = '';
 
-        // Actualizar el Resumen Nutricional
-        document.getElementById('calorieGoalDisplay').innerText = dailyLog.calorieGoal || 2000;
+        // Leer el valor del objetivo calórico desde el input
+        const calorieGoalInput = document.getElementById('calorieGoalInput');
+        const calorieGoal = calorieGoalInput && calorieGoalInput.value ? parseInt(calorieGoalInput.value) : dailyLog.calorieGoal;
+
+        // Actualizar el Resumen Nutricional con el objetivo ingresado
+        document.getElementById('calorieGoalDisplay').innerText = calorieGoal;
         document.getElementById('totalCalories').innerText = dailyLog.totalCalories || 0;
         document.getElementById('totalProteins').innerText = dailyLog.totalProteins || 0;
         document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
         document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
 
-        // Mostrar fecha de creación en el Resumen Nutricional
+        // Mostrar fecha de creación
         let createdAt = new Date(dailyLog.createdAt);
         let createdAtText = `Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
         logContainer.innerHTML += `<p>${createdAtText}</p>`;
@@ -330,6 +378,7 @@
             return;
         }
 
+        // Crear la tabla de alimentos
         let table = document.createElement('table');
         table.innerHTML = `
             <thead>
@@ -340,6 +389,7 @@
                     <th>Proteínas</th>
                     <th>Carbohidratos</th>
                     <th>Grasas</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -355,6 +405,7 @@
                 <td>${food.proteins || 0} g</td>
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
+                <td><button onclick="removeFromDailyLog(${food.id})">Eliminar</button></td>
             `;
             tbody.appendChild(row);
         });
@@ -362,7 +413,32 @@
         logContainer.appendChild(table);
     }
 
+    function updateCalorieGoal() {
+        const calorieGoalInput = document.getElementById('calorieGoalInput').value;
+        const calorieGoal = parseInt(calorieGoalInput);
 
+        if (!calorieGoal || isNaN(calorieGoal) || calorieGoal <= 0) {
+            showToast("Por favor, introduce un objetivo calórico válido.", "#ff9800");
+            return;
+        }
+
+        // Obtener el ID del DailyLog actualmente seleccionado
+        const selectedLogId = document.getElementById('logSelector').value;
+
+        // Enviar la solicitud al backend con el ID actual
+        axios.put('/api/daily-log/update-calorie-goal', {
+            id: selectedLogId,
+            calorieGoal: calorieGoal
+        })
+        .then(() => {
+            showToast("Objetivo calórico actualizado a " + calorieGoal + " kcal", "#4caf50");
+            loadDailyLogFromDatabase();
+        })
+        .catch((error) => {
+            console.error("Error al actualizar el objetivo calórico:", error);
+            showToast("Error al actualizar el objetivo calórico", "#f44336");
+        });
+    }
 
 
 

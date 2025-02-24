@@ -7,11 +7,13 @@ import com.example.login_app.repository.DailyLogRepository;
 import com.example.login_app.repository.FoodRepository;
 import com.example.login_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -134,27 +136,29 @@ public class DailyLogController {
     }
 
 
-    @PostMapping("/update-calorie-goal")
+    @PutMapping("/update-calorie-goal")
     public ResponseEntity<?> updateCalorieGoal(@RequestBody DailyLog updatedLog, Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        DailyLog dailyLog = dailyLogRepository.findByUser(user)
-                .orElseGet(() -> {
-                    DailyLog newLog = new DailyLog();
-                    newLog.setUser(user);
-                    newLog.setCalorieGoal(2000);
-                    return dailyLogRepository.save(newLog);
-                });
+        // Buscar el DailyLog específico por ID y Usuario
+        DailyLog dailyLog = dailyLogRepository.findByIdAndUser(updatedLog.getId(), user)
+                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
 
         dailyLog.setCalorieGoal(updatedLog.getCalorieGoal());
+        dailyLog.setUpdatedAt(LocalDateTime.now());
+
         dailyLogRepository.save(dailyLog);
 
         return ResponseEntity.ok("Objetivo calórico actualizado correctamente");
     }
 
+
+
+
     @PostMapping("/new")
-    public ResponseEntity<?> createNewDailyLog(Principal principal) {
+    public ResponseEntity<?> createNewDailyLog(@RequestBody Map<String, Object> requestBody,
+                                               Principal principal) {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -165,15 +169,31 @@ public class DailyLogController {
             return ResponseEntity.badRequest().body("Ya tienes un registro activo.");
         }
 
+        // Leer el calorieGoal desde el requestBody y convertirlo correctamente
+        int calorieGoal = 2000; // Valor por defecto
+        if (requestBody.get("calorieGoal") != null) {
+            try {
+                calorieGoal = Integer.parseInt(requestBody.get("calorieGoal").toString());
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body("El objetivo calórico debe ser un número válido.");
+            }
+        }
+
+        // Crear nuevo registro con el objetivo calórico proporcionado
         DailyLog newLog = new DailyLog();
         newLog.setUser(user);
-        newLog.setCalorieGoal(2000); // Valor predeterminado
+        newLog.setCalorieGoal(calorieGoal);
         newLog.setTotalCalories(0);
         newLog.setClosed(false); // Registro activo
         dailyLogRepository.save(newLog);
 
         return ResponseEntity.ok(newLog);
     }
+
+
+
+
+
 
 
 
