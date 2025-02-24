@@ -30,6 +30,16 @@ public class DailyLog {
     @Column(nullable = false)
     private int totalCalories = 0; // Calorías consumidas en el día
 
+    @Column(nullable = false)
+    private int totalProteins = 0;
+
+    @Column(nullable = false)
+    private int totalCarbs = 0;
+
+    @Column(nullable = false)
+    private int totalFats = 0;
+
+
 
     // Getters y Setters
     public Long getId() {
@@ -78,5 +88,15 @@ public class DailyLog {
     public void setTotalCalories(int totalCalories) {
         this.totalCalories = totalCalories;
     }
+
+    public int getTotalProteins() { return totalProteins; }
+    public void setTotalProteins(int totalProteins) { this.totalProteins = totalProteins; }
+
+    public int getTotalCarbs() { return totalCarbs; }
+    public void setTotalCarbs(int totalCarbs) { this.totalCarbs = totalCarbs; }
+
+    public int getTotalFats() { return totalFats; }
+    public void setTotalFats(int totalFats) { this.totalFats = totalFats; }
+
 
 }

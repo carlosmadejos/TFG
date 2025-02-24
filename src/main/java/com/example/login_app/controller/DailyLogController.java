@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -55,18 +56,21 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Intentar obtener un DailyLog activo o crear uno nuevo si no existe
+        // Obtener el DailyLog activo o crear uno nuevo
         DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user)
                 .orElseGet(() -> {
-                    System.out.println("No se encontró un DailyLog activo, creando uno nuevo...");
                     DailyLog newLog = new DailyLog();
                     newLog.setUser(user);
-                    newLog.setCalorieGoal(2000);
+                    newLog.setCalorieGoal(2000); // Valor por defecto
                     newLog.setTotalCalories(0);
+                    newLog.setTotalProteins(0);
+                    newLog.setTotalCarbs(0);
+                    newLog.setTotalFats(0);
                     newLog.setClosed(false);
-                    return dailyLogRepository.save(newLog); // Guardar el nuevo registro
+                    return dailyLogRepository.save(newLog);
                 });
 
+        // Crear y guardar el alimento
         Food food = new Food();
         food.setName(foodRequest.getName());
         food.setCalories(foodRequest.getCalories());
@@ -74,15 +78,21 @@ public class DailyLogController {
         food.setCarbs(foodRequest.getCarbs());
         food.setFats(foodRequest.getFats());
         food.setImageUrl(foodRequest.getImageUrl());
-
         food.setDailyLog(dailyLog);
+
         foodRepository.save(food);
 
+        // Actualizar los valores totales en el DailyLog
         dailyLog.setTotalCalories(dailyLog.getTotalCalories() + food.getCalories());
+        dailyLog.setTotalProteins(dailyLog.getTotalProteins() + food.getProteins());
+        dailyLog.setTotalCarbs(dailyLog.getTotalCarbs() + food.getCarbs());
+        dailyLog.setTotalFats(dailyLog.getTotalFats() + food.getFats());
+
         dailyLogRepository.save(dailyLog);
 
-        return ResponseEntity.ok("Alimento agregado exitosamente");
+        return ResponseEntity.ok("Alimento agregado y nutrientes actualizados.");
     }
+
 
 
 
@@ -217,11 +227,15 @@ public class DailyLogController {
         List<Food> foods = foodRepository.findByDailyLog(dailyLog);
         dailyLog.setFoods(foods);
 
-        return ResponseEntity.ok(dailyLog);
+        return ResponseEntity.ok(Map.of(
+                "id", dailyLog.getId(),
+                "calorieGoal", dailyLog.getCalorieGoal(),
+                "totalCalories", dailyLog.getTotalCalories(),
+                "totalProteins", dailyLog.getTotalProteins(),
+                "totalCarbs", dailyLog.getTotalCarbs(),
+                "totalFats", dailyLog.getTotalFats(),
+                "foods", foods
+        ));
     }
-
-
-
-
 
 }

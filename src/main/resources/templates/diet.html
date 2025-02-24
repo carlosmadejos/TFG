@@ -310,7 +310,14 @@
         const logContainer = document.getElementById('dailyLog');
         logContainer.innerHTML = '';
 
-        if (!dailyLog || !dailyLog.foods || dailyLog.foods.length === 0) {
+        // Actualizar el Resumen Nutricional
+        document.getElementById('calorieGoalDisplay').innerText = dailyLog.calorieGoal || 2000;
+        document.getElementById('totalCalories').innerText = dailyLog.totalCalories || 0;
+        document.getElementById('totalProteins').innerText = dailyLog.totalProteins || 0;
+        document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
+        document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
+
+        if (!dailyLog.foods || dailyLog.foods.length === 0) {
             logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
             return;
         }
@@ -346,6 +353,7 @@
 
         logContainer.appendChild(table);
     }
+
 
 
 
