@@ -30,4 +30,8 @@ public interface DailyLogRepository extends JpaRepository<DailyLog, Long> {
 
     Optional<DailyLog> findFirstByUserAndClosedFalseOrderByIdDesc(User user);
 
+    @Query("SELECT d FROM DailyLog d WHERE d.user = :user ORDER BY d.createdAt DESC")
+    List<DailyLog> findByUserOrderByCreatedAtDesc(@Param("user") User user);
+
+
 }

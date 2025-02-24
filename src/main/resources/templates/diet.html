@@ -273,10 +273,13 @@
                     return;
                 }
 
-                response.data.forEach((log, index) => {
+                response.data.forEach((log) => {
+                    let createdAt = new Date(log.createdAt);
+                    let formattedCreatedAt = `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+
                     let option = document.createElement('option');
                     option.value = log.id;
-                    option.textContent = `Registro ${log.id} - ${log.calorieGoal} kcal`;
+                    option.textContent = `Registro ${log.id} - ${log.totalCalories} kcal - Creado: ${formattedCreatedAt}`;
                     logSelector.appendChild(option);
                 });
 
@@ -317,8 +320,13 @@
         document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
         document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
 
+        // Mostrar fecha de creación en el Resumen Nutricional
+        let createdAt = new Date(dailyLog.createdAt);
+        let createdAtText = `Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+        logContainer.innerHTML += `<p>${createdAtText}</p>`;
+
         if (!dailyLog.foods || dailyLog.foods.length === 0) {
-            logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
+            logContainer.innerHTML += '<p>No se han añadido alimentos.</p>';
             return;
         }
 

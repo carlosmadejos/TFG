@@ -182,7 +182,8 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<DailyLog> logs = dailyLogRepository.findByUserAndClosedTrue(user);
+        //List<DailyLog> logs = dailyLogRepository.findByUserAndClosedTrue(user);
+        List<DailyLog> logs = dailyLogRepository.findByUserOrderByCreatedAtDesc(user);
         return ResponseEntity.ok(logs);
     }
 
