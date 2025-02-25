@@ -22,6 +22,9 @@ public class Food {
     @JsonBackReference
     private DailyLog dailyLog;
 
+    @Column(nullable = false)
+    private int gramsConsumed = 100; // Por defecto, 100g
+
     // Constructor vacío
     public Food() {}
 
@@ -88,5 +91,13 @@ public class Food {
 
     public void setDailyLog(DailyLog dailyLog) {
         this.dailyLog = dailyLog;
+    }
+
+    public int getGramsConsumed() {
+        return gramsConsumed;
+    }
+
+    public void setGramsConsumed(int gramsConsumed) {
+        this.gramsConsumed = gramsConsumed;
     }
 }

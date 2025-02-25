@@ -38,8 +38,6 @@
     </div>
 
     <h2>Registro Diario</h2>
-    <label for="calorieGoalInput">Objetivo calórico diario (kcal):</label>
-    <input type="number" id="calorieGoalInput" placeholder="2000">
     <div id="dailyLog"></div>
     <p id="calorieSummary"></p>
     <div>
@@ -140,35 +138,56 @@
 
 
     // Añadir alimentos al registro diario en el backend
-    async function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl) {
+    async function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl, index) {
         try {
-            // Obtener el ID del registro activo
+            // Obtener los gramos especificados por el usuario
+            const gramsInput = document.getElementById(`gramsInput${index}`);
+            const grams = parseFloat(gramsInput.value) || 100; // Por defecto, 100g si está vacío
+
+            // Ajustar los valores nutricionales en función de los gramos
+            const factor = grams / 100;
+
+            // Convertir a números y redondear a 2 decimales
+            const adjustedCalories = Number((calories * factor).toFixed(2));
+            const adjustedProteins = Number((proteins * factor).toFixed(2));
+            const adjustedCarbs = Number((carbs * factor).toFixed(2));
+            const adjustedFats = Number((fats * factor).toFixed(2));
+
+            // Obtener el registro activo
             const response = await axios.get(`/api/daily-log`);
             let dailyLogId = response.data.id;
 
-            // Si no hay un dailyLogId válido, intenta crearlo
+            // Si no hay un registro activo, crear uno nuevo
             if (!dailyLogId) {
-                console.warn("No se encontró un DailyLog activo, creando uno nuevo...");
                 const newLogResponse = await axios.post(`/api/daily-log/new`);
-                dailyLogId = newLogResponse.data.id; // Asignar el ID del nuevo registro
+                dailyLogId = newLogResponse.data.id;
             }
 
-            // Crear el objeto de alimento
-            const food = { name, calories, proteins, carbs, fats, imageUrl, dailyLogId };
+            // Crear el objeto de alimento con los datos ajustados
+            const food = {
+                name: name,
+                calories: adjustedCalories,
+                proteins: adjustedProteins,
+                carbs: adjustedCarbs,
+                fats: adjustedFats,
+                grams: grams,
+                imageUrl: imageUrl,
+                dailyLogId: dailyLogId
+            };
 
             // Enviar el alimento al backend
             await axios.post('/api/daily-log/add-food', food);
 
-            // Mostrar mensaje de éxito
-            showToast(`Añadido: ${name} (${calories} kcal)`, "#4caf50");
-
-            // Actualizar el registro en la interfaz
+            showToast(`Añadido: ${name} (${adjustedCalories} kcal)`, "#4caf50");
             await loadDailyLogFromDatabase();
+
         } catch (error) {
             console.error("Error al añadir alimento:", error);
             showToast("Error al añadir el alimento", "#f44336");
         }
     }
+
+
 
 
 
@@ -221,10 +240,11 @@
                 <tr>
                     <th>Imagen</th>
                     <th>Descripción</th>
-                    <th>Calorías</th>
+                    <th>Calorías (100g)</th>
                     <th>Proteínas</th>
                     <th>Carbohidratos</th>
                     <th>Grasas</th>
+                    <th>Gramos Consumidos</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -233,7 +253,7 @@
 
         const tbody = table.querySelector('tbody');
 
-        results.forEach((food) => {
+        results.forEach((food, index) => {
             if (!food.name) return;
 
             const row = document.createElement('tr');
@@ -244,13 +264,15 @@
                 <td>${food.proteins || 0} g</td>
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
-                <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}')">Añadir</button></td>
+                <td><input type="number" id="gramsInput${index}" placeholder="100" value="100" min="1" style="width:60px;"></td>
+                <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}', ${index})">Añadir</button></td>
             `;
             tbody.appendChild(row);
         });
 
         resultsContainer.appendChild(table);
     }
+
 
     async function deleteDailyLogFromDatabase() {
         try {

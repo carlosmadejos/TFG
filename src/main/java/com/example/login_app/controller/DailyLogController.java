@@ -50,8 +50,6 @@ public class DailyLogController {
         return ResponseEntity.ok(dailyLog.get());
     }
 
-
-
     // Agregar un alimento al registro diario
     @PostMapping("/add-food")
     public ResponseEntity<?> addFoodToDailyLog(@RequestBody Food foodRequest, Principal principal) {
@@ -72,28 +70,41 @@ public class DailyLogController {
                     return dailyLogRepository.save(newLog);
                 });
 
+        // Obtener los gramos consumidos
+        int gramsConsumed = foodRequest.getGramsConsumed() > 0 ? foodRequest.getGramsConsumed() : 100;
+        double factor = gramsConsumed / 100.0;
+
+        // Ajustar los valores nutricionales en función de los gramos consumidos
+        int adjustedCalories = (int) (foodRequest.getCalories());
+        int adjustedProteins = (int) (foodRequest.getProteins());
+        int adjustedCarbs = (int) (foodRequest.getCarbs());
+        int adjustedFats = (int) (foodRequest.getFats());
+
         // Crear y guardar el alimento
         Food food = new Food();
         food.setName(foodRequest.getName());
-        food.setCalories(foodRequest.getCalories());
-        food.setProteins(foodRequest.getProteins());
-        food.setCarbs(foodRequest.getCarbs());
-        food.setFats(foodRequest.getFats());
+        food.setCalories(adjustedCalories);
+        food.setProteins(adjustedProteins);
+        food.setCarbs(adjustedCarbs);
+        food.setFats(adjustedFats);
+        food.setGramsConsumed(gramsConsumed);
         food.setImageUrl(foodRequest.getImageUrl());
         food.setDailyLog(dailyLog);
 
         foodRepository.save(food);
 
         // Actualizar los valores totales en el DailyLog
-        dailyLog.setTotalCalories(dailyLog.getTotalCalories() + food.getCalories());
-        dailyLog.setTotalProteins(dailyLog.getTotalProteins() + food.getProteins());
-        dailyLog.setTotalCarbs(dailyLog.getTotalCarbs() + food.getCarbs());
-        dailyLog.setTotalFats(dailyLog.getTotalFats() + food.getFats());
+        dailyLog.setTotalCalories(dailyLog.getTotalCalories() + adjustedCalories);
+        dailyLog.setTotalProteins(dailyLog.getTotalProteins() + adjustedProteins);
+        dailyLog.setTotalCarbs(dailyLog.getTotalCarbs() + adjustedCarbs);
+        dailyLog.setTotalFats(dailyLog.getTotalFats() + adjustedFats);
 
         dailyLogRepository.save(dailyLog);
 
         return ResponseEntity.ok("Alimento agregado y nutrientes actualizados.");
     }
+
+
 
 
 
@@ -189,12 +200,6 @@ public class DailyLogController {
 
         return ResponseEntity.ok(newLog);
     }
-
-
-
-
-
-
 
 
     @GetMapping("/history")
