@@ -1,6 +1,5 @@
 package com.example.login_app.controller;
 
-import com.example.login_app.model.Progress;
 import com.example.login_app.model.User;
 import com.example.login_app.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -11,11 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.BindingResult;
-import java.security.Principal;
-import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -59,6 +56,12 @@ public class LoginController {
         // Verificar si el email ya está en uso
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             model.addAttribute("error", "El email ya está en uso");
+            return "register";
+        }
+
+        // Verificar si la fecha de nacimiento es válida
+        if (user.getBirthdate() == null || user.getBirthdate().isAfter(LocalDate.now())) {
+            model.addAttribute("error", "La fecha de nacimiento debe ser válida y en el pasado");
             return "register";
         }
 

@@ -2,6 +2,8 @@ package com.example.login_app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table(name = "users")
@@ -25,9 +27,8 @@ public class User {
     private String password = "";
 
     @Column(nullable = false)
-    @Min(value = 18, message = "La edad mínima es 18 años")
-    @Max(value = 99, message = "La edad máxima es 99 años")
-    private Integer age = 18;
+    @Past(message = "La fecha de nacimiento debe ser en el pasado")
+    private LocalDate birthdate;
 
     @Column(nullable = false)
     @Min(value = 30, message = "El peso mínimo es 30 kg")
@@ -75,12 +76,17 @@ public class User {
         this.email = email;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getBirthdate() {
+        return birthdate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public int getAge() {
+        if (birthdate == null) return 0;
+        return Period.between(birthdate, LocalDate.now()).getYears();
     }
 
     public double getWeight() {

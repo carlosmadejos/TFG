@@ -27,9 +27,9 @@
   <input type="password" th:field="*{password}" id="password" required>
   <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
 
-  <label for="age">Edad:</label>
-  <input type="number" th:field="*{age}" id="age" min="18" max="99" required>
-  <div th:if="${#fields.hasErrors('age')}" class="error" th:errors="*{age}"></div>
+  <label for="birthdate">Fecha de Nacimiento:</label>
+  <input type="date" th:field="*{birthdate}" id="birthdate" required>
+  <div th:if="${#fields.hasErrors('birthdate')}" class="error" th:errors="*{birthdate}"></div>
 
   <label for="weight">Peso (kg):</label>
   <input type="number" th:field="*{weight}" id="weight" step="0.1" min="30" max="300" required>
@@ -43,15 +43,9 @@
 </form>
 <script>
   document.getElementById("registerForm").addEventListener("submit", function(event) {
-      let age = parseInt(document.getElementById("age").value);
       let weight = parseFloat(document.getElementById("weight").value);
       let height = parseInt(document.getElementById("height").value);
 
-      if (age < 18 || age > 99) {
-          alert("La edad debe estar entre 18 y 99 años.");
-          event.preventDefault();
-          return;
-      }
 
       if (weight < 30 || weight > 300) {
           alert("El peso debe estar entre 30 y 300 kg.");

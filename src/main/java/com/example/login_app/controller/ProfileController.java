@@ -72,7 +72,9 @@ public class ProfileController {
             model.addAttribute("progressListJson", "[]");
         }
 
+        model.addAttribute("calculatedAge", user.getAge());
         model.addAttribute("user", user);
+
         return "profile";
     }
 
@@ -88,7 +90,6 @@ public class ProfileController {
         // Actualizar el usuario con los nuevos valores
         currentUser.setWeight(updatedUser.getWeight());
         currentUser.setHeight(updatedUser.getHeight());
-        currentUser.setAge(updatedUser.getAge());
         userRepository.save(currentUser);
 
         // Guardar el progreso en la base de datos
