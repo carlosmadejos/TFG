@@ -67,6 +67,12 @@
     </div>
     <div id="dietAnalysis" style="margin-top: 20px;"></div>
 
+    <!-- Gráfica de distribución de macronutrientes -->
+    <h2>Distribución de Macronutrientes</h2>
+    <div style="width: 50%; margin: auto;">
+        <canvas id="macronutrientChart"></canvas>
+    </div>
+
 </div>
 <script>
     // Obtener el token CSRF desde el meta tag
@@ -483,8 +489,8 @@
 <!-- Incluir Chart.js -->
 <script>
     let dietProgressChart;
+    let macronutrientChart;
 
-    // Función para cargar la gráfica de progreso
     function loadDietProgressChart() {
         axios.get('/api/daily-log/history')
             .then(response => {
@@ -532,30 +538,55 @@
             });
     }
 
+    function loadMacronutrientChart() {
+        axios.get('/api/daily-log/history')
+            .then(response => {
+                const logs = response.data;
 
-    // Función para mostrar el análisis de la dieta
-    function analyzeDiet(calorieGoal, totalCalories, totalProteins, totalCarbs, totalFats) {
-        const analysisContainer = document.getElementById('dietAnalysis');
-        let analysis = '';
+                const totalProteins = logs.reduce((sum, log) => sum + (log.totalProteins || 0), 0);
+                const totalCarbs = logs.reduce((sum, log) => sum + (log.totalCarbs || 0), 0);
+                const totalFats = logs.reduce((sum, log) => sum + (log.totalFats || 0), 0);
 
-        if (totalCalories < calorieGoal) {
-            analysis += `<p>⚡ Estás por debajo del objetivo calórico.</p>`;
-        } else if (totalCalories > calorieGoal) {
-            analysis += `<p>⚠️ Has superado tu objetivo calórico.</p>`;
-        } else {
-            analysis += `<p>✅ Has alcanzado tu objetivo calórico. ¡Buen trabajo!</p>`;
-        }
+                const ctx = document.getElementById('macronutrientChart').getContext('2d');
+                if (macronutrientChart) macronutrientChart.destroy();
 
-        if (totalProteins < 50) analysis += `<p>💪 Añade más proteínas.</p>`;
-        if (totalCarbs > 250) analysis += `<p>🥖 Reduzca carbohidratos.</p>`;
-        if (totalFats > 70) analysis += `<p>🥑 Reduce las grasas.</p>`;
-
-        analysisContainer.innerHTML = analysis;
+                macronutrientChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Proteínas', 'Carbohidratos', 'Grasas'],
+                        datasets: [{
+                            data: [totalProteins, totalCarbs, totalFats],
+                            backgroundColor: ['#42a5f5', '#ffca28', '#ef5350']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const value = context.raw;
+                                        const percentage = ((value / total) * 100).toFixed(2);
+                                        return `${context.label}: ${value}g (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar distribución de macronutrientes:", error);
+            });
     }
 
-    // Cargar el gráfico al cargar la página
     document.addEventListener('DOMContentLoaded', () => {
         loadDietProgressChart();
+        loadMacronutrientChart();
     });
 </script>
 </body>
