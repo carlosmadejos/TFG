@@ -14,6 +14,10 @@
     <!-- Incluir SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Incluir Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 </head>
 <body>
 <!-- Botón para ir atrás -->
@@ -56,6 +60,12 @@
     <p><b>Carbohidratos:</b> <span id="totalCarbs">0</span> g</p>
     <p><b>Grasas:</b> <span id="totalFats">0</span> g</p>
 
+    <!-- Gráfica de seguimiento de la dieta -->
+    <h2>Seguimiento de la Dieta</h2>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="dietProgressChart"></canvas>
+    </div>
+    <div id="dietAnalysis" style="margin-top: 20px;"></div>
 
 </div>
 <script>
@@ -462,10 +472,6 @@
         });
     }
 
-
-
-
-
     // Cargar el registro cuando se inicia la página
     document.addEventListener('DOMContentLoaded', () => {
         loadDailyLogFromDatabase();
@@ -474,5 +480,83 @@
 
 </script>
 
+<!-- Incluir Chart.js -->
+<script>
+    let dietProgressChart;
+
+    // Función para cargar la gráfica de progreso
+    function loadDietProgressChart() {
+        axios.get('/api/daily-log/history')
+            .then(response => {
+                const logs = response.data;
+
+                const labels = logs.map(log => new Date(log.createdAt).toLocaleDateString());
+                const totalCalories = logs.map(log => log.totalCalories);
+                const calorieGoals = logs.map(log => log.calorieGoal);
+
+                const ctx = document.getElementById('dietProgressChart').getContext('2d');
+                if (dietProgressChart) dietProgressChart.destroy();
+
+                dietProgressChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Calorías Consumidas',
+                                data: totalCalories,
+                                borderColor: '#4caf50',
+                                fill: false
+                            },
+                            {
+                                label: 'Objetivo Calórico',
+                                data: calorieGoals,
+                                borderColor: '#f44336',
+                                borderDash: [5, 5],
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar datos de la dieta:", error);
+            });
+    }
+
+
+    // Función para mostrar el análisis de la dieta
+    function analyzeDiet(calorieGoal, totalCalories, totalProteins, totalCarbs, totalFats) {
+        const analysisContainer = document.getElementById('dietAnalysis');
+        let analysis = '';
+
+        if (totalCalories < calorieGoal) {
+            analysis += `<p>⚡ Estás por debajo del objetivo calórico.</p>`;
+        } else if (totalCalories > calorieGoal) {
+            analysis += `<p>⚠️ Has superado tu objetivo calórico.</p>`;
+        } else {
+            analysis += `<p>✅ Has alcanzado tu objetivo calórico. ¡Buen trabajo!</p>`;
+        }
+
+        if (totalProteins < 50) analysis += `<p>💪 Añade más proteínas.</p>`;
+        if (totalCarbs > 250) analysis += `<p>🥖 Reduzca carbohidratos.</p>`;
+        if (totalFats > 70) analysis += `<p>🥑 Reduce las grasas.</p>`;
+
+        analysisContainer.innerHTML = analysis;
+    }
+
+    // Cargar el gráfico al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDietProgressChart();
+    });
+</script>
 </body>
 </html>
