@@ -345,7 +345,7 @@
 
                     let option = document.createElement('option');
                     option.value = log.id;
-                    option.textContent = `Registro ${log.id} - ${log.totalCalories} kcal - Creado: ${formattedCreatedAt}`;
+                    option.textContent = `${log.totalCalories} kcal - Creado: ${formattedCreatedAt}`;
                     logSelector.appendChild(option);
                 });
 
