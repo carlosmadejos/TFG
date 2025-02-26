@@ -45,8 +45,30 @@ public class TrainingPlanController {
         return "training-plan-details";
     }
 
+    // ✅ Rutas solo para ADMIN
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @GetMapping("/admin/training-plans")
+    public String manageTrainingPlans(Model model) {
+        model.addAttribute("trainingPlans", trainingPlanService.getAllTrainingPlans());
+        return "admin-training-plans";
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin/training-plans/create")
+    public String showCreateTrainingPlanForm(Model model) {
+        model.addAttribute("trainingPlan", new TrainingPlan());
+        return "create-training-plan";
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/admin/training-plans/create")
+    public String createTrainingPlan(@ModelAttribute TrainingPlan trainingPlan) {
+        trainingPlanService.saveTrainingPlan(trainingPlan);
+        return "redirect:/admin/training-plans";
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/admin/training-plans/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteTrainingPlan(@PathVariable Long id) {
         boolean deleted = trainingPlanService.deleteTrainingPlan(id);

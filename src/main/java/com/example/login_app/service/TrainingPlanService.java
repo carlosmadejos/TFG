@@ -20,6 +20,10 @@ public class TrainingPlanService {
         return trainingPlanRepository.findAll();
     }
 
+    public void saveTrainingPlan(TrainingPlan trainingPlan) {
+        trainingPlanRepository.save(trainingPlan);
+    }
+
     public boolean deleteTrainingPlan(Long id) {
         Optional<TrainingPlan> plan = trainingPlanRepository.findById(id);
         if (plan.isPresent()) {

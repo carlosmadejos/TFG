@@ -78,9 +78,4 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/training-plans")
-    public String manageTrainingPlans(Model model) {
-        model.addAttribute("trainingPlans", trainingPlanRepository.findAll());
-        return "admin-training-plans";  // Carga la vista exclusiva para admins
-    }
 }

@@ -54,7 +54,7 @@
                     confirmButtonText: "Sí, eliminar"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`/training-plans/delete/${planId}`, {
+                        fetch(`/admin/training-plans/delete/${planId}`, {
                             method: "DELETE"
                         })
                         .then(response => {
