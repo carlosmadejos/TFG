@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Administración de Planes de Entrenamiento</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <h2>Administrar Planes de Entrenamiento</h2>
+
+    <!-- Botón para crear un nuevo plan -->
+    <a href="/admin/training-plans/create" class="button">Crear Nuevo Plan</a>
+
+    <h3>Lista de Planes Existentes</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Nivel</th>
+            <th>Duración (semanas)</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="plan : ${trainingPlans}">
+            <td th:text="${plan.name}"></td>
+            <td th:text="${plan.level}"></td>
+            <td th:text="${plan.duration}"></td>
+            <td>
+                <a th:href="@{/training-plans/{id}(id=${plan.id})}" class="button">Ver Detalles</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/admin/dashboard" class="back-button">Volver al Panel de Administración</a>
+</div>
+</body>
+</html>

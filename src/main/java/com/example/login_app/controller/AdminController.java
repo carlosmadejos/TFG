@@ -5,6 +5,7 @@ import com.example.login_app.repository.UserRepository;
 import com.example.login_app.repository.ProgressRepository;
 import com.example.login_app.repository.ExerciseRepository;
 import com.example.login_app.repository.DailyLogRepository;
+import com.example.login_app.repository.TrainingPlanRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,13 +25,15 @@ public class AdminController {
     private final ProgressRepository progressRepository;
     private final ExerciseRepository exerciseRepository;
     private final DailyLogRepository dailyLogRepository;
+    private final TrainingPlanRepository trainingPlanRepository;
 
 
-    public AdminController(UserRepository userRepository, ProgressRepository progressRepository, ExerciseRepository exerciseRepository, DailyLogRepository dailyLogRepository) {
+    public AdminController(UserRepository userRepository, ProgressRepository progressRepository, ExerciseRepository exerciseRepository, DailyLogRepository dailyLogRepository, TrainingPlanRepository trainingPlanRepository) {
         this.userRepository = userRepository;
         this.progressRepository = progressRepository;
         this.exerciseRepository = exerciseRepository;
         this.dailyLogRepository = dailyLogRepository;
+        this.trainingPlanRepository = trainingPlanRepository;
     }
 
     @GetMapping("/dashboard")
@@ -73,5 +76,11 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al eliminar el usuario: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/training-plans")
+    public String manageTrainingPlans(Model model) {
+        model.addAttribute("trainingPlans", trainingPlanRepository.findAll());
+        return "admin-training-plans";  // Carga la vista exclusiva para admins
     }
 }

@@ -14,6 +14,10 @@
     </form>
   </div>
   <h1>Bienvenido, <span th:text="${user.username}">Admin</span>!</h1>
+  <!-- Botón para gestionar planes de entrenamiento -->
+  <div>
+    <a href="/admin/training-plans" class="button">Gestionar Planes de Entrenamiento</a>
+  </div>
 
   <h2>Lista de usuarios</h2>
   <table class="admin-table">
