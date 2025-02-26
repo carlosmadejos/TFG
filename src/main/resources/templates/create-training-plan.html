@@ -12,7 +12,7 @@
     <input type="text" id="name" th:field="*{name}" required />
 
     <label for="description">Descripción:</label>
-    <textarea id="description" th:field="*{description}" required></textarea>
+    <textarea id="description" class="description" th:field="*{description}" rows="4" required></textarea>
 
     <label for="level">Nivel:</label>
     <select id="level" th:field="*{level}">
@@ -25,7 +25,7 @@
     <input type="number" id="duration" th:field="*{duration}" min="1" required />
 
     <label for="details">Detalles del Plan:</label>
-    <textarea id="details" th:field="*{details}" required></textarea>
+    <textarea id="details" class="details-box" th:field="*{details}" rows="10" cols="80" required></textarea>
 
     <button type="submit">Guardar Plan</button>
   </form>

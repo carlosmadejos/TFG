@@ -20,7 +20,7 @@
 <div class="training-container" th:if="${not trainingPlans.isEmpty()}">
   <div class="training-card" th:each="plan : ${trainingPlans}">
     <h3 th:text="${plan.name}"></h3>
-    <p th:text="${plan.description}"></p>
+    <p class="description" th:text="${plan.description}"></p>
     <p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
     <p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
     <a th:href="@{'/training-plans/' + ${plan.id}}" class="button">Ver Detalles</a>
