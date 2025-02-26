@@ -4,6 +4,8 @@
     <title>Administración de Planes de Entrenamiento</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 <body>
 <div class="container">
@@ -54,8 +56,16 @@
                     confirmButtonText: "Sí, eliminar"
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Obtener el token CSRF desde las etiquetas meta
+                        let csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
+                        let csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
+
                         fetch(`/admin/training-plans/delete/${planId}`, {
-                            method: "DELETE"
+                            method: "DELETE",
+                            headers: {
+                                [csrfHeader]: csrfToken,  // Agregar el token CSRF en la cabecera
+                                "Content-Type": "application/json"
+                            }
                         })
                         .then(response => {
                             if (!response.ok) throw new Error("Error al eliminar el plan");
@@ -74,6 +84,7 @@
         });
     });
 </script>
+
 
 </body>
 </html>

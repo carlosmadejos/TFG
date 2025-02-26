@@ -7,7 +7,7 @@
 <body>
 <div class="container">
   <h2>Crear Nuevo Plan de Entrenamiento</h2>
-  <form th:action="@{/training-plans/create}" th:object="${trainingPlan}" method="post">
+  <form th:action="@{/admin/training-plans/create}" th:object="${trainingPlan}" method="post">
     <label for="name">Nombre del Plan:</label>
     <input type="text" id="name" th:field="*{name}" required />
 
