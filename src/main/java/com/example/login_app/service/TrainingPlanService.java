@@ -5,6 +5,7 @@ import com.example.login_app.repository.TrainingPlanRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrainingPlanService {
@@ -17,6 +18,15 @@ public class TrainingPlanService {
 
     public List<TrainingPlan> getAllTrainingPlans() {
         return trainingPlanRepository.findAll();
+    }
+
+    public boolean deleteTrainingPlan(Long id) {
+        Optional<TrainingPlan> plan = trainingPlanRepository.findById(id);
+        if (plan.isPresent()) {
+            trainingPlanRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public TrainingPlan getTrainingPlanById(Long id) {

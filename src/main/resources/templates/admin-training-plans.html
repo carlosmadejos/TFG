@@ -3,6 +3,7 @@
 <head>
     <title>Administración de Planes de Entrenamiento</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="container">
@@ -28,6 +29,7 @@
             <td th:text="${plan.duration}"></td>
             <td>
                 <a th:href="@{/training-plans/{id}(id=${plan.id})}" class="button">Ver Detalles</a>
+                <button class="delete-button" th:data-id="${plan.id}">Eliminar</button>
             </td>
         </tr>
         </tbody>
@@ -35,5 +37,43 @@
 
     <a href="/admin/dashboard" class="back-button">Volver al Panel de Administración</a>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".delete-button").forEach(button => {
+            button.addEventListener("click", function() {
+                let planId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Sí, eliminar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/training-plans/delete/${planId}`, {
+                            method: "DELETE"
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error("Error al eliminar el plan");
+                            return response.text();
+                        })
+                        .then(() => {
+                            Swal.fire("Eliminado!", "El plan ha sido eliminado.", "success")
+                                .then(() => location.reload());
+                        })
+                        .catch(() => {
+                            Swal.fire("Error", "No se pudo eliminar el plan.", "error");
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
