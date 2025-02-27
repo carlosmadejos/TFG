@@ -42,26 +42,36 @@ public class FoodDataService {
         List<Map<String, Object>> partialMatches = new ArrayList<>();
 
         try {
-            JSONArray products = json.getJSONArray("products");
-
-            if (products.isEmpty()) {
+            JSONArray products = json.optJSONArray("products");
+            if (products == null || products.isEmpty()) {
                 return List.of(Map.of("error", "No se encontraron datos nutricionales para este alimento."));
             }
 
             for (int i = 0; i < products.length(); i++) {
                 JSONObject product = products.getJSONObject(i);
-                String name = product.optString("product_name", "");
+                String name = product.optString("product_name", "").trim();
                 String imageUrl = product.optString("image_url", "");
 
                 JSONObject nutrients = product.optJSONObject("nutriments");
+                if (name.isEmpty() || nutrients == null) continue; // Filtrar productos sin nombre o sin nutrientes
+
+                double calories = nutrients.optDouble("energy-kcal_100g", 0);
+                double proteins = nutrients.optDouble("proteins_100g", 0);
+                double carbs = nutrients.optDouble("carbohydrates_100g", 0);
+                double fats = nutrients.optDouble("fat_100g", 0);
+
+                // Filtrar alimentos sin calorías ni macronutrientes
+                if (calories == 0 && proteins == 0 && carbs == 0 && fats == 0) continue;
+
                 Map<String, Object> result = new HashMap<>();
                 result.put("name", name);
                 result.put("image_url", imageUrl);
-                result.put("calories", nutrients != null ? nutrients.optDouble("energy-kcal_100g", 0) : 0);
-                result.put("proteins", nutrients != null ? nutrients.optDouble("proteins_100g", 0) : 0);
-                result.put("carbs", nutrients != null ? nutrients.optDouble("carbohydrates_100g", 0) : 0);
-                result.put("fats", nutrients != null ? nutrients.optDouble("fat_100g", 0) : 0);
+                result.put("calories", calories);
+                result.put("proteins", proteins);
+                result.put("carbs", carbs);
+                result.put("fats", fats);
 
+                // Priorizar coincidencias exactas y parciales
                 if (name.equalsIgnoreCase(query)) {
                     exactMatches.add(result);
                 } else {
@@ -73,7 +83,8 @@ public class FoodDataService {
             return List.of(Map.of("error", "Error procesando la respuesta de Open Food Facts."));
         }
 
-        exactMatches.addAll(partialMatches); // Prioriza coincidencias exactas
+        // Priorizar coincidencias exactas primero y luego las parciales
+        exactMatches.addAll(partialMatches);
         return exactMatches;
     }
 }
