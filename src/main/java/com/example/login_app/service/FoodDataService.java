@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class FoodDataService {
 
     private static final String OPEN_FOOD_FACTS_API_URL = "https://world.openfoodfacts.org/cgi/search.pl?search_terms=%s&json=1";
 
+    @Cacheable(value = "foodSearchCache", key = "#query", unless = "#result == null || #result.isEmpty()")
     public List<Map<String, Object>> searchFoods(String query) {
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format(OPEN_FOOD_FACTS_API_URL, query);
