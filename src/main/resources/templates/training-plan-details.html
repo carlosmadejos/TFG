@@ -20,7 +20,8 @@
     <pre class="details-box" th:utext="${plan.details}"></pre>
   </div>
 
-  <a href="/training-plans" class="return-button">Volver</a>
+  <a th:href="${#authorization.expression('hasAuthority(''ADMIN'')') ? '/admin/training-plans' : '/training-plans'}"
+     class="return-button">Volver</a>
 </div>
 
 </body>
