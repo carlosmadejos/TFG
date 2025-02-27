@@ -5,31 +5,50 @@
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<div class="container">
+
+<div class="create-plan-container">
   <h2>Crear Nuevo Plan de Entrenamiento</h2>
+
   <form th:action="@{/admin/training-plans/create}" th:object="${trainingPlan}" method="post">
-    <label for="name">Nombre del Plan:</label>
-    <input type="text" id="name" th:field="*{name}" required />
 
-    <label for="description">Descripción:</label>
-    <textarea id="description" class="description" th:field="*{description}" rows="4" required></textarea>
+    <div class="create-plan-group">
+      <label for="name" class="create-plan-label">Nombre del Plan:</label>
+      <input type="text" id="name" th:field="*{name}" class="create-plan-input" required />
+    </div>
 
-    <label for="level">Nivel:</label>
-    <select id="level" th:field="*{level}">
-      <option value="Principiante">Principiante</option>
-      <option value="Intermedio">Intermedio</option>
-      <option value="Avanzado">Avanzado</option>
-    </select>
+    <div class="create-plan-group">
+      <label for="description" class="create-plan-label">Descripción:</label>
+      <textarea id="description" class="create-plan-textarea create-plan-description" th:field="*{description}" required></textarea>
+    </div>
 
-    <label for="duration">Duración (semanas):</label>
-    <input type="number" id="duration" th:field="*{duration}" min="1" required />
+    <div class="create-plan-row">
+      <div class="create-plan-group">
+        <label for="level" class="create-plan-label">Nivel:</label>
+        <select id="level" th:field="*{level}" class="create-plan-select">
+          <option value="Principiante">Principiante</option>
+          <option value="Intermedio">Intermedio</option>
+          <option value="Avanzado">Avanzado</option>
+        </select>
+      </div>
 
-    <label for="details">Detalles del Plan:</label>
-    <textarea id="details" class="details-box" th:field="*{details}" rows="10" cols="80" required></textarea>
+      <div class="create-plan-group">
+        <label for="duration" class="create-plan-label">Duración (semanas):</label>
+        <input type="number" id="duration" th:field="*{duration}" class="create-plan-input" min="1" required />
+      </div>
+    </div>
 
-    <button type="submit">Guardar Plan</button>
+    <div class="create-plan-group">
+      <label for="details" class="create-plan-label">Detalles del Plan:</label>
+      <textarea id="details" class="create-plan-textarea create-plan-details" th:field="*{details}" required></textarea>
+    </div>
+
+    <div class="create-plan-button-group">
+      <button type="submit" class="create-plan-button create-plan-save-button">Guardar Plan</button>
+      <a href="/admin/training-plans" class="create-plan-button create-plan-back-button">Volver</a>
+    </div>
+
   </form>
-  <a href="/admin/training-plans" class="back-button">Volver</a>
 </div>
+
 </body>
 </html>
