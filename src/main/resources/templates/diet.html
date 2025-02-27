@@ -223,7 +223,7 @@
 
     // Buscar alimentos desde el backend y mostrarlos
     function searchFoods() {
-        const query = document.getElementById('searchInput').value;
+        const query = document.getElementById('searchInput').value.trim();
 
         if (!query) {
             showToast("Por favor, introduce un término de búsqueda.", "#ff9800");
@@ -232,13 +232,24 @@
 
         axios.get(`/api/foods/search?query=${query}`)
             .then((response) => {
-                displayFoodResults(response.data);
+                if (response.data.message) {
+                    document.getElementById('searchResults').innerHTML = `<p>${response.data.message}</p>`;
+                    return;
+                }
+
+                if (!response.data.results || response.data.results.length === 0) {
+                    document.getElementById('searchResults').innerHTML = '<p>No se encontraron alimentos.</p>';
+                    return;
+                }
+
+                displayFoodResults(response.data.results);
             })
             .catch((error) => {
                 console.error("Error al buscar alimentos:", error);
                 showToast("Hubo un error al buscar los alimentos", "#f44336");
             });
     }
+
 
     // Mostrar los resultados de la búsqueda de alimentos
     function displayFoodResults(results) {
