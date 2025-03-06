@@ -65,17 +65,15 @@
     </div>
 
     <!-- Modal -->
-    <div id="exercise-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative animate-fadeIn">
+    <div id="exercise-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl w-96 relative animate-fadeIn z-50">
         <span class="calendar-modal-close text-gray-500 text-2xl cursor-pointer absolute top-3 right-4">&times;</span>
         <h2 class="text-xl font-semibold mb-4">Registrar Ejercicios</h2>
         <form id="exercise-form" class="space-y-4">
           <label for="selected-date" class="block font-semibold">Fecha:</label>
           <input type="text" id="selected-date" name="date" readonly class="w-full px-3 py-2 border rounded">
-
           <label for="exercises" class="block font-semibold">Ejercicios:</label>
           <textarea id="exercises" name="exercises" rows="4" required class="w-full px-3 py-2 border rounded"></textarea>
-
           <button type="button" onclick="saveExercise()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Guardar
           </button>
@@ -238,18 +236,18 @@
       const modal = document.getElementById('exercise-modal');
       const dateInput = document.getElementById('selected-date');
       dateInput.value = date;
-      modal.style.display = 'block';
+      modal.classList.remove('hidden');
     }
 
     function closeModal() {
       const modal = document.getElementById('exercise-modal');
-      modal.style.display = 'none';
+      modal.classList.add('hidden');
     }
 
     // Cierra el modal al hacer clic fuera de él
     window.addEventListener('click', function (event) {
       const modal = document.getElementById('exercise-modal');
-      if (event.target === modal) {
+      if (event.target === modal && !modal.querySelector('div').contains(event.target)) {
         closeModal();
       }
     });
