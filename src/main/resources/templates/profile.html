@@ -44,7 +44,7 @@
 
         <!-- Formulario de actualización de perfil -->
         <div class="card shadow p-4 w-25">
-            <h2 class="text-center text-secondary">Actualizar Perfil</h2>
+            <h2 class="text-center text-primary">Actualizar Perfil</h2>
             <form th:action="@{/profile/update}" th:object="${user}" method="post" class="needs-validation" novalidate>
                 <div class="mb-3">
                     <label for="weight" class="form-label fw-bold">Nuevo peso (kg):</label>
@@ -264,9 +264,17 @@
 
         if (progressList && progressList.length > 0) {
             var ctx = document.getElementById('progressChart').getContext('2d');
-            var dates = progressList.map(function (progress) { return progress.date; });
-            var weights = progressList.map(function (progress) { return progress.weight; });
-            var heights = progressList.map(function (progress) { return progress.height; });
+            var dates = progressList.map(progress => progress.date);
+            var weights = progressList.map(progress => progress.weight);
+            var heights = progressList.map(progress => progress.height);
+
+            var weightGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            weightGradient.addColorStop(0, 'rgba(54, 162, 235, 1)');
+            weightGradient.addColorStop(1, 'rgba(54, 162, 235, 0.2)');
+
+            var heightGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            heightGradient.addColorStop(0, 'rgba(255, 99, 132, 1)');
+            heightGradient.addColorStop(1, 'rgba(255, 99, 132, 0.2)');
 
             var progressChart = new Chart(ctx, {
                 type: 'line',
@@ -276,64 +284,43 @@
                         label: 'Peso (kg)',
                         data: weights,
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        backgroundColor: weightGradient,
                         pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                        pointBorderColor: 'rgba(255, 255, 255, 1)',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        fill: true
+                        pointBorderColor: '#fff',
+                        pointRadius: 6,
+                        hoverRadius: 8,
+                        fill: true,
+                        cubicInterpolationMode: 'monotone'
                     },
                     {
                         label: 'Altura (cm)',
                         data: heights,
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        backgroundColor: heightGradient,
                         pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                        pointBorderColor: 'rgba(255, 255, 255, 1)',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        fill: true
+                        pointBorderColor: '#fff',
+                        pointRadius: 6,
+                        hoverRadius: 8,
+                        fill: true,
+                        cubicInterpolationMode: 'monotone'
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
                         zoom: {
-                            pan: {
-                                enabled: true,
-                                mode: 'x'
-                            },
-                            zoom: {
-                                wheel: {
-                                    enabled: true
-                                },
-                                pinch: {
-                                    enabled: true
-                                },
-                                mode: 'x'
-                            }
+                            pan: { enabled: true, mode: 'x' },
+                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
                         },
                         tooltip: {
                             callbacks: {
-                                label: function (context) {
-                                    return `Fecha: ${context.label}, Valor: ${context.raw}`;
-                                }
+                                label: context => `Fecha: ${context.label}, Valor: ${context.raw}`
                             }
                         }
                     },
                     scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Fechas'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Valores'
-                            }
-                        }
+                        x: { title: { display: true, text: 'Fechas' } },
+                        y: { title: { display: true, text: 'Valores' } }
                     }
                 }
             });
@@ -341,6 +328,7 @@
             console.log("No hay datos de progreso.");
         }
     };
+
 </script>
 </body>
 </html>
