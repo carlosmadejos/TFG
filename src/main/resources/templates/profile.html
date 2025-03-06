@@ -182,6 +182,14 @@
         <h2>Progreso</h2>
         <canvas id="progressChart"></canvas>
     </div>
+    <!-- Controles adicionales -->
+    <div class="text-center mb-3">
+        <label for="startDate" class="form-label fw-bold">Seleccionar Rango de Fechas:</label>
+        <input type="date" id="startDate" class="form-control d-inline w-auto">
+        <input type="date" id="endDate" class="form-control d-inline w-auto">
+        <button id="filterDate" class="btn btn-primary">Filtrar</button>
+    </div>
+
 </div>
 
 <!-- Modal para cambiar la contraseña -->
@@ -267,68 +275,98 @@
             var dates = progressList.map(progress => progress.date);
             var weights = progressList.map(progress => progress.weight);
             var heights = progressList.map(progress => progress.height);
+            var chartType = 'line';
 
-            var weightGradient = ctx.createLinearGradient(0, 0, 0, 400);
-            weightGradient.addColorStop(0, 'rgba(54, 162, 235, 1)');
-            weightGradient.addColorStop(1, 'rgba(54, 162, 235, 0.2)');
-
-            var heightGradient = ctx.createLinearGradient(0, 0, 0, 400);
-            heightGradient.addColorStop(0, 'rgba(255, 99, 132, 1)');
-            heightGradient.addColorStop(1, 'rgba(255, 99, 132, 0.2)');
+            // Función para calcular promedio móvil
+            function movingAverage(data, windowSize) {
+                let averaged = [];
+                for (let i = 0; i < data.length; i++) {
+                    let start = Math.max(0, i - windowSize + 1);
+                    let subset = data.slice(start, i + 1);
+                    let sum = subset.reduce((a, b) => a + b, 0);
+                    averaged.push(sum / subset.length);
+                }
+                return averaged;
+            }
 
             var progressChart = new Chart(ctx, {
-                type: 'line',
+                type: chartType,
                 data: {
                     labels: dates,
-                    datasets: [{
-                        label: 'Peso (kg)',
-                        data: weights,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: weightGradient,
-                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                        pointBorderColor: '#fff',
-                        pointRadius: 6,
-                        hoverRadius: 8,
-                        fill: true,
-                        cubicInterpolationMode: 'monotone'
-                    },
-                    {
-                        label: 'Altura (cm)',
-                        data: heights,
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: heightGradient,
-                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                        pointBorderColor: '#fff',
-                        pointRadius: 6,
-                        hoverRadius: 8,
-                        fill: true,
-                        cubicInterpolationMode: 'monotone'
-                    }]
+                    datasets: [
+                        {
+                            label: 'Peso (kg)',
+                            data: weights,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                            pointRadius: 6,
+                            hoverRadius: 8,
+                            fill: true,
+                            cubicInterpolationMode: 'monotone'
+                        },
+                        {
+                            label: 'Altura (cm)',
+                            data: heights,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            pointRadius: 6,
+                            hoverRadius: 8,
+                            fill: true,
+                            cubicInterpolationMode: 'monotone'
+                        },
+                        {
+                            label: 'Promedio Peso (Móvil)',
+                            data: movingAverage(weights, 3),
+                            borderColor: 'rgba(0, 200, 83, 1)',
+                            backgroundColor: 'rgba(0, 200, 83, 0.2)',
+                            pointRadius: 0,
+                            borderDash: [5, 5],
+                            borderWidth: 2
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     plugins: {
-                        zoom: {
-                            pan: { enabled: true, mode: 'x' },
-                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
-                        },
                         tooltip: {
-                            callbacks: {
-                                label: context => `Fecha: ${context.label}, Valor: ${context.raw}`
-                            }
+                            enabled: true
+                        },
+                        datalabels: {
+                            display: false // Ocultar etiquetas en puntos
                         }
                     },
                     scales: {
                         x: { title: { display: true, text: 'Fechas' } },
                         y: { title: { display: true, text: 'Valores' } }
                     }
+                },
+                plugins: [ChartDataLabels] // Habilitar etiquetas en puntos
+            });
+
+            // Filtrar por fecha
+            document.getElementById("filterDate").addEventListener("click", function () {
+                let startDate = document.getElementById("startDate").value;
+                let endDate = document.getElementById("endDate").value;
+
+                if (startDate && endDate) {
+                    let filteredData = progressList.filter(p => p.date >= startDate && p.date <= endDate);
+                    let filteredDates = filteredData.map(p => p.date);
+                    let filteredWeights = filteredData.map(p => p.weight);
+                    let filteredHeights = filteredData.map(p => p.height);
+
+                    progressChart.data.labels = filteredDates;
+                    progressChart.data.datasets[0].data = filteredWeights;
+                    progressChart.data.datasets[1].data = filteredHeights;
+                    progressChart.data.datasets[2].data = movingAverage(filteredWeights, 3);
+                    progressChart.update();
                 }
             });
         } else {
             console.log("No hay datos de progreso.");
         }
     };
-
 </script>
 </body>
 </html>
