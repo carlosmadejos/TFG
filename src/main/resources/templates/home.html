@@ -6,6 +6,8 @@
   <meta charset='utf-8' />
   <meta name="_csrf" th:content="${_csrf.token}" />
 
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <!-- FullCalendar CSS y JS -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar/main.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar/main.min.js"></script>
@@ -18,53 +20,69 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
-<div class="home-container">
-  <h1>¡Hola, <span th:text="${user.username}">Usuario</span>!</h1>
-  <p>Estamos felices de verte de nuevo. Aquí tienes un resumen rápido:</p>
+<body class="bg-gray-50">
+  <div class="container mx-auto px-6 py-12">
+    <!-- Título de bienvenida -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-gray-900">¡Hola, <span th:text="${user.username}">Usuario</span>!</h1>
+      <p class="text-lg text-gray-600 mt-2">Estamos felices de verte de nuevo. Aquí tienes un resumen rápido:</p>
+    </div>
 
-  <div class="card-container">
-    <!-- Tarjetas de Progreso, Planes y Dietas -->
-    <div class="card">
-      <h3>Tu Progreso</h3>
-      <p>IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
-      <button onclick="location.href='/profile'">Ver Perfil</button>
+    <!-- Tarjetas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Tarjeta 1 -->
+      <div class="bg-white shadow-lg rounded-xl p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl">
+      <h3 class="text-xl font-semibold text-blue-600">Tu Progreso</h3>
+        <p class="text-gray-700 mt-2">IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
+        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300" onclick="location.href='/profile'">
+          Ver Perfil
+        </button>
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="bg-white shadow-lg rounded-xl p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl">
+        <h3 class="text-xl font-semibold text-blue-600">Planes de Entrenamiento</h3>
+        <p class="text-gray-700 mt-2">Consulta tus planes personalizados o explora nuevos.</p>
+        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300" onclick="location.href='/training-plans'">
+          Ver Planes
+        </button>
+      </div>
+
+      <!-- Tarjeta 3 -->
+      <div class="bg-white shadow-lg rounded-xl p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl">
+        <h3 class="text-xl font-semibold text-blue-600">Dietas</h3>
+        <p class="text-gray-700 mt-2">Consulta tus dietas o crea un nuevo plan nutricional.</p>
+        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300" onclick="location.href='/diet'">
+          Ver Dietas
+        </button>
+      </div>
     </div>
-    <div class="card">
-      <h3>Planes de Entrenamiento</h3>
-      <p>Consulta tus planes personalizados o explora nuevos.</p>
-      <button onclick="location.href='/training-plans'">Ver Planes</button>
+
+    <!-- Calendario -->
+    <div class="mt-10 bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Calendario de Ejercicios</h2>
+      <div id="calendar"></div>
     </div>
-    <div class="card">
-      <h3>Dietas</h3>
-      <p>Consulta tus dietas o crea un nuevo plan nutricional.</p>
-      <button onclick="location.href='/diet'">Ver Dietas</button>
+
+    <!-- Modal -->
+    <div id="exercise-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative animate-fadeIn">
+        <span class="calendar-modal-close text-gray-500 text-2xl cursor-pointer absolute top-3 right-4">&times;</span>
+        <h2 class="text-xl font-semibold mb-4">Registrar Ejercicios</h2>
+        <form id="exercise-form" class="space-y-4">
+          <label for="selected-date" class="block font-semibold">Fecha:</label>
+          <input type="text" id="selected-date" name="date" readonly class="w-full px-3 py-2 border rounded">
+
+          <label for="exercises" class="block font-semibold">Ejercicios:</label>
+          <textarea id="exercises" name="exercises" rows="4" required class="w-full px-3 py-2 border rounded"></textarea>
+
+          <button type="button" onclick="saveExercise()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Guardar
+          </button>
+        </form>
+      </div>
     </div>
   </div>
-
-  <!-- Calendario interactivo -->
-  <div class="calendar-container">
-    <h2>Calendario de Ejercicios</h2>
-    <div id="calendar"></div>
-  </div>
-
-  <!-- Modal para registrar ejercicios -->
-  <div id="exercise-modal" class="calendar-modal" style="display: none;">
-    <div class="calendar-modal-content">
-      <span class="calendar-modal-close" onclick="closeModal()">&times;</span>
-      <h2>Registrar Ejercicios</h2>
-      <form id="exercise-form">
-        <label for="selected-date">Fecha:</label>
-        <input type="text" id="selected-date" name="date" readonly />
-
-        <label for="exercises">Ejercicios:</label>
-        <textarea id="exercises" name="exercises" rows="4" required></textarea>
-
-        <button type="button" onclick="saveExercise()">Guardar</button>
-      </form>
-    </div>
-  </div>
-</div>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
@@ -237,9 +255,10 @@
     });
 
     // Cierra el modal con la "X"
-    document.querySelector('.calendar-modal-close').addEventListener('click', closeModal);
-  });
+    document.querySelector('.calendar-modal-close').addEventListener('click', function() {
+      closeModal();
+    });
+    });
 </script>
-
 </body>
 </html>
