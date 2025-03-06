@@ -529,6 +529,89 @@ a.back-button:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Mejoras visuales para el calendario */
+/* Ajustar tamaño y separación de las celdas del calendario */
+.fc-daygrid-day {
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Resaltar el día actual */
+.fc-day-today {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+    border: 2px solid #ffc107 !important;
+    border-radius: 8px;
+}
+
+.fc-daygrid-day-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333 !important;
+    background: none !important;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Cambiar color al pasar el mouse sobre un día */
+.fc-daygrid-day:hover .fc-daygrid-day-number {
+    color: #007BFF;
+}
+
+/* Estilos para los encabezados de los días de la semana */
+.fc-col-header-cell {
+    background: linear-gradient(135deg, #007BFF, #0056b3);
+    color: white !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Separar los días de la semana */
+.fc-col-header-cell-cushion {
+    background: none !important;
+    padding: 0 !important;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: white !important;
+    text-transform: uppercase;
+}
+
+
+/* Estilo de los eventos del calendario */
+.fc-event {
+    background: linear-gradient(135deg, #007BFF, #0056b3);
+    color: white !important;
+    border: none;
+    border-radius: 8px !important;
+    padding: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Cambiar color al pasar el mouse */
+.fc-event:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Botones de navegación */
+.fc-button {
+    background: linear-gradient(135deg, #007BFF, #0056b3) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+.fc-button:hover {
+    background: linear-gradient(135deg, #0056b3, #003d82) !important;
+    transform: scale(1.05);
+}
+
 /* Estilos para dietas */
 .diet-container {
     max-width: 800px;
@@ -540,6 +623,7 @@ a.back-button:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos para la lista de alimentos */
 .search-container {
     display: flex;
     gap: 10px;
