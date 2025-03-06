@@ -1,21 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
     <title>Bienvenido</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body  class="welcome-page">
+<body class="h-screen flex items-center justify-center bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 animate-gradient">
+<div class="backdrop-blur-lg bg-white/30 rounded-xl p-10 text-center shadow-xl border border-white/20
+                transition transform hover:scale-105 hover:shadow-2xl duration-300">
+    <h1 class="text-4xl font-bold text-white drop-shadow-lg">Bienvenido a la Plataforma</h1>
+    <p class="text-white mt-4 text-lg">
+        Optimiza tu rutina de ejercicios y alimentación con nuestra plataforma.
+    </p>
 
-<div class="welcome-background">
-    <div class="welcome-container">
-        <h1>Bienvenido a la Plataforma de Entrenamiento</h1>
-        <p>Optimiza tu rutina de ejercicios y alimentación con nuestra plataforma.
-            Descubre entrenamientos personalizados y lleva tu progreso al siguiente nivel.</p>
-
-        <div class="buttons">
-            <a th:href="@{/login}" class="button">Iniciar Sesión</a>
-        </div>
+    <div class="mt-6">
+        <a href="/login" class="px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white font-semibold rounded-full
+                                shadow-lg transition-all duration-300 hover:from-blue-500 hover:to-blue-700
+                                hover:shadow-xl transform hover:scale-110">
+            Iniciar Sesión
+        </a>
     </div>
 </div>
+
 </body>
 </html>
