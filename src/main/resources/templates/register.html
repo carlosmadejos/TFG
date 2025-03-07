@@ -2,63 +2,104 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Registro</title>
-  <!-- Enlace al archivo CSS -->
-  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<h1>Registro de Usuario</h1>
-<!-- Botón para ir atrás -->
-<div class="profile-back">
-  <a th:href="@{/home}" class="button back-button">Inicio Sesion</a>
+<body class="h-screen flex items-center justify-center bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300">
+
+<!-- Contenedor del formulario -->
+<div class="bg-white/30 backdrop-blur-lg p-8 rounded-xl shadow-lg w-96 text-center border border-white/20">
+
+  <h1 class="text-3xl font-bold text-white mb-6 drop-shadow-md">Registro de Usuario</h1>
+
+  <!-- Mensaje de error -->
+  <div th:if="${error}" class="text-red-500 font-semibold text-sm mb-4" th:text="${error}"></div>
+
+  <!-- Formulario -->
+  <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
+
+    <div>
+      <label for="username" class="block text-white text-left font-semibold">Usuario:</label>
+      <input type="text" th:field="*{username}" id="username" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('username')}" class="text-red-500 text-sm mt-1" th:errors="*{username}"></div>
+    </div>
+
+    <div>
+      <label for="email" class="block text-white text-left font-semibold">Email:</label>
+      <input type="email" th:field="*{email}" id="email" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('email')}" class="text-red-500 text-sm mt-1" th:errors="*{email}"></div>
+    </div>
+
+    <div>
+      <label for="password" class="block text-white text-left font-semibold">Contraseña:</label>
+      <input type="password" th:field="*{password}" id="password" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('password')}" class="text-red-500 text-sm mt-1" th:errors="*{password}"></div>
+    </div>
+
+    <div>
+      <label for="birthdate" class="block text-white text-left font-semibold">Fecha de Nacimiento:</label>
+      <input type="date" th:field="*{birthdate}" id="birthdate" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('birthdate')}" class="text-red-500 text-sm mt-1" th:errors="*{birthdate}"></div>
+    </div>
+
+    <div>
+      <label for="weight" class="block text-white text-left font-semibold">Peso (kg):</label>
+      <input type="number" th:field="*{weight}" id="weight" step="0.1" min="30" max="300" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('weight')}" class="text-red-500 text-sm mt-1" th:errors="*{weight}"></div>
+    </div>
+
+    <div>
+      <label for="height" class="block text-white text-left font-semibold">Altura (cm):</label>
+      <input type="number" th:field="*{height}" id="height" step="0.1" min="100" max="250" required
+             class="w-full px-4 py-2 rounded-md bg-white/90 border border-gray-300 focus:outline-none
+                              focus:ring-2 focus:ring-blue-500">
+      <div th:if="${#fields.hasErrors('height')}" class="text-red-500 text-sm mt-1" th:errors="*{height}"></div>
+    </div>
+
+    <button type="submit"
+            class="w-full py-2 bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold rounded-lg shadow-md
+                           hover:from-green-500 hover:to-green-700 hover:shadow-lg transition transform hover:scale-105">
+      Registrar
+    </button>
+
+  </form>
+
+  <!-- Botón Inicio Sesión -->
+  <div class="mt-6">
+    <a th:href="@{/login}"
+       class="inline-flex items-center justify-center w-full py-2 bg-blue-500 text-white font-semibold rounded-lg
+                      shadow-md hover:bg-blue-600 hover:shadow-lg transition transform hover:scale-105">
+        Volver a Inicio
+    </a>
+  </div>
+
 </div>
-<!-- Mensaje global de error -->
-<div th:if="${error}" class="error" th:text="${error}"></div>
 
-<form th:action="@{/register}" th:object="${user}" method="post">
-  <label for="username">Usuario:</label>
-  <input type="text" th:field="*{username}" id="username" required>
-  <div th:if="${#fields.hasErrors('username')}" class="error" th:errors="*{username}"></div>
-
-  <label for="email">Email:</label>
-  <input type="email" th:field="*{email}" id="email" required>
-  <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
-
-  <label for="password">Contraseña:</label>
-  <input type="password" th:field="*{password}" id="password" required>
-  <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
-
-  <label for="birthdate">Fecha de Nacimiento:</label>
-  <input type="date" th:field="*{birthdate}" id="birthdate" required>
-  <div th:if="${#fields.hasErrors('birthdate')}" class="error" th:errors="*{birthdate}"></div>
-
-  <label for="weight">Peso (kg):</label>
-  <input type="number" th:field="*{weight}" id="weight" step="0.1" min="30" max="300" required>
-  <div th:if="${#fields.hasErrors('weight')}" class="error" th:errors="*{weight}"></div>
-
-  <label for="height">Altura (cm):</label>
-  <input type="number" th:field="*{height}" id="height" step="0.1" min="100" max="250" required>
-  <div th:if="${#fields.hasErrors('height')}" class="error" th:errors="*{height}"></div>
-
-  <button type="submit">Registrar</button>
-</form>
 <script>
-  document.getElementById("registerForm").addEventListener("submit", function(event) {
+  document.querySelector("form").addEventListener("submit", function(event) {
       let weight = parseFloat(document.getElementById("weight").value);
       let height = parseInt(document.getElementById("height").value);
-
 
       if (weight < 30 || weight > 300) {
           alert("El peso debe estar entre 30 y 300 kg.");
           event.preventDefault();
-          return;
       }
 
       if (height < 100 || height > 250) {
           alert("La altura debe estar entre 100 y 250 cm.");
           event.preventDefault();
-          return;
       }
   });
 </script>
+
 </body>
 </html>
