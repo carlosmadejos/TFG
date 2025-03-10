@@ -199,25 +199,43 @@
 </div>
 
 <!-- Modal para cambiar la contraseña -->
-<div id="change-password-modal" class="modal">
-    <div class="modal-content">
-        <h2>Cambiar Contraseña</h2>
-        <form id="change-password-form" th:action="@{/profile/update-password}" method="post">
-            <div class="form-group">
-                <label for="oldPassword">Contraseña actual:</label>
-                <input type="password" id="oldPassword" name="oldPassword" required />
+<div id="change-password-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md flex flex-col items-center text-center">
+        <h2 class="text-2xl font-bold text-center text-blue-700 mb-4">Cambiar Contraseña</h2>
+
+        <form id="change-password-form" th:action="@{/profile/update-password}" method="post" class="space-y-4 flex flex-col items-center w-full">
+            <div class="w-full text-center">
+                <label for="oldPassword" class="block font-semibold text-gray-700">Contraseña actual:</label>
+                <input type="password" id="oldPassword" name="oldPassword" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-black" />
             </div>
-            <div class="form-group">
-                <label for="newPassword">Nueva contraseña:</label>
-                <input type="password" id="newPassword" name="newPassword" required />
+
+            <div class="w-full text-center">
+                <label for="newPassword" class="block font-semibold text-gray-700">Nueva contraseña:</label>
+                <input type="password" id="newPassword" name="newPassword" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-black" />
             </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirmar nueva contraseña:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required />
+
+            <div class="w-full text-center">
+                <label for="confirmPassword" class="block font-semibold text-gray-700">Confirmar nueva contraseña:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-black" />
             </div>
-            <div id="error-message" style="color: red; display: none;">Las contraseñas no coinciden.</div>
-            <button type="submit" class="button update-button">Guardar Cambios</button>
-            <button type="button" class="button" id="close-modal-btn">Cancelar</button>
+
+            <!-- Mensaje de error -->
+            <div id="error-message" class="text-red-600 font-semibold text-sm hidden">
+                Las contraseñas no coinciden.
+            </div>
+
+            <!-- Botones -->
+            <div class="w-full text-center space-y-2">
+                <button type="submit" class="w-3/4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                    Guardar Cambios
+                </button>
+                <button type="button" id="close-modal-btn" class="w-3/4 bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition">
+                    Cancelar
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -226,27 +244,27 @@
     const imcHelpModal = document.getElementById('imc-help-modal');
     const helpBtn = document.getElementById('help-imc-btn');
     const closeHelpBtn = document.getElementById('close-help-modal');
-    const modal = document.getElementById('change-password-modal');
-    const btn = document.getElementById('change-password-btn');
-    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modal = document.getElementById("change-password-modal");
+    const openModalBtn = document.getElementById("change-password-btn");
+    const closeModalBtn = document.getElementById("close-modal-btn");
     const form = document.getElementById('change-password-form');
 
     // Abre el modal al hacer clic en el botón de cambiar contraseña
-    btn.onclick = function () {
-        modal.style.display = 'block';
-    };
+    openModalBtn.addEventListener("click", () => {
+        modal.classList.remove("hidden");
+    });
 
     // Cierra el modal al hacer clic en el botón de cancelar
-    closeModalBtn.onclick = function () {
-        modal.style.display = 'none';
-    };
+    closeModalBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+    });
 
-    // Cierra el modal al hacer clic fuera de él
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+    // Cierra el modal solo si se hace clic en el fondo oscuro (no en el modal mismo)
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.classList.add("hidden");
         }
-    };
+    });
 
     // Abre el modal de imc de ayuda al hacer clic en el botón
     helpBtn.onclick = function () {
