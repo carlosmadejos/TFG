@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dietas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta charset='utf-8' />
@@ -19,61 +20,91 @@
 
 
 </head>
-<body>
+<body class="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 text-white min-h-screen flex flex-col items-center p-6">
+
 <!-- Botón para ir atrás -->
 <div class="profile-back">
     <a th:href="@{/home}" class="button back-button">Volver a Inicio</a>
 </div>
-<div class="diet-container">
-    <h1>Gestión de Dietas</h1>
-    <p>Aquí puedes buscar alimentos, añadirlos y registrar tu ingesta diaria.</p>
 
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Buscar alimentos...">
-        <button onclick="searchFoods(true)">Buscar</button>
+<!-- Contenedor Principal -->
+<div class="max-w-6xl w-full bg-white shadow-lg rounded-lg p-8 text-gray-800 overflow-x-auto">
+    <h1 class="text-4xl font-extrabold text-center text-blue-700 uppercase mb-4">Gestión de Dietas</h1>
+    <p class="text-gray-700 text-lg text-center leading-relaxed">
+        Aquí puedes buscar alimentos, añadirlos y registrar tu ingesta diaria.
+    </p>
+
+    <!-- Barra de Búsqueda -->
+    <div class="flex items-center gap-3 mt-6">
+        <input type="text" id="searchInput" placeholder="Buscar alimentos..."
+               class="w-full p-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
+        <button onclick="searchFoods(true)"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-full transition shadow-md">
+            Buscar
+        </button>
     </div>
 
-    <h2>Resultados de la búsqueda</h2>
-    <div id="searchResults">
-        <p>No se encontraron alimentos.</p>
+    <!-- Resultados de la Búsqueda -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resultados de la Búsqueda</h2>
+    <div id="searchResults" class="p-6 bg-gray-100 rounded-lg shadow-lg text-center overflow-x-auto">
+        <p class="text-gray-800 text-lg leading-relaxed">No se encontraron alimentos.</p>
     </div>
-    <div class="button-container" style="text-align: center; margin-top: 10px;">
-        <button id="loadMoreButton" onclick="loadMoreFoods()" style="display:none;">Cargar más</button>
-    </div>
-
-    <h2>Registro Diario</h2>
-    <div id="dailyLog"></div>
-    <p id="calorieSummary"></p>
-    <div>
-        <button onclick="deleteDailyLogFromDatabase()">Guardar y Empezar Nuevo Registro</button>
+    <div class="flex justify-center mt-4">
+        <button id="loadMoreButton" onclick="loadMoreFoods()" class="hidden bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition">
+            Cargar más
+        </button>
     </div>
 
-    <h2>Historial de Registros</h2>
-    <label for="logSelector">Seleccionar Registro:</label>
-    <select id="logSelector" onchange="loadSelectedDailyLog()"></select>
-    <button onclick="loadDailyLogHistory()">Cargar Historial</button>
+    <!-- Registro Diario -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Registro Diario</h2>
+    <div id="dailyLog" class="p-4 bg-gray-100 rounded-lg shadow-sm overflow-x-auto"></div>
+    <p id="calorieSummary" class="text-gray-800 text-lg mt-4"></p>
+    <div class="flex justify-center mt-4">
+        <button onclick="deleteDailyLogFromDatabase()"
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-md">
+            Guardar y Empezar Nuevo Registro
+        </button>
+    </div>
 
-    <h2>Resumen Nutricional</h2>
-    <p><b>Objetivo Calórico:</b> <span id="calorieGoalDisplay">0</span> kcal</p>
-    <p><b>Calorías Consumidas:</b> <span id="totalCalories">0</span> kcal</p>
-    <p><b>Proteínas:</b> <span id="totalProteins">0</span> g</p>
-    <p><b>Carbohidratos:</b> <span id="totalCarbs">0</span> g</p>
-    <p><b>Grasas:</b> <span id="totalFats">0</span> g</p>
+    <!-- Historial de Registros -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Historial de Registros</h2>
+    <div class="flex flex-col items-center gap-3">
+        <label for="logSelector" class="font-semibold text-gray-700">Seleccionar Registro:</label>
+        <select id="logSelector" onchange="loadSelectedDailyLog()"
+                class="w-full max-w-sm p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
+        </select>
+        <button onclick="loadDailyLogHistory()"
+                class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+            Cargar Historial
+        </button>
+    </div>
 
-    <!-- Gráfica de seguimiento de la dieta -->
-    <h2>Seguimiento de la Dieta</h2>
-    <div style="width: 80%; margin: auto;">
+    <!-- Resumen Nutricional -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resumen Nutricional</h2>
+    <div class="p-6 bg-gray-100 rounded-lg shadow-lg">
+        <ul class="grid grid-cols-2 gap-4 text-gray-800 text-lg">
+            <li><b>Objetivo Calórico:</b> <span id="calorieGoalDisplay">0</span> kcal</li>
+            <li><b>Calorías Consumidas:</b> <span id="totalCalories">0</span> kcal</li>
+            <li><b>Proteínas:</b> <span id="totalProteins">0</span> g</li>
+            <li><b>Carbohidratos:</b> <span id="totalCarbs">0</span> g</li>
+            <li><b>Grasas:</b> <span id="totalFats">0</span> g</li>
+        </ul>
+    </div>
+
+    <!-- Seguimiento de la Dieta -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Seguimiento de la Dieta</h2>
+    <div class="w-full max-w-lg mx-auto">
         <canvas id="dietProgressChart"></canvas>
     </div>
-    <div id="dietAnalysis" style="margin-top: 20px;"></div>
+    <div id="dietAnalysis" class="mt-6"></div>
 
-    <!-- Gráfica de distribución de macronutrientes -->
-    <h2>Distribución de Macronutrientes</h2>
-    <div style="width: 50%; margin: auto;">
+    <!-- Distribución de Macronutrientes -->
+    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Distribución de Macronutrientes</h2>
+    <div class="w-full max-w-lg mx-auto">
         <canvas id="macronutrientChart"></canvas>
     </div>
-
 </div>
+
 <script>
     // Obtener el token CSRF desde el meta tag
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
@@ -114,17 +145,19 @@
 
                 let table = document.createElement('table');
                 table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Descripción</th>
-                            <th>Calorías</th>
-                            <th>Proteínas</th>
-                            <th>Carbohidratos</th>
-                            <th>Grasas</th>
-                            <th>Acción</th>
+                    <thead class="bg-blue-100">
+                        <tr class="text-gray-800 text-center">
+                            <th class="py-2 px-4 border border-gray-300">Imagen</th>
+                            <th class="py-2 px-4 border border-gray-300">Descripción</th>
+                            <th class="py-2 px-4 border border-gray-300">Calorías (100g)</th>
+                            <th class="py-2 px-4 border border-gray-300">Proteínas</th>
+                            <th class="py-2 px-4 border border-gray-300">Carbohidratos</th>
+                            <th class="py-2 px-4 border border-gray-300">Grasas</th>
+                            <th class="py-2 px-4 border border-gray-300">Gramos Consumidos</th>
+                            <th class="py-2 px-4 border border-gray-300">Acción</th>
                         </tr>
                     </thead>
+
                     <tbody></tbody>
                 `;
 
@@ -263,16 +296,16 @@
 
         let table = document.createElement('table');
         table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Imagen</th>
-                    <th>Descripción</th>
-                    <th>Calorías (100g)</th>
-                    <th>Proteínas</th>
-                    <th>Carbohidratos</th>
-                    <th>Grasas</th>
-                    <th>Gramos Consumidos</th>
-                    <th>Acción</th>
+            <thead class="bg-blue-100">
+                <tr class="text-gray-800 text-center">
+                    <th class="py-2 px-4 border border-gray-300">Imagen</th>
+                    <th class="py-2 px-4 border border-gray-300">Descripción</th>
+                    <th class="py-2 px-4 border border-gray-300">Calorías (100g)</th>
+                    <th class="py-2 px-4 border border-gray-300">Proteínas</th>
+                    <th class="py-2 px-4 border border-gray-300">Carbohidratos</th>
+                    <th class="py-2 px-4 border border-gray-300">Grasas</th>
+                    <th class="py-2 px-4 border border-gray-300">Gramos Consumidos</th>
+                    <th class="py-2 px-4 border border-gray-300">Acción</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -291,8 +324,10 @@
                 <td>${food.proteins || 0} g</td>
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
-                <td><input type="number" id="gramsInput${index}" placeholder="100" value="100" min="1" style="width:60px;"></td>
-                <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}', ${index})">Añadir</button></td>
+                <td><input type="number" id="gramsInput${index}" placeholder="100" value="100" min="1" class="w-16 p-2 border border-gray-300 rounded-md text-center"></td>
+                <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}', ${index})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                    Añadir
+                </button></td>
             `;
             tbody.appendChild(row);
         });
