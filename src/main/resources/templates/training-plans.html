@@ -2,30 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Planes de Entrenamiento</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
-<body>
+<body class="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 text-white min-h-screen flex flex-col items-center">
 <!-- Botón para ir atrás -->
 <div class="profile-back">
   <a th:href="@{/home}" class="button back-button">Volver a Inicio</a>
 </div>
 
-<h2>Planes de Entrenamiento</h2>
-<p>Aquí puedes ver y gestionar tus planes de entrenamiento.</p>
+<h1 class="text-5xl font-extrabold text-center text-blue-900 uppercase tracking-wide drop-shadow-md">
+  Planes de Entrenamiento
+</h1>
+<p class="text-xl text-gray-800 text-center mt-4 font-medium">
+  Aquí puedes ver y gestionar tus planes de entrenamiento.
+</p>
 
 <div th:if="${trainingPlans.isEmpty()}">
   <p>No hay planes de entrenamiento disponibles en este momento.</p>
 </div>
 
 <div class="training-container" th:if="${not trainingPlans.isEmpty()}">
-  <div class="training-card" th:each="plan : ${trainingPlans}">
-    <h3 th:text="${plan.name}"></h3>
-    <p class="description" th:text="${plan.description}"></p>
-    <p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
-    <p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
-    <a th:href="@{'/training-plans/' + ${plan.id}}" class="button">Ver Detalles</a>
+  <div class="training-card flex flex-col justify-between" th:each="plan : ${trainingPlans}">
+    <div>
+      <h3 class="text-center" th:text="${plan.name}"></h3>
+      <p class="description text-justify" th:text="${plan.description}"></p>
+      <p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
+      <p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
+    </div>
+    <a th:href="@{'/training-plans/' + ${plan.id}}" class="button text-center">Ver Detalles</a>
   </div>
 </div>
+
 
 </body>
 </html>
