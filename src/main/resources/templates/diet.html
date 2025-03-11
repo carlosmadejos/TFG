@@ -171,7 +171,8 @@
                         <td>${food.proteins || 0} g</td>
                         <td>${food.carbs || 0} g</td>
                         <td>${food.fats || 0} g</td>
-                        <td><button onclick="removeFromDailyLog(${food.id})">Eliminar</button></td>
+                        <td>${food.gramsConsumed || 0} g</td>
+                        <td><button onclick="removeFromDailyLog(${food.id})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Eliminar</button></td>
                     `;
                     tbody.appendChild(row);
                 });
@@ -219,7 +220,7 @@
                 proteins: adjustedProteins,
                 carbs: adjustedCarbs,
                 fats: adjustedFats,
-                grams: grams,
+                gramsConsumed: grams,
                 imageUrl: imageUrl,
                 dailyLogId: dailyLogId
             };
@@ -473,6 +474,7 @@
                     <th>Proteínas</th>
                     <th>Carbohidratos</th>
                     <th>Grasas</th>
+                    <th>Gramos Consumidos</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -489,7 +491,8 @@
                 <td>${food.proteins || 0} g</td>
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
-                <td><button onclick="removeFromDailyLog(${food.id})">Eliminar</button></td>
+                <td>${food.gramsConsumed || 0} g</td>
+                <td><button onclick="removeFromDailyLog(${food.id})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Eliminar</button></td>
             `;
             tbody.appendChild(row);
         });
