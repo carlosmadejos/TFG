@@ -75,10 +75,10 @@ public class DailyLogController {
         double factor = gramsConsumed / 100.0;
 
         // Ajustar los valores nutricionales en función de los gramos consumidos
-        int adjustedCalories = (int) (foodRequest.getCalories());
-        int adjustedProteins = (int) (foodRequest.getProteins());
-        int adjustedCarbs = (int) (foodRequest.getCarbs());
-        int adjustedFats = (int) (foodRequest.getFats());
+        int adjustedCalories = (int) (foodRequest.getCalories() * factor);
+        int adjustedProteins = (int) (foodRequest.getProteins() * factor);
+        int adjustedCarbs = (int) (foodRequest.getCarbs() * factor);
+        int adjustedFats = (int) (foodRequest.getFats() * factor);
 
         // Crear y guardar el alimento
         Food food = new Food();

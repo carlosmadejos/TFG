@@ -194,15 +194,6 @@
             const gramsInput = document.getElementById(`gramsInput${index}`);
             const grams = parseFloat(gramsInput.value) || 100; // Por defecto, 100g si está vacío
 
-            // Ajustar los valores nutricionales en función de los gramos
-            const factor = grams / 100;
-
-            // Convertir a números y redondear a 2 decimales
-            const adjustedCalories = Number((calories * factor).toFixed(2));
-            const adjustedProteins = Number((proteins * factor).toFixed(2));
-            const adjustedCarbs = Number((carbs * factor).toFixed(2));
-            const adjustedFats = Number((fats * factor).toFixed(2));
-
             // Obtener el registro activo
             const response = await axios.get(`/api/daily-log`);
             let dailyLogId = response.data.id;
@@ -213,13 +204,13 @@
                 dailyLogId = newLogResponse.data.id;
             }
 
-            // Crear el objeto de alimento con los datos ajustados
+            // Crear el objeto de alimento con los valores originales (por 100g)
             const food = {
                 name: name,
-                calories: adjustedCalories,
-                proteins: adjustedProteins,
-                carbs: adjustedCarbs,
-                fats: adjustedFats,
+                calories: calories,
+                proteins: proteins,
+                carbs: carbs,
+                fats: fats,
                 gramsConsumed: grams,
                 imageUrl: imageUrl,
                 dailyLogId: dailyLogId
@@ -228,7 +219,7 @@
             // Enviar el alimento al backend
             await axios.post('/api/daily-log/add-food', food);
 
-            showToast(`Añadido: ${name} (${adjustedCalories} kcal)`, "#4caf50");
+            showToast(`Añadido: ${name} (${calories} kcal/100g, ${grams}g)`, "#4caf50");
             await loadDailyLogFromDatabase();
 
         } catch (error) {
@@ -236,10 +227,6 @@
             showToast("Error al añadir el alimento", "#f44336");
         }
     }
-
-
-
-
 
 
     // Eliminar alimentos del registro diario en el backend
@@ -283,7 +270,6 @@
                 showToast("Hubo un error al buscar los alimentos", "#f44336");
             });
     }
-
 
     // Mostrar los resultados de la búsqueda de alimentos
     function displayFoodResults(results) {
@@ -390,7 +376,6 @@
         }
     }
 
-
     async function loadDailyLogHistory() {
         return axios.get(`/api/daily-log/history`)
             .then((response) => {
@@ -435,7 +420,6 @@
                 showToast("Error al cargar el registro seleccionado", "#f44336");
             });
     }
-
 
     // Función para actualizar la interfaz con los datos del registro seleccionado
     function updateDailyLogUI(dailyLog) {
