@@ -105,11 +105,6 @@ public class DailyLogController {
         return ResponseEntity.ok("Alimento agregado y nutrientes actualizados.");
     }
 
-
-
-
-
-
     // Eliminar un alimento del registro diario
     @DeleteMapping("/remove-food/{foodId}")
     public ResponseEntity<?> removeFoodFromDailyLog(@PathVariable Long foodId, Principal principal) {
@@ -119,12 +114,37 @@ public class DailyLogController {
         Food food = foodRepository.findById(foodId)
                 .orElseThrow(() -> new RuntimeException("Alimento no encontrado"));
 
-        // Verificar que el alimento pertenece a un DailyLog del usuario autenticado
-        if (!food.getDailyLog().getUser().equals(user)) {
+        DailyLog dailyLog = food.getDailyLog();
+        if (!dailyLog.getUser().equals(user)) {
             return ResponseEntity.status(403).body("No tienes permiso para eliminar este alimento.");
         }
 
+        // Eliminar el alimento primero
         foodRepository.delete(food);
+
+        // Recargar la lista de alimentos del DailyLog
+        List<Food> foods = foodRepository.findByDailyLog(dailyLog);
+
+        // Recalcular
+        int totalCalories = 0;
+        int totalProteins = 0;
+        int totalCarbs = 0;
+        int totalFats = 0;
+
+        for (Food f : foods) {
+            totalCalories += f.getCalories();
+            totalProteins += f.getProteins();
+            totalCarbs    += f.getCarbs();
+            totalFats     += f.getFats();
+        }
+
+        dailyLog.setTotalCalories(totalCalories);
+        dailyLog.setTotalProteins(totalProteins);
+        dailyLog.setTotalCarbs(totalCarbs);
+        dailyLog.setTotalFats(totalFats);
+
+        dailyLogRepository.save(dailyLog);
+
         return ResponseEntity.ok("Alimento eliminado exitosamente");
     }
 
@@ -240,7 +260,7 @@ public class DailyLogController {
 
         if (dailyLogOpt.isPresent()) {
             DailyLog activeLog = dailyLogOpt.get();
-            // Si el registro activo fue creado hoy, lo usamos
+            // Si el registro activo es de hoy, se devuelve con los alimentos
             if (activeLog.getCreatedAt() != null && activeLog.getCreatedAt().toLocalDate().isEqual(today)) {
                 List<Food> foods = foodRepository.findByDailyLog(activeLog);
                 activeLog.setFoods(foods);
