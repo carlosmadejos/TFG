@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class DailyLogController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Obtener el DailyLog activo o crear uno nuevo
-        DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user)
+        DailyLog dailyLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByCreatedAtDesc(user)
                 .orElseGet(() -> {
                     DailyLog newLog = new DailyLog();
                     newLog.setUser(user);
@@ -134,7 +135,7 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByCreatedAtDesc(user);
         if (dailyLogOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("No hay un registro diario activo.");
         }
@@ -174,7 +175,7 @@ public class DailyLogController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Verificar si ya hay un registro activo
-        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByCreatedAtDesc(user);
 
         if (activeLog.isPresent()) {
             return ResponseEntity.badRequest().body("Ya tienes un registro activo.");
@@ -217,7 +218,7 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        Optional<DailyLog> activeLog = dailyLogRepository.findFirstByUserAndClosedFalseOrderByCreatedAtDesc(user);
 
         if (activeLog.isPresent()) {
             DailyLog log = activeLog.get();
@@ -234,34 +235,40 @@ public class DailyLogController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByIdDesc(user);
+        LocalDate today = LocalDate.now();
+        Optional<DailyLog> dailyLogOpt = dailyLogRepository.findFirstByUserAndClosedFalseOrderByCreatedAtDesc(user);
 
-        if (dailyLogOpt.isEmpty()) {
-            System.out.println("No se encontró un DailyLog activo, creando uno nuevo..."); // Log para depuración
-
-            DailyLog newLog = new DailyLog();
-            newLog.setUser(user);
-            newLog.setCalorieGoal(2000);
-            newLog.setClosed(false);
-
-            dailyLogRepository.save(newLog);
-
-            return ResponseEntity.ok(newLog);
+        if (dailyLogOpt.isPresent()) {
+            DailyLog activeLog = dailyLogOpt.get();
+            // Si el registro activo fue creado hoy, lo usamos
+            if (activeLog.getCreatedAt() != null && activeLog.getCreatedAt().toLocalDate().isEqual(today)) {
+                List<Food> foods = foodRepository.findByDailyLog(activeLog);
+                activeLog.setFoods(foods);
+                return ResponseEntity.ok(Map.of(
+                        "id", activeLog.getId(),
+                        "calorieGoal", activeLog.getCalorieGoal(),
+                        "totalCalories", activeLog.getTotalCalories(),
+                        "totalProteins", activeLog.getTotalProteins(),
+                        "totalCarbs", activeLog.getTotalCarbs(),
+                        "totalFats", activeLog.getTotalFats(),
+                        "foods", foods
+                ));
+            } else {
+                // Si el registro activo no es de hoy, se cierra y se actualiza inmediatamente
+                activeLog.setClosed(true);
+                dailyLogRepository.saveAndFlush(activeLog);
+            }
         }
 
-        DailyLog dailyLog = dailyLogOpt.get();
-        List<Food> foods = foodRepository.findByDailyLog(dailyLog);
-        dailyLog.setFoods(foods);
+        // Si no hay registro activo o el existente no es de hoy, se crea uno nuevo
+        DailyLog newLog = new DailyLog();
+        newLog.setUser(user);
+        newLog.setCalorieGoal(2000);
+        newLog.setClosed(false);
+        dailyLogRepository.saveAndFlush(newLog);
 
-        return ResponseEntity.ok(Map.of(
-                "id", dailyLog.getId(),
-                "calorieGoal", dailyLog.getCalorieGoal(),
-                "totalCalories", dailyLog.getTotalCalories(),
-                "totalProteins", dailyLog.getTotalProteins(),
-                "totalCarbs", dailyLog.getTotalCarbs(),
-                "totalFats", dailyLog.getTotalFats(),
-                "foods", foods
-        ));
+        return ResponseEntity.ok(newLog);
     }
+
 
 }

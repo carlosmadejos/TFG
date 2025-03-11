@@ -128,56 +128,7 @@
     function loadDailyLogFromDatabase() {
         axios.get(`/api/daily-log`)
             .then((response) => {
-                const dailyLog = response.data;
-                const logContainer = document.getElementById('dailyLog');
-                logContainer.innerHTML = '';
-
-                document.getElementById('calorieGoalDisplay').innerText = dailyLog.calorieGoal || 2000;
-                document.getElementById('totalCalories').innerText = dailyLog.totalCalories || 0;
-                document.getElementById('totalProteins').innerText = dailyLog.totalProteins || 0;
-                document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
-                document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
-
-                if (!dailyLog.foods || dailyLog.foods.length === 0) {
-                    logContainer.innerHTML = '<p>No se han añadido alimentos.</p>';
-                    return;
-                }
-
-                let table = document.createElement('table');
-                table.innerHTML = `
-                    <thead class="bg-blue-100">
-                        <tr class="text-gray-800 text-center">
-                            <th class="py-2 px-4 border border-gray-300">Imagen</th>
-                            <th class="py-2 px-4 border border-gray-300">Descripción</th>
-                            <th class="py-2 px-4 border border-gray-300">Calorías (100g)</th>
-                            <th class="py-2 px-4 border border-gray-300">Proteínas</th>
-                            <th class="py-2 px-4 border border-gray-300">Carbohidratos</th>
-                            <th class="py-2 px-4 border border-gray-300">Grasas</th>
-                            <th class="py-2 px-4 border border-gray-300">Gramos Consumidos</th>
-                            <th class="py-2 px-4 border border-gray-300">Acción</th>
-                        </tr>
-                    </thead>
-
-                    <tbody></tbody>
-                `;
-
-                const tbody = table.querySelector('tbody');
-                dailyLog.foods.forEach((food) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><img src="${food.imageUrl}" alt="${food.name}" style="width:50px; height:50px;"></td>
-                        <td>${food.name}</td>
-                        <td>${food.calories || 0} kcal</td>
-                        <td>${food.proteins || 0} g</td>
-                        <td>${food.carbs || 0} g</td>
-                        <td>${food.fats || 0} g</td>
-                        <td>${food.gramsConsumed || 0} g</td>
-                        <td><button onclick="removeFromDailyLog(${food.id})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Eliminar</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-                logContainer.appendChild(table);
+                updateDailyLogUI(response.data);
             })
             .catch((error) => {
                 console.error("Error al cargar el registro diario:", error);
@@ -397,7 +348,7 @@
                     logSelector.appendChild(option);
                 });
 
-                logSelector.selectedIndex = response.data.length - 1; // Seleccionar el último registro automáticamente
+                logSelector.selectedIndex = 0; // Seleccionar el registro mas reciente
                 loadSelectedDailyLog();
             })
             .catch((error) => {
@@ -426,22 +377,28 @@
         const logContainer = document.getElementById('dailyLog');
         logContainer.innerHTML = '';
 
-        // Leer el valor del objetivo calórico desde el input
+        // Leer el valor del objetivo calórico desde el input (si existe)
         const calorieGoalInput = document.getElementById('calorieGoalInput');
         const calorieGoal = calorieGoalInput && calorieGoalInput.value ? parseInt(calorieGoalInput.value) : dailyLog.calorieGoal;
 
-        // Actualizar el Resumen Nutricional con el objetivo ingresado
+        // Actualizar el Resumen Nutricional
         document.getElementById('calorieGoalDisplay').innerText = calorieGoal;
         document.getElementById('totalCalories').innerText = dailyLog.totalCalories || 0;
         document.getElementById('totalProteins').innerText = dailyLog.totalProteins || 0;
         document.getElementById('totalCarbs').innerText = dailyLog.totalCarbs || 0;
         document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
 
-        // Mostrar fecha de creación
-        let createdAt = new Date(dailyLog.createdAt);
+        // Manejar la fecha de creación: si no existe, usar la fecha actual
+        let createdAt;
+        if (dailyLog.createdAt) {
+            createdAt = new Date(dailyLog.createdAt);
+        } else {
+            createdAt = new Date();
+        }
         let createdAtText = `Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
         logContainer.innerHTML += `<p>${createdAtText}</p>`;
 
+        // Si no hay alimentos, mostrar mensaje y salir
         if (!dailyLog.foods || dailyLog.foods.length === 0) {
             logContainer.innerHTML += '<p>No se han añadido alimentos.</p>';
             return;
@@ -483,6 +440,7 @@
 
         logContainer.appendChild(table);
     }
+
 
     function updateCalorieGoal() {
         const calorieGoalInput = document.getElementById('calorieGoalInput').value;
