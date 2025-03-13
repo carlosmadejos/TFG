@@ -113,9 +113,26 @@
 
     <!-- Distribución de Macronutrientes -->
     <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Distribución de Macronutrientes</h2>
+
+    <!-- Selector de período -->
+    <div class="flex justify-center mb-4">
+        <select id="timeframeSelector" class="p-2 border border-gray-300 rounded-md text-gray-800"
+                onchange="onTimeframeChange()">
+            <option value="hoy">Hoy</option>
+            <option value="semana">Última semana</option>
+            <option value="mes">Último mes</option>
+            <option value="todos" selected>Todos</option>
+        </select>
+    </div>
+
     <div class="w-full max-w-lg mx-auto">
         <canvas id="macronutrientChart"></canvas>
+        <!-- Mensaje inicialmente oculto -->
+        <p id="noDataMessage" class="hidden text-center text-gray-800 font-semibold mt-4">
+            No hay datos para el período seleccionado
+        </p>
     </div>
+
 </div>
 
 <script>
@@ -390,6 +407,7 @@
 
     // Función para actualizar la interfaz con los datos del registro seleccionado
     function updateDailyLogUI(dailyLog) {
+        window.currentDailyLog = dailyLog;
         const logContainer = document.getElementById('dailyLog');
         logContainer.innerHTML = '';
 
@@ -497,6 +515,8 @@
 <script>
     let dietProgressChart;
     let macronutrientChart;
+    let allLogs = [];
+
 
     function loadDietProgressChart() {
         axios.get('/api/daily-log/history')
@@ -548,48 +568,137 @@
     function loadMacronutrientChart() {
         axios.get('/api/daily-log/history')
             .then(response => {
-                const logs = response.data;
+                // Guardar todos los registros en la variable global
+                allLogs = response.data;
 
-                const totalProteins = logs.reduce((sum, log) => sum + (log.totalProteins || 0), 0);
-                const totalCarbs = logs.reduce((sum, log) => sum + (log.totalCarbs || 0), 0);
-                const totalFats = logs.reduce((sum, log) => sum + (log.totalFats || 0), 0);
-
-                const ctx = document.getElementById('macronutrientChart').getContext('2d');
-                if (macronutrientChart) macronutrientChart.destroy();
-
-                macronutrientChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Proteínas', 'Carbohidratos', 'Grasas'],
-                        datasets: [{
-                            data: [totalProteins, totalCarbs, totalFats],
-                            backgroundColor: ['#42a5f5', '#ffca28', '#ef5350']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const value = context.raw;
-                                        const percentage = ((value / total) * 100).toFixed(2);
-                                        return `${context.label}: ${value}g (${percentage}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                // Dibujar la gráfica inicialmente con todos los logs
+                drawMacronutrientChart(allLogs, 'todos');
             })
             .catch(error => {
                 console.error("Error al cargar distribución de macronutrientes:", error);
             });
     }
+
+    function drawMacronutrientChart(allLogs, period) {
+        // 1) Filtrar
+        const filteredLogs = filterLogsByPeriod(allLogs, period);
+
+        // 2) Calcular totales
+        let totalProteins = 0;
+        let totalCarbs = 0;
+        let totalFats = 0;
+
+        filteredLogs.forEach(log => {
+            totalProteins += (log.totalProteins || 0);
+            totalCarbs += (log.totalCarbs || 0);
+            totalFats += (log.totalFats || 0);
+        });
+
+        // 2.1) Chequear si hay datos
+        const totalMacros = totalProteins + totalCarbs + totalFats;
+        const canvasEl = document.getElementById('macronutrientChart');
+        const noDataEl = document.getElementById('noDataMessage');
+
+        if (filteredLogs.length === 0 || totalMacros === 0) {
+            // Si existe un gráfico anterior, destruirlo para evitar errores
+            if (macronutrientChart) {
+                macronutrientChart.destroy();
+            }
+            // Ocultar el canvas
+            canvasEl.style.display = 'none';
+            // Mostrar el mensaje
+            noDataEl.classList.remove('hidden');
+            return; // Salir de la función
+        }
+
+        // Si sí hay datos, asegurarnos de mostrar el canvas y ocultar el mensaje
+        canvasEl.style.display = 'block';
+        noDataEl.classList.add('hidden');
+
+        // 3) Destruir gráfico previo si existe
+        if (macronutrientChart) {
+            macronutrientChart.destroy();
+        }
+
+        // 4) Crear el nuevo gráfico
+        const ctx = canvasEl.getContext('2d');
+        macronutrientChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Proteínas', 'Carbohidratos', 'Grasas'],
+                datasets: [{
+                    data: [totalProteins, totalCarbs, totalFats],
+                    backgroundColor: ['#42a5f5', '#ffca28', '#ef5350']
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutCubic'
+                },
+                onClick: (evt, elements) => {
+                    if (!elements.length) return;
+                    const index = elements[0].index;
+                    const label = macronutrientChart.data.labels[index];
+                    showFoodsForMacro(label, filteredLogs);
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const value = context.raw;
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return `${context.label}: ${value}g (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    function filterLogsByPeriod(logs, period) {
+        const now = new Date();
+        // Convertimos la fecha a ms para comparar
+        const nowTime = now.getTime();
+
+        return logs.filter(log => {
+            const createdAt = new Date(log.createdAt);
+            const diffMs = nowTime - createdAt.getTime();
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+            switch (period) {
+                case 'hoy':
+                    // Mismo día
+                    return createdAt.toDateString() === now.toDateString();
+
+                case 'semana':
+                    // Últimos 7 días
+                    return diffDays <= 7;
+
+                case 'mes':
+                    // Últimos 30 días
+                    return diffDays <= 30;
+
+                case 'todos':
+                default:
+                    return true;
+            }
+        });
+    }
+
+    function onTimeframeChange() {
+        const period = document.getElementById('timeframeSelector').value;
+        drawMacronutrientChart(allLogs, period);
+    }
+
 
     function showLoadingSpinner() {
         const spinner = document.getElementById('loadingSpinner');
@@ -597,6 +706,48 @@
             spinner.classList.remove('hidden');
         }
     }
+
+    function showFoodsForMacro(label, filteredLogs) {
+        // Unir todos los foods de todos los logs filtrados
+        let allFoods = [];
+        filteredLogs.forEach(log => {
+            if (log.foods) {
+                allFoods = allFoods.concat(log.foods);
+            }
+        });
+
+        // Determinar qué propiedad de Food buscar
+        let macroKey;
+        switch (label) {
+            case "Proteínas": macroKey = "proteins"; break;
+            case "Carbohidratos": macroKey = "carbs"; break;
+            case "Grasas": macroKey = "fats"; break;
+            default: return;
+        }
+
+        // Ordenar los alimentos según ese macro, de mayor a menor
+        const foodsCopy = allFoods.slice();
+        foodsCopy.sort((a, b) => b[macroKey] - a[macroKey]);
+
+        // Tomar los 5 alimentos con más aporte
+        const topFoods = foodsCopy.slice(0, 5);
+
+        // Generar HTML
+        let html = "<ul style='text-align:left'>";
+        topFoods.forEach(food => {
+            html += `<li><b>${food.name}</b>: ${food[macroKey]} g de ${label.toLowerCase()}</li>`;
+        });
+        html += "</ul>";
+
+        // Mostrar popup con SweetAlert2
+        Swal.fire({
+            title: `Top alimentos en ${label}`,
+            html: html,
+            icon: 'info',
+            confirmButtonText: 'Cerrar'
+        });
+    }
+
 
     function hideLoadingSpinner() {
         const spinner = document.getElementById('loadingSpinner');
