@@ -38,11 +38,24 @@
     <div class="flex items-center gap-3 mt-6">
         <input type="text" id="searchInput" placeholder="Buscar alimentos..."
                class="w-full p-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
-        <button onclick="searchFoods(true)"
+        <button onclick="searchFoods()"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-full transition shadow-md">
             Buscar
         </button>
     </div>
+
+    <!-- Spinner de carga -->
+    <div id="loadingSpinner" class="hidden mt-4 flex justify-center">
+        <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg"
+             fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10"
+                    stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+    </div>
+
+
 
     <!-- Resultados de la Búsqueda -->
     <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resultados de la Búsqueda</h2>
@@ -201,9 +214,11 @@
             showToast("Por favor, introduce un término de búsqueda.", "#ff9800");
             return;
         }
+        showLoadingSpinner();
 
         axios.get(`/api/foods/search?query=${query}`)
             .then((response) => {
+                hideLoadingSpinner();
                 if (response.data.message) {
                     document.getElementById('searchResults').innerHTML = `<p>${response.data.message}</p>`;
                     return;
@@ -217,6 +232,7 @@
                 displayFoodResults(response.data.results);
             })
             .catch((error) => {
+                hideLoadingSpinner();
                 console.error("Error al buscar alimentos:", error);
                 showToast("Hubo un error al buscar los alimentos", "#f44336");
             });
@@ -573,6 +589,20 @@
             .catch(error => {
                 console.error("Error al cargar distribución de macronutrientes:", error);
             });
+    }
+
+    function showLoadingSpinner() {
+        const spinner = document.getElementById('loadingSpinner');
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+    }
+
+    function hideLoadingSpinner() {
+        const spinner = document.getElementById('loadingSpinner');
+        if (spinner) {
+            spinner.classList.add('hidden');
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
