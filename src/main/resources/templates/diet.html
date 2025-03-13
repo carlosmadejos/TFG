@@ -83,14 +83,21 @@
     <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Historial de Registros</h2>
     <div class="flex flex-col items-center gap-3">
         <label for="logSelector" class="font-semibold text-gray-700">Seleccionar Registro:</label>
-        <select id="logSelector" onchange="loadSelectedDailyLog()"
+        <select id="logSelector" onchange="handleLogSelectionChange()"
                 class="w-full max-w-sm p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
         </select>
-        <button onclick="loadDailyLogHistory()"
-                class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
-            Cargar Historial
-        </button>
+        <div class="flex gap-3">
+            <button onclick="loadDailyLogHistory()"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+                Cargar Historial
+            </button>
+            <button id="deleteLogButton" onclick="deleteDailyLogRecord()"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+                Eliminar Registro Antiguo
+            </button>
+        </div>
     </div>
+
 
     <!-- Resumen Nutricional -->
     <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resumen Nutricional</h2>
@@ -166,8 +173,6 @@
             });
     }
 
-
-
     // Añadir alimentos al registro diario en el backend
     async function addToDailyLog(name, calories, proteins, carbs, fats, imageUrl, index) {
         try {
@@ -208,7 +213,6 @@
             showToast("Error al añadir el alimento", "#f44336");
         }
     }
-
 
     // Eliminar alimentos del registro diario en el backend
     function removeFromDailyLog(foodId) {
@@ -306,7 +310,6 @@
         resultsContainer.appendChild(table);
     }
 
-
     async function deleteDailyLogFromDatabase() {
         try {
             const { value: newCalorieGoal } = await Swal.fire({
@@ -361,47 +364,58 @@
     }
 
     async function loadDailyLogHistory() {
-        return axios.get(`/api/daily-log/history`)
-            .then((response) => {
-                const logSelector = document.getElementById('logSelector');
-                logSelector.innerHTML = '';
+      return axios.get(`/api/daily-log/history`)
+        .then((response) => {
+          const logSelector = document.getElementById('logSelector');
+          logSelector.innerHTML = '';
 
-                if (response.data.length === 0) {
-                    logSelector.innerHTML = '<option disabled>No hay registros anteriores</option>';
-                    return;
-                }
+          if (response.data.length === 0) {
+            logSelector.innerHTML = '<option disabled>No hay registros anteriores</option>';
+            return;
+          }
 
-                response.data.forEach((log) => {
-                    let createdAt = new Date(log.createdAt);
-                    let formattedCreatedAt = `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+          response.data.forEach((log) => {
+            let createdAt = new Date(log.createdAt);
+            let formattedCreatedAt = `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
 
-                    let option = document.createElement('option');
-                    option.value = log.id;
-                    option.textContent = `${log.totalCalories} kcal - Creado: ${formattedCreatedAt}`;
-                    logSelector.appendChild(option);
-                });
+            let option = document.createElement('option');
+            option.value = log.id;
+            option.textContent = `${log.totalCalories} kcal - Creado: ${formattedCreatedAt}`;
+            logSelector.appendChild(option);
+          });
 
-                logSelector.selectedIndex = 0; // Seleccionar el registro mas reciente
-                loadSelectedDailyLog();
-            })
-            .catch((error) => {
-                console.error("Error al cargar el historial:", error);
-                showToast("Error al cargar el historial", "#f44336");
-            });
+          // Seleccionar el registro más reciente
+          logSelector.selectedIndex = 0;
+
+          // Cargar ese registro y actualizar el botón
+          loadSelectedDailyLog().then(dailyLog => {
+            if (dailyLog) {
+              updateDeleteRecordButton(dailyLog);
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error al cargar el historial:", error);
+          showToast("Error al cargar el historial", "#f44336");
+        });
     }
 
+
+    // Función que carga el registro seleccionado y retorna el dailyLog
     function loadSelectedDailyLog() {
         let logSelector = document.getElementById('logSelector');
-        if (logSelector.options.length === 0) return; // Evita errores si no hay registros disponibles
+        if (logSelector.options.length === 0) return Promise.resolve(null);
 
         let selectedLogId = logSelector.value;
-        axios.get(`/api/daily-log/${selectedLogId}`)
+        return axios.get(`/api/daily-log/${selectedLogId}`)
             .then((response) => {
                 updateDailyLogUI(response.data);
+                return response.data;
             })
             .catch((error) => {
                 console.error("Error al cargar el registro seleccionado:", error);
                 showToast("Error al cargar el registro seleccionado", "#f44336");
+                return null;
             });
     }
 
@@ -423,14 +437,14 @@
         document.getElementById('totalFats').innerText = dailyLog.totalFats || 0;
 
         // Manejar la fecha de creación: si no existe, usar la fecha actual
-        let createdAt;
-        if (dailyLog.createdAt) {
-            createdAt = new Date(dailyLog.createdAt);
-        } else {
-            createdAt = new Date();
-        }
+        let createdAt = dailyLog.createdAt ? new Date(dailyLog.createdAt) : new Date();
         let createdAtText = `Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
         logContainer.innerHTML += `<p>${createdAtText}</p>`;
+
+        // Determinar si el registro es de hoy y no está cerrado
+        const isToday = (createdAt.toDateString() === new Date().toDateString());
+        const isClosed = dailyLog.closed;
+        const canRemove = (isToday && !isClosed);
 
         // Si no hay alimentos, mostrar mensaje y salir
         if (!dailyLog.foods || dailyLog.foods.length === 0) {
@@ -467,14 +481,21 @@
                 <td>${food.carbs || 0} g</td>
                 <td>${food.fats || 0} g</td>
                 <td>${food.gramsConsumed || 0} g</td>
-                <td><button onclick="removeFromDailyLog(${food.id})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Eliminar</button></td>
+                <td>
+                    <button
+                        onclick="removeFromDailyLog(${food.id})"
+                        ${canRemove ? '' : 'disabled'}
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition
+                               ${canRemove ? '' : 'opacity-50 cursor-not-allowed'}">
+                        Eliminar
+                    </button>
+                </td>
             `;
             tbody.appendChild(row);
         });
 
         logContainer.appendChild(table);
     }
-
 
     function updateCalorieGoal() {
         const calorieGoalInput = document.getElementById('calorieGoalInput').value;
@@ -509,6 +530,65 @@
         loadDailyLogHistory();
     });
 
+    // Función para actualizar el botón de eliminar registro según la elegibilidad del registro
+    function updateDeleteRecordButton(dailyLog) {
+        const deleteButton = document.getElementById('deleteLogButton');
+        // Convertir la fecha de creación a Date y comparar con la fecha actual
+        const createdAt = dailyLog.createdAt ? new Date(dailyLog.createdAt) : new Date();
+        const isToday = (createdAt.toDateString() === new Date().toDateString());
+        const isClosed = dailyLog.closed;
+
+        // Permitir eliminar solo si NO es de hoy o si ya está cerrado
+        const canDelete = (!isToday) || isClosed;
+        deleteButton.disabled = !canDelete;
+        if (!canDelete) {
+            deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    // Función que combina la carga del registro y la actualización del botón
+    function handleLogSelectionChange() {
+        loadSelectedDailyLog().then((dailyLog) => {
+            if (dailyLog) {
+                updateDeleteRecordButton(dailyLog);
+            }
+        });
+    }
+
+    function deleteDailyLogRecord() {
+        // 1. Tomar el ID del registro seleccionado
+        const logSelector = document.getElementById('logSelector');
+        if (!logSelector || logSelector.options.length === 0) return;
+
+        const selectedLogId = logSelector.value;
+
+        // 2. Confirmación con SweetAlert2
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará el registro diario seleccionado. ¡No se podrá recuperar!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            // 3. Si el usuario confirma, hacer la petición DELETE
+            if (result.isConfirmed) {
+                axios.delete(`/api/daily-log/${selectedLogId}`)
+                    .then((response) => {
+                        showToast("Registro eliminado correctamente", "#4caf50");
+                        // 4. Recargar el historial y el registro actual
+                        loadDailyLogHistory();
+                        loadDailyLogFromDatabase();
+                    })
+                    .catch((error) => {
+                        console.error("Error al eliminar registro diario:", error);
+                        showToast("Error al eliminar el registro", "#f44336");
+                    });
+            }
+        });
+    }
 </script>
 
 <!-- Incluir Chart.js -->
@@ -761,5 +841,6 @@
         loadMacronutrientChart();
     });
 </script>
+
 </body>
 </html>

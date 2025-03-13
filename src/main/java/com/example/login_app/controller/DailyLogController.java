@@ -290,5 +290,26 @@ public class DailyLogController {
         return ResponseEntity.ok(newLog);
     }
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteDailyLog(@PathVariable Long id, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        DailyLog dailyLog = dailyLogRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+
+        // Verificar que el registro no sea del día actual
+        LocalDate today = LocalDate.now();
+        if (dailyLog.getCreatedAt() != null && dailyLog.getCreatedAt().toLocalDate().isEqual(today)
+                && !dailyLog.isClosed()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("No se puede eliminar el registro del día actual.");
+        }
+
+        dailyLogRepository.delete(dailyLog);
+        return ResponseEntity.ok("Registro eliminado correctamente.");
+    }
+
+
 
 }
