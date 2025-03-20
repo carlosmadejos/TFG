@@ -272,8 +272,8 @@ canvas#progressChart {
 /* Estilo para el botón "Volver" */
 .profile-back {
     position: absolute;
-    top: 20px; /* Ajusta la posición vertical */
-    left: 20px; /* Ajusta la posición horizontal */
+    top: 20px;
+    left: 20px;
 }
 
 a.back-button {
@@ -773,20 +773,16 @@ a.back-button:hover {
 
 /* Tarjetas de los planes */
 .training-card {
-    background: #ffffff;
-    width: 350px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    text-align: left;
-    overflow: hidden;
-    word-wrap: break-word;
+    transition: all 0.3s ease-in-out;
 }
 
 .training-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+    transform: scale(1.02);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .training-card h3 {
