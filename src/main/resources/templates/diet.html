@@ -28,7 +28,7 @@
 </div>
 
 <!-- Contenedor Principal -->
-<div class="max-w-6xl w-full bg-white shadow-lg rounded-lg p-8 text-gray-800 overflow-x-auto">
+<div class="max-w-6xl w-full bg-white shadow-lg rounded-lg p-10 text-gray-800 overflow-x-auto space-y-6">
     <h1 class="text-4xl font-extrabold text-center text-blue-700 uppercase mb-4">Gestión de Dietas</h1>
     <p class="text-gray-700 text-lg text-center leading-relaxed">
         Aquí puedes buscar alimentos, añadirlos y registrar tu ingesta diaria.
@@ -39,7 +39,9 @@
         <input type="text" id="searchInput" placeholder="Buscar alimentos..."
                class="w-full p-4 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
         <button onclick="searchFoods()"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-full transition shadow-md">
+                class="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800
+               text-white font-semibold px-6 py-3 rounded-full shadow-lg transform transition-all duration-300
+               hover:scale-105 hover:shadow-xl">
             Buscar
         </button>
     </div>
@@ -55,10 +57,11 @@
         </svg>
     </div>
 
-
-
     <!-- Resultados de la Búsqueda -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resultados de la Búsqueda</h2>
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Resultados de la Búsqueda
+    </h2>
     <div id="searchResults" class="p-6 bg-gray-100 rounded-lg shadow-lg text-center overflow-x-auto">
         <p class="text-gray-800 text-lg leading-relaxed">No se encontraron alimentos.</p>
     </div>
@@ -69,7 +72,10 @@
     </div>
 
     <!-- Registro Diario -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Registro Diario</h2>
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Registro Diario
+    </h2>
     <div id="dailyLog" class="p-4 bg-gray-100 rounded-lg shadow-sm overflow-x-auto"></div>
     <p id="calorieSummary" class="text-gray-800 text-lg mt-4"></p>
     <div class="flex justify-center mt-4">
@@ -80,7 +86,10 @@
     </div>
 
     <!-- Historial de Registros -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Historial de Registros</h2>
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Historial de Registros
+    </h2>
     <div class="flex flex-col items-center gap-3">
         <label for="logSelector" class="font-semibold text-gray-700">Seleccionar Registro:</label>
         <select id="logSelector" onchange="handleLogSelectionChange()"
@@ -100,7 +109,10 @@
 
 
     <!-- Resumen Nutricional -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Resumen Nutricional</h2>
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Resumen Nutricional
+    </h2>
     <div class="p-6 bg-gray-100 rounded-lg shadow-lg">
         <ul class="grid grid-cols-2 gap-4 text-gray-800 text-lg">
             <li><b>Objetivo Calórico:</b> <span id="calorieGoalDisplay">0</span> kcal</li>
@@ -112,15 +124,20 @@
     </div>
 
     <!-- Seguimiento de la Dieta -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Seguimiento de la Dieta</h2>
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Progreso de la Dieta
+    </h2>
     <div class="w-full max-w-lg mx-auto">
         <canvas id="dietProgressChart"></canvas>
     </div>
     <div id="dietAnalysis" class="mt-6"></div>
 
     <!-- Distribución de Macronutrientes -->
-    <h2 class="text-2xl font-bold text-center text-blue-700 underline decoration-blue-500 mt-8 mb-4">Distribución de Macronutrientes</h2>
-
+    <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
+           text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
+        Macronutrientes Consumidos
+    </h2>
     <!-- Selector de período -->
     <div class="flex justify-center mb-4">
         <select id="timeframeSelector" class="p-2 border border-gray-300 rounded-md text-gray-800"
