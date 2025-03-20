@@ -455,7 +455,7 @@
 
         // Manejar la fecha de creación: si no existe, usar la fecha actual
         let createdAt = dailyLog.createdAt ? new Date(dailyLog.createdAt) : new Date();
-        let createdAtText = `Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+        let createdAtText = `<p class="text-gray-600 font-semibold">Creado: ${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}</p>`;
         logContainer.innerHTML += `<p>${createdAtText}</p>`;
 
         // Determinar si el registro es de hoy y no está cerrado
@@ -465,31 +465,33 @@
 
         // Si no hay alimentos, mostrar mensaje y salir
         if (!dailyLog.foods || dailyLog.foods.length === 0) {
-            logContainer.innerHTML += '<p>No se han añadido alimentos.</p>';
+            logContainer.innerHTML += '<p class="text-gray-500 italic">No se han añadido alimentos.</p>';
             return;
         }
 
         // Crear la tabla de alimentos
         let table = document.createElement('table');
+        table.className = "min-w-full bg-white shadow-md rounded-lg overflow-hidden";
         table.innerHTML = `
-            <thead>
+            <thead class="bg-blue-600 text-white text-md">
                 <tr>
-                    <th>Imagen</th>
-                    <th>Descripción</th>
-                    <th>Calorías</th>
-                    <th>Proteínas</th>
-                    <th>Carbohidratos</th>
-                    <th>Grasas</th>
-                    <th>Gramos Consumidos</th>
-                    <th>Acción</th>
+                    <th class="py-3 px-5 text-center">Imagen</th>
+                    <th class="py-3 px-5 text-left">Descripción</th>
+                    <th class="py-3 px-5 text-center">Calorías</th>
+                    <th class="py-3 px-5 text-center">Proteínas</th>
+                    <th class="py-3 px-5 text-center">Carbohidratos</th>
+                    <th class="py-3 px-5 text-center">Grasas</th>
+                    <th class="py-3 px-5 text-center">Gramos Consumidos</th>
+                    <th class="py-3 px-5 text-center">Acción</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody class="text-gray-700"></tbody>
         `;
 
         const tbody = table.querySelector('tbody');
         dailyLog.foods.forEach((food) => {
             const row = document.createElement('tr');
+            row.className = "border-b border-gray-200 hover:bg-gray-100 transition";
             row.innerHTML = `
                 <td><img src="${food.imageUrl || 'https://via.placeholder.com/50'}" alt="${food.name}" style="width:50px; height:50px;"></td>
                 <td>${food.name}</td>
