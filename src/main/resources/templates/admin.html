@@ -1,54 +1,81 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <title>Panel de Administración</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
-<div class="admin-container">
-  <!-- Botón para cerrar sesión -->
-  <div class="profile-logout">
+
+<body class="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 min-h-screen flex items-center justify-center p-6">
+
+<div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-6xl text-gray-900">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-extrabold text-blue-700 uppercase">Panel de Administración</h1>
     <form th:action="@{/logout}" method="post">
-      <button type="submit" class="button update-button">Cerrar Sesión</button>
+      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition">
+        Cerrar Sesión
+      </button>
     </form>
   </div>
-  <h1>Bienvenido, <span th:text="${user.username}">Admin</span>!</h1>
-  <!-- Botón para gestionar planes de entrenamiento -->
-  <div>
-    <a href="/admin/training-plans" class="button">Gestionar Planes de Entrenamiento</a>
+
+  <!-- Bienvenida -->
+  <h2 class="text-xl font-semibold mb-4">Bienvenido, <span th:text="${user.username}" class="text-blue-600">Admin</span>!</h2>
+
+  <!-- Botón gestionar planes -->
+  <div class="mb-6">
+    <a href="/admin/training-plans"
+       class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition inline-block">
+      Gestionar Planes de Entrenamiento
+    </a>
   </div>
 
-  <h2>Lista de usuarios</h2>
-  <table class="admin-table">
-    <thead>
-    <tr>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="u : ${users}">
-      <td th:text="${u.username}"></td>
-      <td th:text="${u.email}"></td>
-      <td th:text="${u.role}"></td>
-      <td>
-        <button class="admin-delete-button" th:data-id="${u.id}" th:data-username="${u.username}">Delete</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+  <!-- Lista de usuarios -->
+  <h3 class="text-lg font-bold mb-4">Lista de Usuarios</h3>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left table-auto shadow-lg rounded-lg overflow-hidden">
+      <thead class="bg-blue-600 text-white">
+      <tr>
+        <th class="p-4">Usuario</th>
+        <th class="p-4">Email</th>
+        <th class="p-4">Rol</th>
+        <th class="p-4 text-center">Acciones</th>
+      </tr>
+      </thead>
+      <tbody class="bg-white text-gray-700 divide-y divide-gray-200">
+      <tr th:each="u : ${users}" class="hover:bg-gray-100 transition">
+        <td class="p-4" th:text="${u.username}"></td>
+        <td class="p-4" th:text="${u.email}"></td>
+        <td class="p-4" th:text="${u.role}"></td>
+        <td class="p-4 text-center">
+          <button
+                  th:if="${u.role != 'ADMIN'}"
+                  class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition delete-button"
+                  th:data-id="${u.id}"
+                  th:data-username="${u.username}">
+            Delete
+          </button>
+          <button
+                  th:if="${u.role == 'ADMIN'}"
+                  class="bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded-lg shadow-md cursor-not-allowed"
+                  disabled>
+            No permitido
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<!-- CSRF Token -->
+<!-- CSRF -->
 <meta name="_csrf" th:content="${_csrf.token}"/>
 <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-      document.querySelectorAll(".admin-delete-button").forEach(button => {
+      document.querySelectorAll(".delete-button").forEach(button => {
           button.addEventListener("click", function() {
               let userId = this.getAttribute("data-id");
               let username = this.getAttribute("data-username");
@@ -85,5 +112,6 @@
       });
   });
 </script>
+
 </body>
 </html>
