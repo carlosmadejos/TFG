@@ -22,20 +22,20 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-50">
-  <div class="container mx-auto px-6 py-12">
+  <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
     <!-- Título de bienvenida -->
     <div class="text-center mb-10">
-      <h1 class="text-5xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text">¡Hola, <span th:text="${user.username}">Usuario</span>!</h1>
+      <h1 class="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text">¡Hola, <span th:text="${user.username}">Usuario</span>!</h1>
       <p class="text-lg text-gray-600 mt-2">Estamos felices de verte de nuevo. Aquí tienes un resumen rápido:</p>
     </div>
 
     <!-- Tarjetas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <!-- Tarjeta 1 -->
       <div class="bg-white shadow-2xl rounded-xl p-8 text-center transition-transform hover:scale-105 hover:shadow-2xl">
         <h3 class="text-xl font-semibold text-blue-600">Tu Progreso</h3>
         <p class="text-gray-700 mt-2">IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
-        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-110 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/profile'">
+        <button class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-105 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/profile'">
           Ver Perfil
         </button>
       </div>
@@ -44,7 +44,7 @@
       <div class="bg-white shadow-2xl rounded-xl p-8 text-center transition-transform hover:scale-105 hover:shadow-2xl">
         <h3 class="text-xl font-semibold text-blue-600">Planes de Entrenamiento</h3>
         <p class="text-gray-700 mt-2">Consulta tus planes personalizados o explora nuevos.</p>
-        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-110 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/training-plans'">
+        <button class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-105 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/training-plans'">
           Ver Planes
         </button>
       </div>
@@ -53,14 +53,14 @@
       <div class="bg-white shadow-2xl rounded-xl p-8 text-center transition-transform hover:scale-105 hover:shadow-2xl">
         <h3 class="text-xl font-semibold text-blue-600">Dietas</h3>
         <p class="text-gray-700 mt-2">Consulta tus dietas o crea un nuevo plan nutricional.</p>
-        <button class="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-110 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/diet'">
+        <button class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-105 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/diet'">
           Ver Dietas
         </button>
       </div>
     </div>
 
     <!-- Calendario -->
-    <div class="mt-10 bg-white shadow-2xl rounded-2xl p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
+    <div class="mt-10 overflow-x-auto bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
       <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text mb-6">Calendario de Ejercicios</h2>
       <div id="calendar"></div>
     </div>
