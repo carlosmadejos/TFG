@@ -60,9 +60,9 @@
     </div>
 
     <!-- Calendario -->
-    <div class="mt-10 overflow-x-auto bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
+    <div class="mt-10 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-gray-200 bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
       <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text mb-6">Calendario de Ejercicios</h2>
-      <div id="calendar"></div>
+      <div id="calendar" class="min-w-full sm:min-w-0"></div>
     </div>
 
     <!-- Modal -->
@@ -88,7 +88,7 @@
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
+      initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth',
       locale: 'es',
       selectable: true,
       editable: false, // No permitir arrastrar eventos
