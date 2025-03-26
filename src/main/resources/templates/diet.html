@@ -21,10 +21,21 @@
     <style>
         canvas {
           display: block;
-          max-width: 100%;
-          height: auto;
+        }
+
+        #macronutrientChart {
+          width: 600px !important;
+          height: 300px !important;
+        }
+
+        @media (max-width: 768px) {
+          #macronutrientChart {
+            width: 100% !important;
+            height: auto !important;
+          }
         }
     </style>
+
 </head>
 <body class="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 text-white min-h-screen flex flex-col items-center p-6">
 
@@ -151,7 +162,7 @@
     </div>
 
     <div class="w-full max-w-lg mx-auto" style="min-height: 320px;">
-        <canvas id="macronutrientChart" width="600" height="300"></canvas>
+        <canvas id="macronutrientChart"></canvas>
         <p id="noDataMessage" class="hidden text-center text-gray-800 font-semibold mt-4">
             No hay datos para el período seleccionado
         </p>
@@ -734,6 +745,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 animation: false,
                 onClick: (evt, elements) => {
                     if (!elements.length) return;
