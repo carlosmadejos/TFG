@@ -96,17 +96,12 @@
                 class="w-full max-w-sm p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 shadow-md text-lg">
         </select>
         <div class="flex gap-3">
-            <button onclick="loadDailyLogHistory()"
-                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
-                Cargar Historial
-            </button>
             <button id="deleteLogButton" onclick="deleteDailyLogRecord()"
                     class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
                 Eliminar Registro Antiguo
             </button>
         </div>
     </div>
-
 
     <!-- Resumen Nutricional -->
     <h2 class="text-2xl font-extrabold text-blue-700 uppercase tracking-wide mt-6
@@ -128,8 +123,8 @@
            text-center bg-gradient-to-r from-blue-500 to-blue-800 text-transparent bg-clip-text drop-shadow-md">
         Progreso de la Dieta
     </h2>
-    <div class="w-full max-w-lg mx-auto">
-        <canvas id="dietProgressChart"></canvas>
+    <div class="w-full max-w-lg mx-auto" style="min-height: 320px;">
+        <canvas id="dietProgressChart" width="600" height="300"></canvas>
     </div>
     <div id="dietAnalysis" class="mt-6"></div>
 
@@ -149,13 +144,13 @@
         </select>
     </div>
 
-    <div class="w-full max-w-lg mx-auto">
-        <canvas id="macronutrientChart"></canvas>
-        <!-- Mensaje inicialmente oculto -->
+    <div class="w-full max-w-lg mx-auto" style="min-height: 320px;">
+        <canvas id="macronutrientChart" width="600" height="300"></canvas>
         <p id="noDataMessage" class="hidden text-center text-gray-800 font-semibold mt-4">
             No hay datos para el período seleccionado
         </p>
     </div>
+
 
 </div>
 
@@ -733,10 +728,7 @@
             },
             options: {
                 responsive: true,
-                animation: firstLoad ? false : {
-                    duration: 800,
-                    easing: 'easeOutQuart'
-                },
+                animation: false,
                 onClick: (evt, elements) => {
                     if (!elements.length) return;
                     const index = elements[0].index;
@@ -760,7 +752,6 @@
                 }
             }
         });
-        firstLoad = false;
     }
 
 
