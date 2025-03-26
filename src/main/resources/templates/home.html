@@ -20,18 +20,6 @@
     <!-- SweetAlert2 CSS y JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <style>
-    @media (max-width: 768px) {
-      .fc .fc-toolbar-title {
-        font-size: 1.1rem !important;
-      }
-      .fc-event-title {
-        font-size: 0.85rem;
-      }
-    }
-  </style>
-
 </head>
 <body class="bg-gray-50">
   <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -74,10 +62,6 @@
     <!-- Calendario -->
     <div class="mt-10 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-gray-200 bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
       <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text mb-6">Calendario de Ejercicios</h2>
-      <button onclick="openExerciseModal(new Date().toISOString().split('T')[0])"
-              class="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow">
-        Añadir ejercicio para hoy
-      </button>
       <div id="calendar" class="w-full min-w-0"></div>
     </div>
 
@@ -104,10 +88,10 @@
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth',
+      initialView: window.innerWidth < 768 ? 'listDay' : 'dayGridMonth',
       locale: 'es',
       selectable: true,
-      editable: false,
+      editable: false, // No permitir arrastrar eventos
       events: '/api/exercises/get',
 
       dateClick: function (info) {
