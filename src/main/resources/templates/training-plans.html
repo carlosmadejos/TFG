@@ -11,10 +11,11 @@
   <a th:href="@{/home}" class="button back-button">Volver a Inicio</a>
 </div>
 
-<h1 class="text-5xl font-extrabold text-center text-white uppercase tracking-wide drop-shadow-md">
+<h1 class="text-3xl sm:text-5xl font-extrabold text-center text-white uppercase tracking-wide mt-6">
   Planes de Entrenamiento
 </h1>
-<p class="text-xl text-gray-800 text-center mt-4 font-medium">
+
+<p class="text-base sm:text-lg text-gray-100 text-center mt-2 px-4 max-w-2xl">
   Aquí puedes ver y gestionar tus planes de entrenamiento.
 </p>
 
@@ -22,15 +23,18 @@
   <p>No hay planes de entrenamiento disponibles en este momento.</p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-  <div class="training-card flex flex-col justify-between" th:each="plan : ${trainingPlans}">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 px-4 w-full max-w-7xl">
+  <div class="flex flex-col justify-between bg-white rounded-xl shadow-xl p-6 text-gray-800 transition-transform hover:scale-[1.02]" th:each="plan : ${trainingPlans}">
     <div>
       <h3 class="text-center text-2xl font-semibold text-blue-700" th:text="${plan.name}"></h3>
       <p class="description text-justify text-gray-700 leading-relaxed" th:text="${plan.description}"></p>
       <p><strong>Nivel:</strong> <span th:text="${plan.level}"></span></p>
       <p><strong>Duración:</strong> <span th:text="${plan.duration}"></span> semanas</p>
     </div>
-    <a th:href="@{'/training-plans/' + ${plan.id}}" class="button text-center">Ver Detalles</a>
+    <a th:href="@{'/training-plans/' + ${plan.id}}"
+       class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md text-center w-full transition">
+      Ver Detalles
+    </a>
   </div>
 </div>
 </body>
