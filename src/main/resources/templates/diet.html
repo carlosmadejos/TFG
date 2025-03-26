@@ -19,22 +19,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        canvas {
-          display: block;
-        }
-
         #macronutrientChart {
-          width: 600px !important;
-          height: 300px !important;
+          width: 100%;
+          max-width: 480px;
+          height: auto;
+          aspect-ratio: 1 / 1;
         }
 
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
           #macronutrientChart {
-            width: 100% !important;
-            height: auto !important;
+            max-width: 550px;
           }
         }
+
+        .chart-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 1rem;
+        }
     </style>
+
 
 </head>
 <body class="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 text-white min-h-screen flex flex-col items-center p-6">
@@ -649,24 +654,82 @@
                             {
                                 label: 'Calorías Consumidas',
                                 data: totalCalories,
-                                borderColor: '#4caf50',
+                                borderColor: '#22c55e',
+                                backgroundColor: '#22c55e',
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointHoverRadius: 6,
+                                pointStyle: 'circle',
                                 fill: false
                             },
                             {
                                 label: 'Objetivo Calórico',
                                 data: calorieGoals,
-                                borderColor: '#f44336',
-                                borderDash: [5, 5],
+                                borderColor: '#ef4444',
+                                backgroundColor: '#ef4444',
+                                borderDash: [6, 6],
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointHoverRadius: 6,
+                                pointStyle: 'rectRot',
                                 fill: false
                             }
                         ]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         animation: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.raw} kcal`;
+                                    }
+                                },
+                                backgroundColor: '#fff',
+                                titleColor: '#111',
+                                bodyColor: '#111',
+                                borderColor: '#ccc',
+                                borderWidth: 1
+                            }
+                        },
                         scales: {
+                            x: {
+                                ticks: {
+                                    color: '#555',
+                                    font: {
+                                        size: 12,
+                                        weight: '500'
+                                    }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            },
                             y: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#555',
+                                    callback: value => `${value} kcal`,
+                                    font: {
+                                        size: 12
+                                    }
+                                },
+                                grid: {
+                                    color: '#e5e7eb'
+                                }
                             }
                         }
                     }
@@ -676,6 +739,7 @@
                 console.error("Error al cargar datos de la dieta:", error);
             });
     }
+
 
     function loadMacronutrientChart() {
         axios.get('/api/daily-log/history')
@@ -740,13 +804,17 @@
                 labels: ['Proteínas', 'Carbohidratos', 'Grasas'],
                 datasets: [{
                     data: [totalProteins, totalCarbs, totalFats],
-                    backgroundColor: ['#42a5f5', '#ffca28', '#ef5350']
+                    backgroundColor: ['#3b82f6', '#facc15', '#ef4444'], // Tailwind blue-yellow-red
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 10
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: false,
+                cutout: '55%',
                 onClick: (evt, elements) => {
                     if (!elements.length) return;
                     const index = elements[0].index;
@@ -755,9 +823,24 @@
                 },
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 14,
+                            padding: 16,
+                            font: {
+                                size: 14,
+                                weight: 'bold',
+                                family: 'Inter, sans-serif'
+                            },
+                            color: '#333'
+                        }
                     },
                     tooltip: {
+                        backgroundColor: '#f9f9f9',
+                        titleColor: '#111',
+                        bodyColor: '#111',
+                        borderColor: '#ccc',
+                        borderWidth: 1,
                         callbacks: {
                             label: function(context) {
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
