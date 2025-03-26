@@ -20,6 +20,22 @@
     <!-- SweetAlert2 CSS y JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    @media (max-width: 768px) {
+      .fc .fc-toolbar-title {
+        font-size: 1.2rem !important;
+      }
+      .fc-button {
+        font-size: 0.9rem !important;
+        padding: 0.5rem 0.75rem !important;
+      }
+      .fc-event-title {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
 </head>
 <body class="bg-gray-50">
   <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -60,7 +76,7 @@
     </div>
 
     <!-- Calendario -->
-    <div class="mt-10 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-gray-200 bg-white shadow-2xl rounded-2xl p-6 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
+    <div class="mt-10 w-full sm:max-w-full overflow-x-auto bg-white shadow-2xl rounded-2xl p-4 sm:p-8 border border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100">
       <h2 class="text-3xl font-extrabold bg-gradient-to-r from-blue-500 to-blue-700 text-transparent bg-clip-text mb-6">Calendario de Ejercicios</h2>
       <div id="calendar" class="w-full min-w-0"></div>
     </div>
