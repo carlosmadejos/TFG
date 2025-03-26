@@ -651,6 +651,7 @@
                     },
                     options: {
                         responsive: true,
+                        animation: false,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -732,9 +733,9 @@
             },
             options: {
                 responsive: true,
-                animation: {
-                    duration: 1500,
-                    easing: 'easeInOutCubic'
+                animation: firstLoad ? false : {
+                    duration: 800,
+                    easing: 'easeOutQuart'
                 },
                 onClick: (evt, elements) => {
                     if (!elements.length) return;
@@ -759,6 +760,7 @@
                 }
             }
         });
+        firstLoad = false;
     }
 
 
