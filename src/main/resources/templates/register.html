@@ -22,6 +22,7 @@
     <div>
       <label for="username" class="block text-white text-left font-semibold">Usuario:</label>
       <input type="text" th:field="*{username}" id="username" required pattern="^\S+$"
+             title="El nombre de usuario no debe contener espacios"
              class="w-full px-4 py-3 rounded-md bg-white/90 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
       <div th:if="${#fields.hasErrors('username')}" class="text-red-500 text-sm mt-1" th:errors="*{username}"></div>
     </div>
@@ -29,6 +30,7 @@
     <div>
       <label for="email" class="block text-white text-left font-semibold">Email:</label>
       <input type="email" th:field="*{email}" id="email" required pattern="^\S+$"
+             title="El correo no debe contener espacios"
              class="w-full px-4 py-3 rounded-md bg-white/90 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
       <div th:if="${#fields.hasErrors('email')}" class="text-red-500 text-sm mt-1" th:errors="*{email}"></div>
     </div>
@@ -36,6 +38,7 @@
     <div>
       <label for="password" class="block text-white text-left font-semibold">Contraseña:</label>
       <input type="password" th:field="*{password}" id="password" required pattern="^\S+$"
+             title="La contraseña no debe contener espacios"
              class="w-full px-4 py-3 rounded-md bg-white/90 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
       <div th:if="${#fields.hasErrors('password')}" class="text-red-500 text-sm mt-1" th:errors="*{password}"></div>
     </div>
