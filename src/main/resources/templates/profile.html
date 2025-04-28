@@ -30,6 +30,14 @@
     <div class="profile-back">
         <a th:href="@{/home}" class="btn btn-secondary">Volver a Inicio</a>
     </div>
+    <!-- Botón para ver logros -->
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold text-white mb-2">Mis Logros</h2>
+        <a th:href="@{/profile/achievements}"
+           class="inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">
+            Ver todos mis badges
+        </a>
+    </div>
 
     <div class="flex flex-col md:flex-row justify-center items-stretch gap-6 mt-6 w-full md:max-w-6xl mx-auto">
     <!-- Información del perfil -->

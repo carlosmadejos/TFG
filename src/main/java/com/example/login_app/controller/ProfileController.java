@@ -1,9 +1,12 @@
 package com.example.login_app.controller;
 
+import com.example.login_app.model.Achievement;
 import com.example.login_app.model.User;
 import com.example.login_app.model.Progress;
+import com.example.login_app.model.UserAchievement;
 import com.example.login_app.repository.UserRepository;
 import com.example.login_app.repository.ProgressRepository;
+import com.example.login_app.service.AchievementService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ public class ProfileController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AchievementService achievementService;
 
     @GetMapping("/profile")
     public String viewProfile(Model model, Principal principal) {
@@ -75,6 +81,15 @@ public class ProfileController {
         model.addAttribute("calculatedAge", user.getAge());
         model.addAttribute("user", user);
 
+        // Obtener los logros del usuario
+        List<UserAchievement> userAchievements =
+                achievementService.getUserAchievements(user);
+        List<Achievement> allAchievements =
+                achievementService.getAllAchievements();
+
+        model.addAttribute("userAchievements", userAchievements);
+        model.addAttribute("allAchievements", allAchievements);
+
         return "profile";
     }
 
@@ -100,6 +115,9 @@ public class ProfileController {
         progress.setUser(currentUser); // Relacionar el progreso con el usuario
 
         progressRepository.save(progress); // Guardar el progreso en la base de datos
+
+        // Evaluar logros tras actualizar progreso
+        achievementService.evaluateWeightLossAchievements(currentUser);
 
         // Redirigir al perfil
         return "redirect:/profile";

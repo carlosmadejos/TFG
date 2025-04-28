@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Logros</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <style>
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    .shine {
+    background: linear-gradient(90deg, #facc15, #fcd34d, #fde68a, #fcd34d, #facc15);
+    background-size: 400% 100%;
+    animation: shine 5s linear infinite;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    }
+    @keyframes shine {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-300 text-white min-h-screen flex flex-col items-center p-8">
+
+<!-- Botón regresar -->
+<div class="profile-back mb-8">
+  <a th:href="@{/profile}" class="button back-button shadow-md hover:shadow-xl transform hover:scale-105 transition">Volver al Perfil</a>
+</div>
+
+<!-- Título -->
+<div class="text-center mb-12">
+  <h2 class="text-5xl font-extrabold uppercase tracking-wide shine drop-shadow-lg">
+    🏆 Tus Logros
+  </h2>
+</div>
+<!-- Barra de progreso -->
+<div class="w-full max-w-3xl mb-12">
+  <div class="flex justify-between mb-2">
+    <span class="text-lg font-semibold text-white">Progreso de Logros</span>
+    <span class="text-lg font-semibold text-white">
+      <span th:text="${#numbers.formatDecimal(userAchievements.size() * 100.0 / allAchievements.size(), 0, 0)}"></span>% completado
+    </span>
+  </div>
+  <div class="w-full bg-white/30 rounded-full h-4">
+    <div class="bg-green-400 h-4 rounded-full transition-all duration-500"
+         th:style="|width: ${userAchievements.size() * 100 / allAchievements.size()}%;|"></div>
+  </div>
+</div>
+<!-- Mensaje de progreso -->
+<div class="text-center mb-12">
+  <p th:if="${userAchievements.size() == allAchievements.size()}" class="text-lg font-semibold text-white">
+    ¡Has desbloqueado todos los logros! 🎉
+  </p>
+  <p th:if="${userAchievements.size() < allAchievements.size()}" class="text-lg font-semibold text-white">
+    ¡Sigue trabajando para desbloquear más logros! 💪
+  </p>
+</div>
+
+<!-- Sección de logros -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 w-full max-w-7xl">
+
+  <div th:each="ach : ${allAchievements}"
+       class="fade-in bg-white/20 border border-white/30 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center justify-between text-center shadow-xl hover:shadow-2xl transition-transform transform hover:scale-105">
+
+    <!-- Icono -->
+    <div th:if="${#lists.contains(userAchievements, ach)}" th:switch="${ach.level}" class="text-7xl mb-6 pulse">
+      <span th:case="'BRONZE'">🏅</span>
+      <span th:case="'SILVER'">🥈</span>
+      <span th:case="'GOLD'">🥇</span>
+    </div>
+
+    <div th:if="${!#lists.contains(userAchievements, ach)}" class="mb-6">
+      <!-- Candado -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 opacity-70 mx-auto" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 2a5 5 0 00-5 5v3H6.75A2.75 2.75 0 004 12.75v7.5A2.75 2.75 0 006.75 23h10.5A2.75 2.75 0 0020 20.25v-7.5A2.75 2.75 0 0017.25 10H17V7a5 5 0 00-5-5zm-3.5 8V7a3.5 3.5 0 117 0v3h-7zM6.75 11.5a1.25 1.25 0 00-1.25 1.25v7.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-7.5a1.25 1.25 0 00-1.25-1.25H6.75z" clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <!-- Nombre -->
+    <h3 th:text="${ach.name}" class="text-2xl font-bold mb-2 text-white drop-shadow-md"></h3>
+
+    <!-- Descripción -->
+    <p th:text="${ach.description}" class="text-gray-300 text-base leading-relaxed mb-6"></p>
+
+    <!-- Estado -->
+    <div>
+      <span th:if="${#lists.contains(userAchievements, ach)}"
+            class="px-5 py-2 bg-green-400 text-black font-bold rounded-full shadow-md text-sm">
+        Desbloqueado
+      </span>
+      <span th:if="${!#lists.contains(userAchievements, ach)}"
+            class="px-5 py-2 bg-gray-600 text-gray-200 font-bold rounded-full shadow-md text-sm">
+        Faltan
+        <span th:text="${#numbers.formatDecimal(ach.threshold - weightLost, 0, 0)} + ' kg'"></span>
+      </span>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
