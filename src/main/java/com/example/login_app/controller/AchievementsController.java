@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,15 +38,22 @@ public class AchievementsController {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         // 1) Reevalúa y asigna badges
-        achievementService.evaluateWeightLossAchievements(user);
+        List<Progress> progresses = progressRepository.findByUser(user);
+        if (!progresses.isEmpty()) {
+            achievementService.evaluateWeightLossAchievements(user);
+        }
+
 
         // 2) Calcula cuánto ha perdido el usuario
-        var progresses = progressRepository.findByUser(user);
-        double initialWeight = progresses.stream()
-                .min(Comparator.comparing(Progress::getDate))
-                .orElseThrow()
-                .getWeight();
-        double weightLost = initialWeight - user.getWeight();
+        double weightLost = 0;
+        if (!progresses.isEmpty()) {
+            Optional<Progress> first = progresses.stream()
+                    .min(Comparator.comparing(Progress::getDate));
+            if (first.isPresent()) {
+                double initialWeight = first.get().getWeight();
+                weightLost = initialWeight - user.getWeight();
+            }
+        }
 
         // 3) Vuelca al modelo
         model.addAttribute("user", user);

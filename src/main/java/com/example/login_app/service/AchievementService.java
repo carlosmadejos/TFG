@@ -9,7 +9,8 @@ import com.example.login_app.repository.UserAchievementRepository;
 import com.example.login_app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.example.login_app.model.Progress;
+import java.util.Optional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -49,33 +50,33 @@ public class AchievementService {
      */
     @Transactional
     public void evaluateWeightLossAchievements(User user) {
-        // Obtener el progreso inicial (peso al primer registro)
+        // 1) Se obtiene todos los registros de progreso
         var progresses = progressRepository.findByUser(user);
-        if (progresses.isEmpty()) {
-            return;
-        }
-        var initialProgress = progresses.stream()
-                .min(Comparator.comparing(p -> p.getDate()))
-                .orElseThrow();
-        double initialWeight = initialProgress.getWeight();
 
-        // Peso actual del usuario
+        // 2) Calcula el peso inicial:
+        // Si hay registros, toma el más antiguo.
+        // Si no, usa el peso actual almacenado.
+        double initialWeight = progresses.stream()
+                .min(Comparator.comparing(Progress::getDate))
+                .map(Progress::getWeight)
+                .orElse(user.getWeight());
+
+        // 3) Peso actual y pérdida
         double currentWeight = user.getWeight();
         double weightLost = initialWeight - currentWeight;
         if (weightLost <= 0) {
             return; // No hay pérdida de peso
         }
 
-        // Filtrar logros de tipo pérdida de peso y ordenar por threshold ascendente
+        // 4) Filtra y ordena los logros de pérdida de peso
         List<Achievement> weightLossAchievements = achievementRepository.findAll().stream()
                 .filter(a -> a.getCode().startsWith("WEIGHT_LOSS"))
                 .sorted(Comparator.comparing(Achievement::getThreshold))
                 .collect(Collectors.toList());
 
-        // Evalúa cada logro
+        // 5) Asigna cada logro alcanzado
         for (Achievement achievement : weightLossAchievements) {
             if (weightLost >= achievement.getThreshold()) {
-                // Verificar si el usuario ya tiene este logro
                 boolean exists = userAchievementRepository
                         .findByUserAndAchievement(user, achievement)
                         .isPresent();

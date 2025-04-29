@@ -1,6 +1,8 @@
 package com.example.login_app.controller;
 
+import com.example.login_app.model.Progress;
 import com.example.login_app.model.User;
+import com.example.login_app.repository.ProgressRepository;
 import com.example.login_app.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +22,12 @@ public class LoginController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProgressRepository progressRepository;
 
-    public LoginController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public LoginController(UserRepository userRepository, PasswordEncoder passwordEncoder, ProgressRepository progressRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.progressRepository = progressRepository;
     }
 
     @GetMapping("/login")
@@ -71,18 +75,20 @@ public class LoginController {
         // Encriptar la contraseña
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Guardar en la base de datos
-        userRepository.save(user);
+        // 1) Guardamos al usuario
+        User saved = userRepository.save(user);
 
-        // Redirigir al login con un mensaje de éxito
+        // 2) Creamos el primer Progress con el peso inicial
+        Progress initial = new Progress();
+        initial.setUser(saved);
+        initial.setWeight(saved.getWeight());
+        initial.setHeight(saved.getHeight());
+        initial.setDate(LocalDate.now());
+        progressRepository.save(initial);
+
+        // 3) Redirigimos al login con mensaje de éxito
         model.addAttribute("success", "Usuario registrado exitosamente. Ahora puedes iniciar sesión.");
         return "redirect:/login";
     }
-
-
-
-
-
-
 
 }
