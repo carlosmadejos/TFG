@@ -43,6 +43,9 @@ public class User {
     @Column(nullable = false)
     private String role = "USER";
 
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer searchCount = 0;
+
     // Getters y Setters
     public Long getId() {
         return id;
@@ -111,5 +114,13 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Integer getSearchCount() {
+        return searchCount;
+    }
+
+    public void setSearchCount(Integer searchCount) {
+        this.searchCount = searchCount;
     }
 }

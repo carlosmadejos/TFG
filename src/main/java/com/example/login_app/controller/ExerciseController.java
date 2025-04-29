@@ -4,11 +4,10 @@ import com.example.login_app.model.Exercise;
 import com.example.login_app.model.User;
 import com.example.login_app.repository.ExerciseRepository;
 import com.example.login_app.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.login_app.service.AchievementService;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +15,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/exercises")
 public class ExerciseController {
 
-    @Autowired
-    private ExerciseRepository exerciseRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final UserRepository userRepository;
+    private final AchievementService achievementService;
 
-    @Autowired
-    private UserRepository userRepository;
+    public ExerciseController(
+            ExerciseRepository exerciseRepository,
+            UserRepository userRepository,
+            AchievementService achievementService
+    ) {
+        this.exerciseRepository = exerciseRepository;
+        this.userRepository     = userRepository;
+        this.achievementService = achievementService;
+    }
 
     // Guardar un ejercicio
     @PostMapping("/save")
@@ -33,7 +40,10 @@ public class ExerciseController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         exercise.setUser(user);
-        return exerciseRepository.save(exercise); // Devolver el ejercicio guardado
+        Exercise saved = exerciseRepository.save(exercise);
+        achievementService.evaluateFirstExerciseLog(user);
+
+        return saved;
     }
 
     // Obtener ejercicios en formato compatible con FullCalendar

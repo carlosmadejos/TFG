@@ -1,6 +1,9 @@
 package com.example.login_app.controller;
 
 import com.example.login_app.model.TrainingPlan;
+import com.example.login_app.model.User;
+import com.example.login_app.repository.UserRepository;
+import com.example.login_app.service.AchievementService;
 import com.example.login_app.service.TrainingPlanService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,18 +12,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Controller
 public class TrainingPlanController {
 
     private final TrainingPlanService trainingPlanService;
+    private final AchievementService achievementService;
+    private final UserRepository userRepository;
 
-    public TrainingPlanController(TrainingPlanService trainingPlanService) {
+    public TrainingPlanController(TrainingPlanService trainingPlanService,
+                                  AchievementService achievementService,
+                                  UserRepository userRepository) {
         this.trainingPlanService = trainingPlanService;
+        this.achievementService = achievementService;
+        this.userRepository = userRepository;
     }
+
 
     @PostConstruct
     public void init() {
@@ -36,11 +46,15 @@ public class TrainingPlanController {
     }
 
     @GetMapping("/training-plans/{id}")
-    public String viewTrainingPlanDetails(@PathVariable Long id, Model model) {
+    public String viewTrainingPlanDetails(@PathVariable Long id, Principal principal, Model model) {
         TrainingPlan plan = trainingPlanService.getTrainingPlanById(id);
         if (plan == null) {
             return "redirect:/training-plans"; // Si no existe, redirigir a la lista
         }
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        achievementService.evaluateFirstPlanFinish(user);
         model.addAttribute("plan", plan);
         return "training-plan-details";
     }

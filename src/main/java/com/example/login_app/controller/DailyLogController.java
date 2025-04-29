@@ -6,6 +6,7 @@ import com.example.login_app.model.User;
 import com.example.login_app.repository.DailyLogRepository;
 import com.example.login_app.repository.FoodRepository;
 import com.example.login_app.repository.UserRepository;
+import com.example.login_app.service.AchievementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,22 @@ import java.util.Optional;
 @RequestMapping("/api/daily-log")
 public class DailyLogController {
 
-    @Autowired
-    private DailyLogRepository dailyLogRepository;
+    private final DailyLogRepository dailyLogRepository;
+    private final UserRepository userRepository;
+    private final FoodRepository foodRepository;
+    private final AchievementService achievementService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private FoodRepository foodRepository;
+    public DailyLogController(
+            AchievementService achievementService,
+            DailyLogRepository dailyLogRepository,
+            UserRepository userRepository,
+            FoodRepository foodRepository
+    ) {
+        this.achievementService = achievementService;
+        this.dailyLogRepository = dailyLogRepository;
+        this.userRepository     = userRepository;
+        this.foodRepository     = foodRepository;
+    }
 
     // Obtener el registro diario del usuario autenticado con alimentos
     @GetMapping("/{id}")
@@ -102,6 +111,9 @@ public class DailyLogController {
 
         dailyLogRepository.save(dailyLog);
 
+        achievementService.evaluateFirstFoodLog(user, dailyLog);
+        achievementService.evaluateCalorieGoal(user, dailyLog);
+
         return ResponseEntity.ok("Alimento agregado y nutrientes actualizados.");
     }
 
@@ -164,6 +176,7 @@ public class DailyLogController {
         dailyLog.setClosed(true);
         dailyLogRepository.save(dailyLog);
 
+        achievementService.evaluateDailyLogComplete(user, dailyLog);
         return ResponseEntity.ok("Registro diario cerrado exitosamente");
     }
 

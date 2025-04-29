@@ -118,6 +118,7 @@ public class ProfileController {
 
         // Evaluar logros tras actualizar progreso
         achievementService.evaluateWeightLossAchievements(currentUser);
+        achievementService.evaluateWeightStreak(currentUser);
 
         // Redirigir al perfil
         return "redirect:/profile";

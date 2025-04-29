@@ -82,12 +82,13 @@
        class="fade-in bg-white/20 border border-white/30 backdrop-blur-md rounded-2xl p-8 flex flex-col items-center justify-between text-center shadow-xl hover:shadow-2xl transition-transform transform hover:scale-105">
 
     <!-- Icono -->
-    <div th:if="${#lists.contains(userAchievements, ach)}" th:switch="${ach.level}" class="text-7xl mb-6 pulse">
+    <div th:if="${#lists.contains(userAchievements, ach)}"
+         th:switch="${ach.level}"
+         class="text-7xl mb-6 pulse">
       <span th:case="'BRONZE'">🏅</span>
       <span th:case="'SILVER'">🥈</span>
       <span th:case="'GOLD'">🥇</span>
     </div>
-
     <div th:if="${!#lists.contains(userAchievements, ach)}" class="mb-6">
       <!-- Candado -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 opacity-70 mx-auto" viewBox="0 0 24 24" fill="currentColor">
@@ -103,14 +104,20 @@
 
     <!-- Estado -->
     <div>
+      <!-- Si ya está desbloqueado -->
       <span th:if="${#lists.contains(userAchievements, ach)}"
             class="px-5 py-2 bg-green-400 text-black font-bold rounded-full shadow-md text-sm">
-        Desbloqueado
-      </span>
+          Desbloqueado
+        </span>
+
+      <!-- Si falta para desbloquear -->
       <span th:if="${!#lists.contains(userAchievements, ach)}"
             class="px-5 py-2 bg-gray-600 text-gray-200 font-bold rounded-full shadow-md text-sm">
         Faltan
-        <span th:text="${#numbers.formatDecimal(ach.threshold - weightLost, 0, 0)} + ' kg'"></span>
+        <span th:if="${ach.code.startsWith('WEIGHT_LOSS')}"
+              th:text="|${#numbers.formatDecimal(ach.threshold - weightLost, 0, 0)} kg|"></span>
+        <span th:unless="${ach.code.startsWith('WEIGHT_LOSS')}"
+              th:text="|${#numbers.formatDecimal(ach.threshold, 0, 0)}|"></span>
       </span>
     </div>
 
