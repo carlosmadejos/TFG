@@ -1,16 +1,13 @@
 package com.example.login_app.controller;
 
 import com.example.login_app.model.User;
-import com.example.login_app.repository.UserRepository;
-import com.example.login_app.repository.ProgressRepository;
-import com.example.login_app.repository.ExerciseRepository;
-import com.example.login_app.repository.DailyLogRepository;
-import com.example.login_app.repository.TrainingPlanRepository;
+import com.example.login_app.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +23,18 @@ public class AdminController {
     private final ExerciseRepository exerciseRepository;
     private final DailyLogRepository dailyLogRepository;
     private final TrainingPlanRepository trainingPlanRepository;
+    private final FoodRepository foodRepository;
+    private final UserAchievementRepository userAchievementRepository;
 
 
-    public AdminController(UserRepository userRepository, ProgressRepository progressRepository, ExerciseRepository exerciseRepository, DailyLogRepository dailyLogRepository, TrainingPlanRepository trainingPlanRepository) {
+    public AdminController(UserRepository userRepository, ProgressRepository progressRepository, ExerciseRepository exerciseRepository, DailyLogRepository dailyLogRepository, FoodRepository foodRepository, TrainingPlanRepository trainingPlanRepository, UserAchievementRepository userAchievementRepository) {
         this.userRepository = userRepository;
         this.progressRepository = progressRepository;
         this.exerciseRepository = exerciseRepository;
         this.dailyLogRepository = dailyLogRepository;
+        this.foodRepository         = foodRepository;
         this.trainingPlanRepository = trainingPlanRepository;
+        this.userAchievementRepository = userAchievementRepository;
     }
 
     @GetMapping("/dashboard")
@@ -48,6 +49,7 @@ public class AdminController {
         return "admin";
     }
 
+    @Transactional
     @DeleteMapping("/delete-user/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
@@ -63,11 +65,20 @@ public class AdminController {
             }
 
             // Eliminar registros relacionados en otras tablas antes de eliminar al usuario
+            // 1) Logros del usuario
+            userAchievementRepository.deleteByUserId(id);
+
+            // 2) Alimentos
+            foodRepository.deleteByUserId(id);
+
+            // 3) Progreso y ejercicios
             progressRepository.deleteByUserId(id);
             exerciseRepository.deleteByUserId(id);
+
+            // 4) DailyLogs
             dailyLogRepository.deleteByUserId(id);
 
-            // Finalmente, eliminar el usuario
+            // 5) Finalmente, el usuario
             userRepository.deleteById(id);
 
             return ResponseEntity.ok("Usuario y registros eliminados correctamente.");
