@@ -15,11 +15,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        // DEBUG: Imprimir los roles en la consola
-        for (GrantedAuthority authority : authorities) {
-            System.out.println("ROL DETECTADO: " + authority.getAuthority()); // 🔹 Esto te dirá qué está pasando
-        }
-
         for (GrantedAuthority authority : authorities) {
             if (authority.getAuthority().equals("ADMIN")) { // Verifica ambos casos
                 response.sendRedirect("/admin/dashboard");

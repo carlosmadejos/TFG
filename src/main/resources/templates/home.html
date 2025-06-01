@@ -50,7 +50,15 @@
       <!-- Tarjeta 1 -->
       <div class="bg-white shadow-2xl rounded-xl p-8 text-center transition-transform hover:scale-105 hover:shadow-2xl">
         <h3 class="text-xl font-semibold text-blue-600">Tu Progreso</h3>
-        <p class="text-gray-700 mt-2">IMC actual: <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span></p>
+        <p class="text-gray-700 mt-2">
+          IMC actual:
+          <span th:text="${#numbers.formatDecimal(user.weight / ((user.height / 100) * (user.height / 100)), 2, 2)}">XX.XX</span>
+          <button id="help-imc-btn-home"
+                  class="inline-block ml-2 bg-white text-blue-500 text-lg font-bold py-1 px-3 rounded-lg shadow-md border border-blue-500 hover:bg-blue-50 focus:outline-none transition-colors duration-200"
+                  title="¿Qué significa el IMC?">
+            ?
+          </button>
+        </p>
         <button class="w-full mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:scale-105 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300" onclick="location.href='/profile'">
           Ver Perfil
         </button>
@@ -97,6 +105,57 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal para explicar el IMC -->
+    <div id="imc-help-modal-home" class="modal-imc">
+      <div class="modal-content-imc">
+        <h2>¿Qué es el IMC?</h2>
+        <p>El Índice de Masa Corporal (IMC) es una medida que relaciona tu peso y tu altura para evaluar tu salud general. Es ampliamente utilizado como una herramienta sencilla para identificar si tienes un peso saludable.</p>
+
+        <h3>¿Cómo se calcula?</h3>
+        <p>El IMC se calcula con la fórmula:</p>
+        <p><strong>IMC = Peso (kg) / Altura (m)²</strong></p>
+        <p><em>Ejemplo:</em> Si pesas 70 kg y mides 1.75 m:</p>
+        <p><strong>IMC = 70 / (1.75 × 1.75) = 22.86</strong></p>
+
+        <h3>Interpretación del IMC</h3>
+        <table>
+          <tr>
+            <th>Clasificación</th>
+            <th>IMC</th>
+          </tr>
+          <tr>
+            <td style="color: #17a2b8;"><strong>Bajo peso</strong></td>
+            <td>Menor a 18.5</td>
+          </tr>
+          <tr>
+            <td style="color: #28a745;"><strong>Peso saludable</strong></td>
+            <td>18.5 - 24.9</td>
+          </tr>
+          <tr>
+            <td style="color: #ffc107;"><strong>Sobrepeso</strong></td>
+            <td>25 - 29.9</td>
+          </tr>
+          <tr>
+            <td style="color: #dc3545;"><strong>Obesidad</strong></td>
+            <td>30 o más</td>
+          </tr>
+        </table>
+
+        <h3>Limitaciones del IMC</h3>
+        <ul>
+          <li>No tiene en cuenta la composición corporal (músculo vs grasa).</li>
+          <li>Puede no ser preciso para deportistas o personas con gran masa muscular.</li>
+          <li>No evalúa la distribución de grasa corporal.</li>
+        </ul>
+
+        <h3>Consejos</h3>
+        <p>El IMC es solo una guía. Consulta con un profesional de la salud para una evaluación más completa. Además, mantén un estilo de vida saludable con una dieta equilibrada y actividad física regular.</p>
+
+        <button id="close-help-modal-home" class="button">Cerrar</button>
+      </div>
+    </div>
+
   </div>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -277,5 +336,28 @@
     });
     });
 </script>
+  <script>
+    const imcHelpModalHome = document.getElementById('imc-help-modal-home');
+    const helpBtnHome = document.getElementById('help-imc-btn-home');
+    const closeHelpBtnHome = document.getElementById('close-help-modal-home');
+
+    // Abre el modal de ayuda al hacer clic en el botón de home
+    helpBtnHome.onclick = function () {
+      imcHelpModalHome.style.display = 'block';
+    };
+
+    // Cierra el modal al hacer clic en el botón de cerrar
+    closeHelpBtnHome.onclick = function () {
+      imcHelpModalHome.style.display = 'none';
+    };
+
+    // Cierra el modal si se hace clic fuera del contenido
+    window.onclick = function(event) {
+      if (event.target === imcHelpModalHome) {
+        imcHelpModalHome.style.display = 'none';
+      }
+    };
+  </script>
+
 </body>
 </html>

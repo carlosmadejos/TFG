@@ -93,7 +93,6 @@ public class ProfileController {
         return "profile";
     }
 
-
     @PostMapping("/profile/update")
     public String updateUserProfile(@ModelAttribute User updatedUser, Model model) {
 
