@@ -44,10 +44,22 @@
     </div>
 
     <div>
-      <label for="birthdate" class="block text-white text-left font-semibold">Fecha de Nacimiento:</label>
-      <input type="date" th:field="*{birthdate}" id="birthdate" required
-             class="w-full px-4 py-3 rounded-md bg-white/90 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-      <div th:if="${#fields.hasErrors('birthdate')}" class="text-red-500 text-sm mt-1" th:errors="*{birthdate}"></div>
+      <label for="birthdate" class="block text-white text-left font-semibold">
+        Fecha de Nacimiento:
+      </label>
+      <input
+              type="date"
+              th:field="*{birthdate}"
+              id="birthdate"
+              required
+              class="w-full px-4 py-3 rounded-md bg-white/90 text-gray-800 border border-gray-300
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+      <div
+              th:if="${#fields.hasErrors('birthdate')}"
+              class="text-red-500 text-sm mt-1"
+              th:errors="*{birthdate}">
+      </div>
     </div>
 
     <div>
@@ -82,6 +94,23 @@
   </div>
 
 </div>
+<script>
+    // Script para establecer la fecha máxima del input de fecha de nacimiento
+  document.addEventListener('DOMContentLoaded', function() {
+    // Obtiene el input
+    const birthdateInput = document.getElementById('birthdate');
+    if (!birthdateInput) return;
 
+    // Calcula hoy − 16 años
+    const today = new Date();
+    const minYear = today.getFullYear() - 16;
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // meses van 0–11
+    const day = String(today.getDate()).padStart(2, '0');
+    const maxDate = `${minYear}-${month}-${day}`; // formato "YYYY-MM-DD"
+
+    // Asigna el atributo max al input
+    birthdateInput.setAttribute('max', maxDate);
+  });
+</script>
 </body>
 </html>
