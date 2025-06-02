@@ -114,9 +114,16 @@
       <span th:if="${!#lists.contains(userAchievements, ach)}"
             class="px-5 py-2 bg-gray-600 text-gray-200 font-bold rounded-full shadow-md text-sm">
         Faltan
+            <!-- Caso WEIGHT_LOSS -->
         <span th:if="${ach.code.startsWith('WEIGHT_LOSS')}"
               th:text="|${#numbers.formatDecimal(ach.threshold - weightLost, 0, 0)} kg|"></span>
-        <span th:unless="${ach.code.startsWith('WEIGHT_LOSS')}"
+
+            <!-- Caso FOOD_SEARCHER -->
+        <span th:if="${ach.code == 'FOOD_SEARCHER'}"
+              th:text="|${#numbers.formatDecimal(ach.threshold - user.searchCount, 0, 0)}|"></span>
+
+            <!-- Resto de casos (ni WEIGHT_LOSS ni FOOD_SEARCHER) -->
+        <span th:if="${ach.code != 'FOOD_SEARCHER' and !ach.code.startsWith('WEIGHT_LOSS')}"
               th:text="|${#numbers.formatDecimal(ach.threshold, 0, 0)}|"></span>
       </span>
     </div>
