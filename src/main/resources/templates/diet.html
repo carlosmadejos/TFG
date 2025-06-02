@@ -330,9 +330,9 @@
                 <td><img src="${food.image_url}" alt="${food.name}" style="width:50px; height:50px;"></td>
                 <td>${food.name}</td>
                 <td>${food.calories || 0} kcal</td>
-                <td>${food.proteins || 0} g</td>
-                <td>${food.carbs || 0} g</td>
-                <td>${food.fats || 0} g</td>
+                <td>${food.proteins != null ? food.proteins.toFixed(3) : "0.000"} g</td>
+                <td>${food.carbs    != null ? food.carbs   .toFixed(3) : "0.000"} g</td>
+                <td>${food.fats     != null ? food.fats    .toFixed(3) : "0.000"} g</td>
                 <td><input type="number" id="gramsInput${index}" placeholder="100" value="100" min="1" class="w-16 p-2 border border-gray-300 rounded-md text-center"></td>
                 <td><button onclick="addToDailyLog('${food.name}', ${food.calories}, ${food.proteins}, ${food.carbs}, ${food.fats}, '${food.image_url}', ${index})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
                     Añadir
