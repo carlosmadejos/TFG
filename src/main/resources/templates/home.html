@@ -273,11 +273,7 @@
         })
         .then((response) => response.json())
         .then((exercise) => {
-          calendar.addEvent({
-            id: exercise.id,
-            title: exercise.description,
-            start: exercise.date,
-          });
+          calendar.refetchEvents();
           Toastify({
             text: "Ejercicio guardado correctamente",
             duration: 3000,
