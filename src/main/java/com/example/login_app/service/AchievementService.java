@@ -38,7 +38,9 @@ public class AchievementService {
      * Obtiene todos los logros definidos en el sistema.
      */
     public List<Achievement> getAllAchievements() {
-        return achievementRepository.findAll();
+        return achievementRepository.findAll().stream()
+                .filter(a -> !List.of("DAILY_LOG_COMPLETE", "WEIGHT_STREAK_7").contains(a.getCode()))
+                .collect(Collectors.toList());
     }
 
     /**

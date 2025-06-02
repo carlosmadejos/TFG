@@ -97,7 +97,6 @@
 <script>
     // Script para establecer la fecha máxima del input de fecha de nacimiento
   document.addEventListener('DOMContentLoaded', function() {
-    // Obtiene el input
     const birthdateInput = document.getElementById('birthdate');
     if (!birthdateInput) return;
 
@@ -106,7 +105,7 @@
     const minYear = today.getFullYear() - 16;
     const month = String(today.getMonth() + 1).padStart(2, '0'); // meses van 0–11
     const day = String(today.getDate()).padStart(2, '0');
-    const maxDate = `${minYear}-${month}-${day}`; // formato "YYYY-MM-DD"
+    const maxDate = `${minYear}-${month}-${day}`;
 
     // Asigna el atributo max al input
     birthdateInput.setAttribute('max', maxDate);
