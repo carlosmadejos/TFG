@@ -2,6 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Perfil de Usuario</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Perfil de usuario: consulta tu información, actualiza tu peso y altura, y revisa tu progreso." />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vinculamos el archivo CSS -->
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
@@ -54,30 +58,97 @@
 
         <!-- Formulario de actualización de perfil -->
         <div class="card shadow-lg p-6 w-full md:w-1/2 flex flex-col justify-between">
-            <h2 class="text-center text-blue-700 text-2xl font-bold tracking-wide uppercase">Actualizar Perfil</h2>
-            <form id="profileForm" th:action="@{/profile/update}" th:object="${user}" method="post" class="needs-validation" novalidate>
+            <h2 class="text-center text-blue-700 text-2xl font-bold tracking-wide uppercase">
+                Actualizar Perfil
+            </h2>
+            <form
+                    id="profileForm"
+                    th:action="@{/profile/update}"
+                    th:object="${user}"
+                    method="post"
+                    novalidate
+            >
+                <!-- Peso (mín 30, máx 300) -->
                 <div class="mb-3">
                     <label for="weight" class="form-label fw-bold">Nuevo peso (kg):</label>
-                    <input type="number" id="weight" th:field="*{weight}" step="0.1" min="30" max="300"
-                           class="form-control" required />
-                    <div class="invalid-feedback">
-                        El peso debe estar entre 30 y 300 kg.
-                    </div>
+                    <input
+                            type="number"
+                            id="weight"
+                            th:field="*{weight}"
+                            step="0.1"
+                            min="30"
+                            max="300"
+                            class="form-control"
+                            required
+                    />
+                    <small id="weight-note" class="text-warning small mt-1"></small>
                 </div>
+
+                <!-- Altura (mín 100, máx 250) -->
                 <div class="mb-3">
                     <label for="height" class="form-label fw-bold">Nueva altura (cm):</label>
-                    <input type="number" id="height" th:field="*{height}" step="0.1" min="100" max="250"
-                           class="form-control" required />
-                    <div class="invalid-feedback">
-                        La altura debe estar entre 100 y 250 cm.
-                    </div>
+                    <input
+                            type="number"
+                            id="height"
+                            th:field="*{height}"
+                            step="0.1"
+                            min="100"
+                            max="250"
+                            class="form-control"
+                            required
+                    />
+                    <small id="height-note" class="text-warning small mt-1"></small>
                 </div>
-                <button type="submit" class="btn btn-success w-100">Actualizar Perfil</button>
+
+                <button type="submit" id="submitBtn" class="btn btn-success w-100" disabled>
+                    Actualizar Perfil
+                </button>
             </form>
         </div>
-    </div>
 
-    <!-- Botón para cambiar la contraseña -->
+        <script>
+            const weightInput = document.getElementById('weight');
+            const heightInput = document.getElementById('height');
+            const weightNote = document.getElementById('weight-note');
+            const heightNote = document.getElementById('height-note');
+            const submitBtn = document.getElementById('submitBtn');
+
+            function validateInputs() {
+              let validWeight = true;
+              let validHeight = true;
+
+              const w = parseFloat(weightInput.value.replace(',', '.'));
+              const h = parseFloat(heightInput.value.replace(',', '.'));
+
+              // Validar peso
+              if (isNaN(w) || w < 30 || w > 300) {
+                validWeight = false;
+                weightNote.textContent = 'El peso debe estar entre 30 y 300 kg.';
+              } else {
+                weightNote.textContent = '';
+              }
+
+              // Validar altura
+              if (isNaN(h) || h < 100 || h > 250) {
+                validHeight = false;
+                heightNote.textContent = 'La altura debe estar entre 100 y 250 cm.';
+              } else {
+                heightNote.textContent = '';
+              }
+
+              // Habilitar o deshabilitar botón
+              submitBtn.disabled = !(validWeight && validHeight);
+            }
+
+            weightInput.addEventListener('input', validateInputs);
+            heightInput.addEventListener('input', validateInputs);
+
+            // Al cargar la página, chequea una vez
+            window.addEventListener('DOMContentLoaded', validateInputs);
+        </script>
+
+
+        <!-- Botón para cambiar la contraseña -->
     <div class="profile-change-password">
         <button id="change-password-btn" class="btn btn-success">Cambiar Contraseña</button>
     </div>
